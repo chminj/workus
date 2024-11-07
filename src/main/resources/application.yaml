@@ -8,7 +8,7 @@ spring:
     name: workus
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/workus?useSSL=false
+    url: jdbc:mysql://localhost:3306/workus?useSSL=false?serverTimezone=Asia/Seoul
     username: user1
     password: zxcv1234
   mvc:
@@ -20,3 +20,17 @@ spring:
 upload:
   directory:
     board: "C:/projects/final-repository"
+
+# spring mvc 설정
+  mvc:
+      view:
+        prefix: /WEB-INF/views/
+        suffix: .jsp
+
+# mybatis 설정
+mybatis:
+  mapper-locations:
+    - mybatis/mappers/*.xml
+  configuration:
+    jdbc-type-for-null: NULL
+    log-impl: org.apache.ibatis.logging.log4j2.Log4j2Impl
