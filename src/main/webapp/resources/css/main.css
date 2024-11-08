@@ -157,6 +157,9 @@ ul.flex li {margin:0 10px}
 }
 
 header.header {
+    position:fixed;
+    background-color:#fff;
+    left:0; top:0;
     z-index: 30;
     display: flex;
     width: 100%;
@@ -176,14 +179,15 @@ header.header {
     min-height: 0;
     width: auto;
     flex: 1 1 0%;
-    height : calc(100vh - 60px);
+    height : max-content;
+    margin-top:60px;
 }
 
 .leftMenu {
-    position:static;
+    position:fixed;
     bottom: 0;
     left: 0;
-    top: 0;
+    top: 60px;
     z-index: 10;
     height: 100%;
     overflow: hidden;
@@ -277,13 +281,13 @@ header.header {
     --tw-text-opacity: 1;
     color: rgb(117 117 117/var(--tw-text-opacity));
     padding-left: 2px;
-    padding-right: 2px
+    padding-right: 2px;
 }
 
 .lnb {
     --tw-bg-opacity: 1;
     background-color: rgb(247 247 247/var(--tw-bg-opacity));
-    padding:25px; position: relative; width: 230px; max-width: 350px; min-width: 230px; box-sizing: border-box; flex-shrink: 0; margin-left: 0px;
+    padding:25px; position: relative; width: 230px; max-width: 350px; min-width: 230px; box-sizing: border-box; flex-shrink: 0; margin-left: 76px; min-height:calc(100vh - 60px);
 }
 
 .lnb .list1 li, .lnb .list2 li {font-size:15px; line-height:1.7;}

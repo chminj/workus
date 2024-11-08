@@ -48,18 +48,7 @@
               </span>
             </a>
           </div>
-          <div class="calendarContent this-month">
-            <div class="cal-month">
-              <span id="titleMonth" class="cal-txt"></span>
-            </div>
-            <div class="btnWrap gap-1.5 my-2">
-              <button id="goPrevMonth" type="button"></button>
-              <button id="goToday" type="button"></button>
-              <button id="goNextMonth" type="button"></button>
-            </div>
-          </div>
-          <div id="full-calendar" class="fc fc-ltr fc-unthemed fullCalendarInAtd">
-            풀캘린더 영역
+          <div id="fullCalendarInAtd" class="mgt20">
           </div>
         </div>
       </main>

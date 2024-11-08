@@ -164,7 +164,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="">
+                    <a href="/attendance/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topWorknote"></use>
@@ -175,11 +175,11 @@
                 </li>
                 <li class="gnb">
                     <a href="">
-                                        <span class="gnbIcon">
-                                            <svg class="gnbIcon text-skin">
-                                                <use href="#topEas"></use>
-                                            </svg>
-                                        </span>
+                        <span class="gnbIcon">
+                            <svg class="gnbIcon text-skin">
+                                <use href="#topEas"></use>
+                            </svg>
+                        </span>
                         <span class="gnbText">결재</span>
                     </a>
                 </li>
