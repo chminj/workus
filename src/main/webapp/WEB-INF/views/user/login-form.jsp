@@ -15,7 +15,7 @@
             <a href="#" id="signin">로그인</a>
         </li>
         <li>
-            <a href="#" id="signup">회원가입</a>
+            <a href="/signup" id="signup">회원가입</a>
         </li>
         <li>
             <a href="#" id="reset">비밀번호 찾기</a>
@@ -26,15 +26,11 @@
     <form  action="" method="post">
         <!-- email input -->
         <div class="first-input input__block first-input__block">
-            <input type="email" placeholder="ID 또는 사번을 입력해주세요" class="input" id="email"   />
+            <input type="email" placeholder="ID 또는 사번을 입력해주세요" class="input" name="email"   />
         </div>
         <!-- password input -->
         <div class="input__block">
-            <input type="password" placeholder="비밀번호를 입력해주세요" class="input" id="password"    />
-        </div>
-        <!-- repeat password input -->
-        <div class="input__block">
-            <input type="password" placeholder="Repeat password" class="input repeat__password" id="repeat__password"    />
+            <input type="password" placeholder="비밀번호를 입력해주세요" class="input" name="password"    />
         </div>
         <!-- sign in button -->
         <button class="signin__btn">

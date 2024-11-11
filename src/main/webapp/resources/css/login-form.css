@@ -19,6 +19,13 @@ h1 {
     transition: .2s linear;
 }
 
+label {
+    text-decoration: none;
+    color: #0f132a;
+    font-weight: bolder;
+    text-align: left;
+    cursor: pointer;
+}
 .links {
     list-style-type: none;
 
