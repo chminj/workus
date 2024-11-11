@@ -22,18 +22,19 @@
 							<!-- 채팅방 목록 -->
 							<div class="col-4 border-end p-0 overflow-auto">
 								<!-- 채팅방 -->
+								<c:forEach var="chatroom" items="${chatroomList}">
 								<div class="border-bottom p-3" role="button">
 									<div class="d-flex justify-content-between align-items-start">
-										<h6 class="mb-1">채팅방 제목</h6>
-										<small class="text-muted">오후 2:30</small>
+										<h6 class="mb-1">${chatroom.chatroomTitle}</h6>
+										<small class="text-muted"><fmt:formatDate value="${chatroom.lastChatDate}" pattern="yyyy년 MM월 dd시 HH시 mm분" /></small>
 									</div>
-									<p class="mb-1 text-muted">개설자: 홍길동</p>
+									<p class="mb-1 text-muted">${chatroom.lastChatAuthor}</p>
 									<div class="d-flex justify-content-between align-items-center">
-										<small class="text-muted text-truncate me-2">마지막 메시지 내용...</small>
-										<span class="badge bg-primary rounded-pill">3</span>
+										<small class="text-muted text-truncate me-2">${chatroom.lastChat}</small>
+										<span class="badge bg-primary rounded-pill">읽지 않은 메시지 수</span>
 									</div>
 								</div>
-								<!-- 추가 채팅방들... -->
+								</c:forEach>
 							</div>
 
 							<!-- 채팅 내용 -->
