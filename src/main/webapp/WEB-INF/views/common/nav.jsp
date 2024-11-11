@@ -215,7 +215,7 @@
                 </li>
 
                 <li class="gnb">
-                    <a href="">
+                    <a href="/chatroom/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topSms"></use>

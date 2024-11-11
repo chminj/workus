@@ -101,7 +101,7 @@
 								<!-- 메시지 입력 영역 -->
 								<div class="border-top p-3">
 									<div class="input-group">
-										<input type="text" class="form-control" placeholder="메시지를 입력하세요...">
+										<input type="text" class="form-control" placeholder="메시지를 입력하세요.">
 										<button class="btn btn-primary">전송</button>
 									</div>
 								</div>
@@ -114,11 +114,11 @@
 	</div>
 
 	<!-- 프로필 모달 -->
-	<div class="modal fade" id="testModal" tabindex="-1" aria-labelledby="testModalLabel" aria-hidden="true">
+	<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="testModalLabel">프로필 정보</h5>
+					<h5 class="modal-title" id="profileModalLabel">프로필 정보</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
@@ -160,7 +160,7 @@
 	</div>
 	<script>
 		// 모달 객체 생성
-		const myModal = new bootstrap.Modal('#testModal');
+		const myModal = new bootstrap.Modal('#profileModal');
 
 		// 모달 등장
 		$(".participant-name").on('click', () => {
