@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.workus.chat.mapper.ChatroomMapper">
+    <select id="getChatroomNoByUserNo" resultType="Integer">
+        select CHATROOM_NO
+        from WORKUS_CHATROOM_HISTORY
+        where USER_NO = #{userNo}
+        and CHATROOM_OUT_TIME is null
+    </select>
+
+    <select id="getChatRoom" resultType="ChatroomDto">
+        select
+            R.CHATROOM_NO as chatroomNo
+            , R.CHATROOM_TITLE chatroomTitle
+            , C.CHAT_CONTENT as lastChat
+            , C.CHAT_TIME as lastChatDate
+            , U.USER_NAME as "lastChatAuthor.name"
+        from
+            WORKUS_CHAT C
+        inner join
+            WORKUS_CHATROOM R
+        on
+            R.CHATROOM_NO = C.CHATROOM_NO
+        inner join
+            WORKUS_USERS U
+        on
+            U.USER_NO = C.USER_NO
+        where R.CHATROOM_NO = #{chatroomNo}
+        order by C.CHAT_TIME desc
+        limit 1
+    </select>
+</mapper>
