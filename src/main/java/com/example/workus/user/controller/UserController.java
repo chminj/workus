@@ -15,4 +15,9 @@ public class UserController {
     public String signup() {
         return "user/signup-form";
     }
+
+    @GetMapping("/findpw")
+    public String findpw() {
+        return "user/findpw-form";
+    }
 }
