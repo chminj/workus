@@ -1,0 +1,859 @@
+@import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+
+h1{
+    color:#262626;
+    font-family:'Lobster', cursive;
+    font-weight:100;
+    line-height: 1;
+}
+button {
+    background-color: transparent; /* 배경 투명 */
+    border: none; /* 테두리 없음 */
+    cursor: pointer; /* 커서 포인터 */
+    padding: 0; /* 패딩 없음 */
+    outline: none; /* 포커스 아웃라인 없음 */
+    display: flex; /* 중앙 정렬을 위해 플렉스 사용 */
+    align-items: center; /* 수직 중앙 정렬 */
+    justify-content: center; /* 수평 중앙 정렬 */
+}
+
+button svg {
+    width: 24px; /* 아이콘 크기 조정 */
+    height: 24px; /* 아이콘 크기 조정 */
+    fill: currentColor; /* 현재 텍스트 색상 사용 */
+    transition: transform 0.2s; /* 애니메이션 효과 */
+}
+
+button:hover svg {
+    transform: scale(1.1); /* 호버 시 크기 증가 */
+}
+.dropdown {
+    display: none; /* 기본적으로 숨김 */
+    position: absolute; /* 부모 요소에 대해 절대 위치 */
+    background-color: white; /* 배경색 */
+    border: 1px solid #ccc; /* 테두리 */
+    z-index: 1; /* z-index 설정 */
+    padding: 10px; /* 내부 여백 */
+}
+
+.dropdown.show {
+    display: block; /* show 클래스가 있을 때 표시 */
+}
+
+.dropdown-item {
+    padding: 5px 10px; /* 항목의 여백 */
+    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+}
+
+.dropdown-item:hover {
+    background-color: #f0f0f0; /* 호버 시 배경색 변경 */
+}
+
+.wrap{
+    width:1000px;
+    margin:0 auto;
+}
+
+.round_img{
+    border-radius:100%;
+}
+
+.txt_id{
+    font-weight:bold;
+}
+
+/**************************
+HEADER
+**************************/
+header{
+
+    top: 0; /* 상단에 고정 */
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #e8e8e8;
+}
+
+header .wrap{
+    display: flex;
+    align-items: center;
+}
+
+header .logo h1{
+    height:100%;
+    margin-left:35px;
+    padding-left:15px;
+    border-left:1px solid #262626;
+    font-size:40px;
+    line-height:15px;
+    font-weight:100;
+}
+
+.search{
+    display: flex;
+    flex: 3.5;
+    padding: 0 5px;
+    margin: 0 15%;
+    background: #fafafa;
+    border: 1px solid #e8e8e8;
+    text-align: center;
+}
+
+.search input[type=text]{
+    position: relative;
+    flex: 9;
+    height: 25px;
+    background: none;
+    border: none;
+}
+
+.search button{
+    flex: 1;
+    color: #999;
+}
+.search button> .fas {
+    position: relative;
+}
+
+.gnb{
+    flex: 1.5;
+}
+
+.gnb ul{
+    display: flex;
+}
+
+.gnb ul li{
+    position: relative;
+    flex: 2.5;
+    font-size: 0;
+    width: 25px;
+    height: 25px;
+    background-position:  center center;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+.gnb ul li:before{
+    content: "";
+    position: absolute;
+    bottom: -7px;
+    left: 50%;
+    margin-left: -1.5px;
+    width: 4px;
+    height: 4px;
+    background: #e04141;
+    border-radius: 4px;
+}
+/*.gnb ul li.home{*/
+/*    background-image: url(../img/home.png);*/
+/*}*/
+/*.gnb ul li.direct{*/
+/*    background-image: url(../img/direct.png);*/
+/*}*/
+.gnb ul li.research{
+    background-image: url('https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/bearu/explore.png');
+}
+
+.gnb ul li.like{
+    background-image: url('https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/bearu/heart.png');
+}
+
+.gnb ul li.mypage{
+    background-image: url('https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/bearu/profile.png');
+}
+
+.gnb ul li.mypage:before{
+    display: none;
+}
+
+.gnb ul li a{
+    display: block;
+    height: 100%;
+}
+
+/**************************
+MAIN LAYOUT
+**************************/
+main.wrap{
+    display: flex;
+    flex-direction: row-reverse;
+    padding: 80px 0 100px;
+}
+
+/**************************
+ASIDE
+**************************/
+aside{
+    flex: 3.5;
+}
+
+/* my profile */
+.my_profile{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.my_profile a.profile_img{
+    flex:2;
+}
+
+.my_profile a.profile_img img{
+    width: 55px;
+    height: 55px;
+}
+
+.my_profile .my_id{
+    flex: 8;
+}
+
+.my_profile .my_id p{
+    color:  #999;
+}
+.my_id > button {
+    flex: 2;
+    color: #0095f6;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+
+
+/* WIDGET - common */
+.widget{
+    background: #fff;
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.widget_ttl{
+    display: flex;
+    /*  justify-content 속성은 플렉스 요소의 수평 방향 정렬 방식을 설정
+        1. flex-start : 기본 설정으로, 플렉스 요소는 플렉스 컨테이너의 앞쪽에서부터 배치됩니다.
+        2. flex-end : 플렉스 요소는 플렉스 컨테이너의 뒤쪽에서부터 배치됩니다.
+        3. center : 플렉스 요소는 플렉스 컨테이너의 가운데에서부터 배치됩니다.
+        4. space-between : 플렉스 요소는 요소들 사이에만 여유 공간을 두고 배치됩니다.
+        5. space-around : 플렉스 요소는 앞, 뒤, 그리고 요소들 사이에도 모두 여유 공간을 두고 배치됩니다.*/
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.8em;
+}
+
+.widget_ttl span{
+    color: #999;
+}
+
+.widget .txt_id:hover{
+    text-decoration: underline;
+}
+
+/* WIDGET - story */
+.stories{
+    padding-bottom: 0;
+}
+
+.list_story{
+    height: 200px;
+    overflow-y: scroll;
+}
+/*  스크롤바역할을 한다.
+    ::-webkit-scrollbar — 스크롤바 전체.
+    ::-webkit-scrollbar-button — 스크롤바의 버튼
+    (한 번 누를 때마다 위아래로 한 줄씩 오르내리는 위아래 화살표).
+    ::-webkit-scrollbar-thumb — 드래그할 수 있는 스크롤 손잡이.
+    ::-webkit-scrollbar-track — 흰색 막대 위에 회색 바가 존재할 경우의 스크롤바의 트랙(진행 표시줄).
+    ::-webkit-scrollbar-track-piece — 손잡이에 의해 덮이지 않은 트랙(진행 표시줄)의 부분.
+    ::-webkit-scrollbar-corner — 수평 스크롤바와 수직 스크롤바가 교차하는 곳의 하단 모서리.
+                                주로 브라우저 창의 우측 하단 모서리에 위치한다.
+    ::-webkit-resizer — 몇몇 요소들의 하단 모서리에 나타나는, 드래그 할 수 있는 사이즈 변경 손잡이.*/
+.list_story::-webkit-scrollbar{
+    width: 0;
+}
+
+.story{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.story a.follower_img{
+    flex: 2;
+}
+
+.story a.follower_img img{
+    width: 45px;
+    height: 45px;
+}
+
+.story .user_id{
+    flex: 8;
+}
+
+.story .user_id p{
+    color: #999;
+}
+
+/* WIDGET - recommend*/
+.recommends{
+    padding-bottom:5px;
+}
+
+.recommend{
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.recommend a.recommend_img{
+    flex: 2;
+}
+
+.recommend a.recommend_img img{
+    width: 45px;
+    height: 45px;
+}
+
+.recommend .user_id{
+    flex: 6;
+}
+
+.recommend .user_id p{
+    color:  #999;
+}
+
+.recommend button{
+    flex: 2;
+    color: #0095f6;
+    font-size: 0.8em;
+    font-weight: 500;
+}
+
+/*menu*/
+.menu ul li{
+    position: relative;
+    display: inline-block;
+    line-height: 1.5;
+    padding-right: 12px;
+}
+
+.menu ul li:before{
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 7px;
+    width: 2px;
+    height: 2px;
+    margin-top: -1px;
+    background: #b9b9b9;
+}
+
+.menu ul li a{
+    color: #999;
+    font-size: 0.8em;
+}
+
+.copyright{
+    color: #999;
+    font-size: 0.8em;
+    padding-top: 20px;
+}
+
+/**************************
+FEED BOARD
+**************************/
+div.feed_board{
+    flex: 6.5;
+    margin-right: 15px;
+}
+
+/* FEED - common */
+.feed{
+    background: #fff;
+    border: 1px solid #e8e8e8;
+}
+
+/* FEED - top */
+.new_poster{
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.new_poster .poster_img{
+    flex:1;
+}
+
+.new_poster .poster_img img{
+    width:45px;
+    height:45px;
+}
+
+.new_poster .poster_id{
+    flex: 18;
+    margin-left: 10px;
+}
+
+.new_poster button{
+    flex: 1;
+    font-size: 0;
+    text-align: right;
+}
+
+.new_poster button .fas{
+    flex: 0.4;
+    font-size: 12px;
+}
+
+/* FEED - content */
+.feed_imgs img,
+.feed_imgs video{
+    width: 100%;
+}
+
+.interactions{
+    display: flex;
+    align-items: center;
+    height: 50px;
+    padding: 0 10px;
+}
+
+
+
+
+.interactions button .far{
+    font-size: 20px;
+    color: #676767;
+}
+.interactions .my_emotion{
+    display: flex;
+    flex: 2;
+}
+.large-heart {
+    font-size: 25px; /* 피드 내 하트 크기 */
+}
+
+.small-heart {
+    font-size: 20px !important; /* 강제로 크기 설정 */
+}
+
+
+.pagnation{
+    flex:25;
+}
+
+.like_user img{
+    width: 25px;
+    height: 25px;
+}
+
+.feed_imgs p{
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+}
+
+.feed_imgs p .like_user{
+    display: flex;
+    align-items: center;
+}
+
+.feed_imgs p .txt_id{
+    margin-left: 10px;
+}
+
+/* FEED - feed text */
+.feed_txt{
+    padding: 0 20px;
+}
+
+.feed_txt .txt_id{
+    margin-right: 5px;
+}
+
+.feed_txt .more{
+    color: #999;
+}
+
+/*comments*/
+.popup-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+.popup {
+    background: #fff;
+    width: 1500px;
+    height: 800px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+}
+.popup-left {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+}
+.popup-left img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.popup-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+.open-popup-btn {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin: 0 10px; /* 상하 0px, 좌우 10px */
+
+
+}
+.open-popup-btn svg {
+    width: 24px;
+    height: 24px;
+    fill: #000000;
+}
+.popup-header {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    border-bottom: 1px solid #e6e6e6;
+    position: relative;
+}
+.popup-header img.profile {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+.popup-header .username {
+    font-weight: bold;
+    font-size: 14px;
+}
+.popup-header .more-options {
+    cursor: pointer;
+    font-size: 20px;
+    position: absolute;
+    right: 50px;
+}
+.popup-header .dropdown-menu {
+    display: none; /* 기본적으로 숨김 */
+    position: absolute; /* 부모 요소에 대해 절대 위치 */
+    top: 40px; /* 상단 위치 */
+    right: 10px; /* 오른쪽 위치 */
+    background: #fff; /* 배경색 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    overflow: hidden; /* 내용 넘침 방지 */
+}
+
+.popup-header .dropdown-menu.show {
+    display: block; /* show 클래스가 있을 때 표시 */
+}
+
+.popup-header .dropdown-menu div {
+    padding: 10px; /* 항목의 여백 */
+    font-size: 14px; /* 글자 크기 */
+    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+
+.popup-header .dropdown-menu div:hover {
+    background-color: #f0f0f0; /* 호버 시 배경색 변경 */
+}
+
+.popup-header .popup-close {
+    position: absolute;
+    top: 10px; /* 팝업창 상단으로 위치 조정 */
+    right: 15px; /* 팝업창 오른쪽으로 위치 조정 */
+    font-size: 24px;
+    cursor: pointer;
+}
+.popup-content {
+    padding: 15px;
+    font-size: 14px;
+    line-height: 1.5;
+}
+.comments-section {
+    flex: 1;
+    overflow-y: auto;
+    margin: 10px 0;
+    padding: 0 15px;
+    border-top: 1px solid #e6e6e6;
+}
+.comment {
+    padding: 5px 0;
+    display: flex;
+    align-items: center;
+}
+.comment .username {
+    font-weight: bold;
+    margin-right: 5px;
+}
+.popup-footer {
+    padding: 10px 15px;
+    border-top: 1px solid #e6e6e6;
+    font-size: 14px;
+    color: #888;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.popup-footer .likes {
+    font-weight: bold;
+    color: #000;
+}
+.popup-footer .like-btn {
+    cursor: pointer;
+    color: #888;
+}
+.popup-footer .like-btn.liked {
+    color: #e74c3c;
+}
+.add-comment {
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #e6e6e6;
+    padding: 10px 15px;
+}
+.add-comment input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 5px;
+    font-size: 14px;
+}
+.add-comment button {
+    border: none;
+    background: none;
+    color: #3897f0;
+    font-weight: bold;
+    cursor: pointer;
+}
+.small-heart {
+    font-size: 24px; /* 팝업 내 하트 크기 (예: 24px) */
+}
+.list_comment{
+    margin-bottom: 10px;
+}
+
+.txt_comment{
+    display:flex;
+    margin-bottom: 5px;
+}
+
+.txt_comment > span{
+    flex:9.8;
+}
+
+.txt_comment > span .txt_id{
+    margin-right: 10px;
+}
+
+.txt_comment > span span{
+    width: 100%;
+}
+
+.txt_comment button{
+    color: #ddd;
+}
+
+.txt_comment button:hover{
+    color: #777;
+}
+
+.post_comment{
+    display: flex;
+    align-content: center;
+    padding: 20px 0 10px;
+    border-top: 1px solid #e8e8e8;
+}
+
+.post_comment textarea{
+    flex: 9;
+    height: 30px;
+    border: none;
+    resize: none;
+}
+
+.post_comment textarea::-webkit-scrollbar{
+    width: 0;
+}
+
+.post_comment button{
+    flex: 1;
+    color: #0095f6;
+}
+/* form css */
+.post-container {
+    width: 600px;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.post-header, .post-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dbdbdb;
+}
+.post-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.post-header .username {
+    font-weight: bold;
+}
+.post-media {
+    width: 100%;
+}
+.post-media img, .post-media video {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+}
+.post-footer {
+    display: flex;
+    flex-direction: column;
+}
+.post-actions {
+    display: flex;
+    gap: 10px;
+}
+.post-actions button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+.post-comments {
+    padding: 10px;
+    border: 1px solid #ccc; /* 댓글 섹션 테두리 */
+    margin-bottom: 10px; /* 섹션 간 간격 */
+}
+.hashtags {
+    color: #00376b;
+}
+.post-comments {
+    padding: 10px;
+}
+.post-comments div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+.post-comments div img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+.comment-input-section {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #dbdbdb;
+}
+.comment-input-section input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.comment-input-section button {
+    margin-left: 10px;
+    padding: 8px 12px;
+    background-color: #0095f6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* detail css */
+.post-container {
+    width: 600px;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.post-header, .post-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #dbdbdb;
+}
+.post-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+.post-header .username {
+    font-weight: bold;
+}
+.post-media {
+    width: 100%;
+}
+.post-media img, .post-media video {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+}
+.post-footer {
+    display: flex;
+    flex-direction: column;
+}
+.post-actions {
+    display: flex;
+    gap: 10px;
+}
+.post-actions button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+}
+.post-content {
+    padding: 10px;
+    font-size: 14px;
+}
+.hashtags {
+    color: #00376b;
+}
+.post-comments {
+    padding: 10px;
+}
+.post-comments div {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-bottom: 5px;
+}
+.post-comments div img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
