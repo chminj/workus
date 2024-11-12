@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>공지사항 상세보기</title>
-    <link href="../../../resources/css/notic.css" rel="stylesheet">
+    <link href="../../../resources/css/notice.css" rel="stylesheet">
 </head>
 <body>
 

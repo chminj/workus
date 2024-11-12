@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../../../resources/css/notic.css" rel="stylesheet"/>
+    <link href="../../../resources/css/notice.css" rel="stylesheet"/>
     <title>공지사항</title>
 </head>
 <body>

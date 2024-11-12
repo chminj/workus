@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>게시판 글쓰기</title>
-    <link href="../../../resources/css/notic.css" rel="stylesheet"/>
+    <link href="../../../resources/css/notice.css" rel="stylesheet"/>
     <style>
         /* 기본 스타일 */
         main {
