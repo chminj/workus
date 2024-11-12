@@ -134,7 +134,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="">
+                    <a href="../addressbook/address-book">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topAddress"></use>
