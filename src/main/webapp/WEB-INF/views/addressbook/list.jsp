@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-  <title>주소록</title>
+  <title>workus template</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <link rel="stylesheet" href="../../../resources/css/address-book.css">
 </head>
@@ -17,10 +17,17 @@
     <%@ include file="../common/header.jsp" %>
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
+      <div class="lnb" style="position: fixed;">
+        <ul class="">
+          <li class="">
+            <a href="">text1</a>
+          </li>
+        </ul>
+      </div>
       <main>
+        <h3 class="title1">주소록</h3>
         <div class="content">
           <section class="member-search-container">
-            <h3 class="title1">주소록</h3>
             <!-- 검색 바 -->
             <div class="search-bar-wrapper">
               <div class="search-input-wrapper" style="display: flex; align-items: center;">
@@ -154,6 +161,7 @@
               <button class="pagination-button">이후</button>
             </div>
           </section>
+
         </div>
       </main>
     </section>

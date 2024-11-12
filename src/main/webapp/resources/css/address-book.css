@@ -2,7 +2,7 @@
 .member-search-container {
     display: flex;
     flex-direction: column;
-    max-width: 621px;
+    max-width: 1500px;
     margin: 0 auto; /* 페이지 중앙 정렬 */
 }
 
@@ -46,17 +46,14 @@
     font: 16px/1.4 Roboto, sans-serif;
 }
 
-/* 카드 스타일 */
 .testimonial-card {
-    border-radius: 8px;
-    background-color: #fff;
     display: flex;
-    flex-direction: column;
-    padding: 15px;
-    border: 1px solid #383838;
-    min-width: 120px; /* 최소 너비 */
-    min-height: 100px; /* 최소 높이 */
-    align-items: center; /* 중앙 정렬 */
+    align-items: flex-start; /* 좌측 정렬 */
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #fff;
 }
 
 /* 카드 내부 스타일 */
@@ -67,30 +64,36 @@
     gap: 10px; /* 이미지와 텍스트 간격 */
 }
 
+/* 이미지 크기 조정 */
 .avatar-image {
-    border-radius: 50%; /* 원형 이미지 */
-    width: 40px; /* 이미지 너비 */
-    height: 40px; /* 이미지 높이 */
+    width: 80px; /* 이미지 크기를 더 키우기 */
+    height: 80px;
+    border-radius: 50%; /* 둥근 모양 유지 */
+    margin-right: 20px; /* 이미지와 텍스트 간격 */
 }
 
+/* 텍스트 스타일 조정 */
 .info-block {
-    text-align: center; /* 텍스트 중앙 정렬 */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .info-title {
+    font-size: 1.2em; /* 제목 크기 증가 */
     font-weight: bold;
-    margin: 0; /* 기본 여백 제거 */
+    margin: 0;
 }
 
 .info-description {
-    margin: 0; /* 기본 여백 제거 */
-    color: #666; /* 설명 텍스트 색상 */
+    font-size: 1em; /* 설명 텍스트 크기 조정 */
+    color: #555;
+    margin: 5px 0;
 }
 
 .contact-info {
-    font-size: 12px; /* 작은 글씨 */
-    color: #999; /* 색상 */
-    margin-top: 5px; /* 위쪽 여백 */
+    font-size: 0.9em; /* 연락처 정보 크기 조정 */
+    color: #777;
 }
 
 /* 돋보기 아이콘 스타일 */
@@ -150,23 +153,23 @@
     opacity: 0.8; /* 호버 시 투명도 변화 */
 }
 
+.lnb {
+    position: fixed; /* 고정 위치 */
+}
+
+main {
+    margin-left: 300px;
+    flex: 1; /* 나머지 공간 차지 */
+    padding: 20px; /* 여백 추가 */
+    box-sizing: border-box; /* 패딩 포함한 크기 계산 */
+}
+
+.content {
+    width: 100%; /* 콘텐츠가 가득 차도록 설정 */
+    margin: 0; /* 기본 마진 제거 */
+    padding: 0; /* 기본 패딩 제거 */
+}
+
 .verticalLayoutFixedSection {
     display: flex; /* 수평 정렬 */
-}
-
-nav {
-    width: 250px; /* 메뉴바 너비 설정 */
-    flex-shrink: 0; /* 메뉴바가 줄어들지 않도록 설정 */
-}
-
-#divContents {
-    flex: 1; /* 나머지 공간을 차지하도록 설정 */
-    padding: 20px; /* 여백 추가 */
-    margin-left: 150px; /* 메뉴바와 간격 유지 */
-}
-
-.member-search-container {
-    max-width: 100%; /* 최대 너비를 100%로 설정 */
-    margin: 0 auto; /* 중앙 정렬 */
-    padding: 20px; /* 여백 추가 */
 }
