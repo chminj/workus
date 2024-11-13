@@ -12,13 +12,13 @@
     <!-- Links -->
     <ul class="links">
         <li>
-            <a href="" id="signin">로그인</a>
+            <a href="/user/login" id="signin">로그인</a>
         </li>
         <li>
-            <a href="/signup" id="signup">회원가입</a>
+            <a href="/user/signup" id="signup">회원가입</a>
         </li>
         <li>
-            <a href="/findpw" id="reset">비밀번호 찾기</a>
+            <a href="/user/findpw" id="reset">비밀번호 찾기</a>
         </li>
     </ul>
 
