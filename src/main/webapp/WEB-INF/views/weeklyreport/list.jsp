@@ -6,16 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../../../resources/css/notice.css" rel="stylesheet"/>
     <title>주간보고서</title>
+    <%@ include file="../home.jsp" %>
 </head>
 <body>
-
 <section class="notice">
     <div class="page-title">
         <div class="container">
             <h3>주간보고서</h3>
         </div>
     </div>
-
     <!-- board search area -->
     <div id="board-search">
         <div class="container">
@@ -36,7 +35,7 @@
         <div class="container">
             <!-- 글쓰기 버튼 -->
             <div class="button-group1">
-                <a href="write_report.html" class="btn btn-dark">글쓰기</a>
+                <a href="detail" class="btn btn-dark">글쓰기</a>
             </div>
 
             <table class="board-table">
@@ -51,7 +50,7 @@
                     <tr>
                         <td>3</td>
                         <th>
-                          <a href="#!">[주간보고서] 영업팀 10월 1주차 주간보고서</a>
+                          <a href="detail">[주간보고서] 영업팀 10월 1주차 주간보고서</a>
                           <p>주간보고서</p>
                         </th>
                         <td>2017.07.1</td>
