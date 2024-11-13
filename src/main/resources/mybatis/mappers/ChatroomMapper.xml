@@ -8,7 +8,7 @@
         and CHATROOM_OUT_TIME is null
     </select>
 
-    <select id="getChatRoom" resultType="ChatroomDto">
+    <select id="getChatRoomInMenuByChatroomNo" resultType="ChatroomDto">
         select
             R.CHATROOM_NO as chatroomNo
             , R.CHATROOM_TITLE chatroomTitle
@@ -28,5 +28,36 @@
         where R.CHATROOM_NO = #{chatroomNo}
         order by C.CHAT_TIME desc
         limit 1
+    </select>
+
+    <resultMap id="chatroomInfoMap" type="ChatroomInfoDto">
+        <result property="chatroomTitle" column="CHATROOM_TITLE" />
+        <collection property="users" ofType="User">
+            <id property="no" column="USER_NO" />
+            <id property="name" column="USER_NAME" />
+            <id property="profileSrc" column="USER_PROFILE_SRC" />
+        </collection>
+    </resultMap>
+
+    <select id="getChatroomInfoByChatroomNo" resultMap="chatroomInfoMap">
+        select
+            R.CHATROOM_TITLE
+            , U.USER_NO
+            , U.USER_NAME
+            , U.USER_PROFILE_SRC
+        from
+            WORKUS_CHATROOM_HISTORY H
+        INNER JOIN
+            WORKUS_USERS U
+        ON
+            H.USER_NO = U.USER_NO
+        INNER JOIN
+            WORKUS_CHATROOM R
+        ON
+            H.CHATROOM_NO = R.CHATROOM_NO
+        WHERE
+            H.CHATROOM_NO = #{chatroomNo}
+        AND
+            H.CHATROOM_OUT_TIME IS NULL
     </select>
 </mapper>

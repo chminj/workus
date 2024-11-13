@@ -10,7 +10,7 @@ import org.apache.ibatis.type.Alias;
 @ToString
 @Alias("Chatroom")
 public class Chatroom {
-    private int no;
+    private long no;
     private String title;
     private int userNo;
 }
