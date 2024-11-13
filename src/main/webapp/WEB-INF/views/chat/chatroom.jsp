@@ -22,13 +22,13 @@
 							<!-- 채팅방 목록 -->
 							<div class="col-4 border-end p-0 overflow-auto">
 								<!-- 채팅방 -->
-								<c:forEach var="chatroom" items="${chatroomList}">
-								<div class="border-bottom p-3" role="button">
+								<c:forEach var="chatroom" items="${chatrooms}">
+								<div class="border-bottom p-3 chatroom" role="button" data-chatroom-no="${chatroom.chatroomNo}">
 									<div class="d-flex justify-content-between align-items-start">
 										<h6 class="mb-1">${chatroom.chatroomTitle}</h6>
 										<small class="text-muted"><fmt:formatDate value="${chatroom.lastChatDate}" pattern="yyyy년 MM월 dd시 HH시 mm분" /></small>
 									</div>
-									<p class="mb-1 text-muted">${chatroom.lastChatAuthor}</p>
+									<p class="mb-1 text-muted">${chatroom.lastChatAuthor.name}</p>
 									<div class="d-flex justify-content-between align-items-center">
 										<small class="text-muted text-truncate me-2">${chatroom.lastChat}</small>
 										<span class="badge bg-primary rounded-pill">읽지 않은 메시지 수</span>
@@ -37,75 +37,8 @@
 								</c:forEach>
 							</div>
 
-							<!-- 채팅 내용 -->
-							<div class="col-8 p-0 d-flex flex-column h-100">
-								<!-- 채팅방 헤더 -->
-								<div class="border-bottom p-3 bg-light d-flex justify-content-between align-items-center">
-									<h5 class="mb-0">채팅방 제목</h5>
-									<div class="dropdown">
-										<button class="btn btn-light" data-bs-toggle="dropdown">
-											<i class="fas fa-users"></i>
-										</button>
-										<!-- 참여자 목록 드롭다운 -->
-										<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
-											<li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
-											<li>
-												<div class="d-flex align-items-center my-2">
-													<img src="" alt="프로필" class="rounded-circle me-2">
-													<span role="button" class="participant-name">홍길동</span>
-												</div>
-											</li>
-											<!-- 추가 참여자들... -->
-										</ul>
-									</div>
-								</div>
+							<div class="col-8 p-0 d-flex flex-column h-100" id="chat">
 
-								<!-- 채팅 내용 영역 -->
-								<div class="flex-grow-1 overflow-auto p-3">
-									<!-- 날짜 구분선 -->
-									<div class="d-flex align-items-center my-4">
-										<div class="border-bottom flex-grow-1"></div>
-										<span class="mx-3 text-muted">2024년 3월 7일</span>
-										<div class="border-bottom flex-grow-1"></div>
-									</div>
-
-									<!-- 상대방 메시지 -->
-									<div class="mb-3 w-75">
-										<div class="d-flex align-items-center mb-1">
-											<img src="" alt="프로필" class="rounded-circle me-2">
-											<strong>홍길동</strong>
-										</div>
-										<div class="d-flex">
-											<div class="bg-light rounded p-2 mb-1">
-												안녕하세요!
-											</div>
-										</div>
-										<small class="text-muted">오전 10:30</small>
-									</div>
-
-									<!-- 내 메시지 -->
-									<div class="mb-3 w-75 ms-auto">
-										<div class="text-end mb-1">
-											<strong>나</strong>
-										</div>
-										<div class="d-flex justify-content-end">
-											<div class="bg-primary text-white rounded p-2 mb-1">
-												네, 안녕하세요!
-											</div>
-										</div>
-										<div class="text-end">
-											<small class="text-muted">오전 10:31</small>
-										</div>
-									</div>
-								</div>
-
-								<!-- 메시지 입력 영역 -->
-								<div class="border-top p-3">
-									<div class="input-group">
-										<input type="text" class="form-control" placeholder="메시지를 입력하세요.">
-										<button class="btn btn-primary">전송</button>
-									</div>
-								</div>
 							</div>
 						</div>
 					</div>
@@ -164,9 +97,179 @@
 		const myModal = new bootstrap.Modal('#profileModal');
 
 		// 모달 등장
-		$(".participant-name").on('click', () => {
+		$('#chat').on('click', '.participant-name', function(e) {
+			e.preventDefault();
 			myModal.show();
 		});
+
+		// 날짜와 시간 포맷
+		function formatTime(unformattedTime) {
+			const time = new Date(unformattedTime);
+
+			const year = time.getFullYear();
+			const month = time.getMonth() + 1;
+			const day = time.getDate();
+
+			let hours = time.getHours();
+			const minutes = time.getMinutes();
+			const ampm = hours >= 12 ? '오후' : '오전';
+			hours = hours >= 12 ? hours - 12 : hours;
+
+			const timeStr = `\${ampm} \${hours}시 \${minutes}분`;
+			const dateStr = `\${year}년 \${month}월 \${day}일`;
+
+			return {
+				time: timeStr,
+				date: dateStr
+			};
+		}
+
+		// data의 기존의 date타입 대신 포맷된 date타입을 집어넣는다.
+		function replaceFormatTime(data) {
+			data.forEach(data => {
+				data.time = formatTime(data.time);
+			})
+		}
+
+		// 채팅방 입장
+		$(".chatroom").on('click', async function () {
+			// data-chatroom-no 속성 가져오기
+			const chatroomNo = $(this).data("chatroomNo");
+			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
+			const chatDiv = await ajaxChatsData(chatroomNo);
+			const div = titleAndUsersDiv + chatDiv;
+			await $('#chat').html(div);
+		});
+
+		// 채팅방 제목과 참여중인 유저들을 ajax로 불러온다.
+		async function ajaxTitleAndUsersData(chatroomNo) {
+			try {
+				const response = await fetch('/ajax/chatroom/' + chatroomNo);
+				const result = await response.json();
+				const data = await result.data;
+				if (response.ok) {
+					return loadTitleAndUsers(data);
+				} else {
+					console.log(data.message);
+				}
+			} catch (error) {
+				console.log('에러메시지', error);
+			}
+		}
+
+		// 채팅방에 해당하는 채팅들을 ajax로 불러온다.
+		async function ajaxChatsData(chatroomNo) {
+			try {
+				const response = await fetch('/ajax/chat/' + chatroomNo);
+				const result = await response.json();
+				const data = result.data;
+				if (response.ok) {
+					replaceFormatTime(data);
+					return loadChats(data);
+				} else {
+					console.log('채팅을 불러오는데 실패했습니다.', result.message);
+				}
+			} catch (error) {
+				console.log('에러메시지', error);
+			}
+		}
+
+		// 채팅방 제목과 참여자 목록 불러오기
+		function loadTitleAndUsers(data) {
+			return `
+					<!-- 채팅방 헤더 -->
+					<div class="border-bottom p-3 bg-light d-flex justify-content-between align-items-center">
+						<h5 class="mb-0">\${data.chatroomTitle}</h5>
+						<div class="dropdown">
+							<button class="btn btn-light" data-bs-toggle="dropdown">
+								<i class="fas fa-users"></i>
+							</button>
+							<!-- 참여자 목록 드롭다운 -->
+							<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
+								<li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
+								<li>
+									\${data.users.map((user) => `
+										<div class="d-flex align-items-center my-2">
+										<img src="" alt="프로필" class="rounded-circle me-2">
+										<span role="button" class="participant-name">\${user.name}</span>
+										</div>
+									`).join('')}
+								</li>
+								<!-- 추가 참여자들... -->
+							</ul>
+						</div>
+					</div>
+			`;
+		}
+
+		// 클릭한 채팅방에 맞는 채팅들 불러오기
+		function loadChats(data) {
+			return `
+					<!-- 채팅 내용 영역 -->
+					<div class="flex-grow-1 overflow-auto p-3">
+						<!-- 날짜 구분선 -->
+						<div class="d-flex align-items-center my-4">
+							<div class="border-bottom flex-grow-1"></div>
+							<span class="mx-3 text-muted">2024년 3월 7일</span>
+							<div class="border-bottom flex-grow-1"></div>
+						</div>
+
+						\${data.map((d) => `
+							<div class="mb-3 w-75">
+								<div class="d-flex align-items-center mb-1">
+									<img src="" alt="프로필" class="rounded-circle me-2">
+									<strong>\${d.user.name}</strong>
+								</div>
+								<div class="d-flex">
+									<div class="bg-light rounded p-2 mb-1">
+										\${d.content}
+									</div>
+								</div>
+								<small class="text-muted">\${d.time.time}</small>
+							</div>
+						`).join('')}
+
+						<!-- 상대방 메시지
+						<div class="mb-3 w-75">
+							<div class="d-flex align-items-center mb-1">
+								<img src="" alt="프로필" class="rounded-circle me-2">
+								<strong>홍길동</strong>
+							</div>
+							<div class="d-flex">
+								<div class="bg-light rounded p-2 mb-1">
+									안녕하세요!
+								</div>
+							</div>
+							<small class="text-muted">오전 10:30</small>
+						</div>
+						-->
+
+						<!-- 내 메시지
+						<div class="mb-3 w-75 ms-auto">
+							<div class="text-end mb-1">
+								<strong>나</strong>
+							</div>
+							<div class="d-flex justify-content-end">
+								<div class="bg-primary text-white rounded p-2 mb-1">
+									네, 안녕하세요!
+								</div>
+							</div>
+							<div class="text-end">
+								<small class="text-muted">오전 10:31</small>
+							</div>
+						</div>
+						-->
+					</div>
+
+					<!-- 메시지 입력 영역 -->
+					<div class="border-top p-3">
+						<div class="input-group">
+							<input type="text" class="form-control" placeholder="메시지를 입력하세요.">
+							<button class="btn btn-primary">전송</button>
+						</div>
+					</div>
+				`;
+		}
 	</script>
 </body>
 </html>

@@ -4,19 +4,15 @@ import com.example.workus.user.vo.User;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
-import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @ToString
-@Alias("ChatroomDto")
-public class ChatroomDto {
-
-    private long chatroomNo;
+@Alias("ChatroomInfoDto")
+public class ChatroomInfoDto {
     private String chatroomTitle;
-    private User lastChatAuthor;
-    private String lastChat;
-    private Date lastChatDate;
+    private List<User> users;
 }
