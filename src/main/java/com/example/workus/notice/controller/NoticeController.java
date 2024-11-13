@@ -22,4 +22,10 @@ public class NoticeController {
     public String form(){
         return "notice/form";
     }
+
+  @GetMapping("modify")
+    public String modify() {
+        return "notice/modify";
+  }
+
 }

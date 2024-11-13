@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>주간 보고서 작성 및 상세보기</title>
     <link href="../../../resources/css/report.css" rel="stylesheet">
+    <%@ include file="../home.jsp" %>
 </head>
 <body>
 
@@ -87,8 +88,7 @@
                 <label for="report-status">진행 상태</label>
                 <select id="report-status">
                     <option value="ongoing">진행중</option>
-                    <option value="complete">완료</option>
-                    <option value="not-started">시작 전</option>
+                    <option value="not-started">진행완료</option>
                 </select>
             </div>
             <div class="form-group">
@@ -98,8 +98,8 @@
 
             <!-- 취소 및 저장 버튼 -->
             <div class="form-buttons">
-                <button type="button" class="btn-cancel" onclick="location.href='report_list.html'">취소</button>
-                <button type="submit" class="btn-save">저장</button>
+                <button type="button" class="btn-cancel" onclick="location.href='list'">취소</button>
+                <button type="submit" class="btn-save">등록</button>
             </div>
         </form>
     </div>

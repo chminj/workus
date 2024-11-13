@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../../../resources/css/notice.css" rel="stylesheet"/>
     <title>공지사항</title>
+    <%@ include file="../home.jsp" %>
 </head>
 <body>
 
@@ -35,7 +36,7 @@
     <div id="board-list" class="container">
         <!-- 글쓰기 버튼 -->
         <div class="button-group1">
-            <a href="write_notice.html" class="btn btn-dark">글쓰기</a>
+            <a href="form" class="btn btn-dark">글쓰기</a>
         </div>
 
         <table class="board-table">
@@ -50,7 +51,7 @@
             <tr>
                 <td>3</td>
                 <th>
-                  <a href="#!">[공지사항] 개인정보 처리방침 변경안내처리방침</a>
+                  <a href="detail">[공지사항] 개인정보 처리방침 변경안내처리방침</a>
                   <p>테스트</p>
                 </th>
                 <td>2017.07.13</td>
@@ -58,13 +59,13 @@
 
             <tr>
                 <td>2</td>
-                <th><a href="#!">공지사항 안내입니다. 이용해주셔서 감사합니다</a></th>
+                <th><a href="detail">공지사항 안내입니다. 이용해주셔서 감사합니다</a></th>
                 <td>2017.06.15</td>
             </tr>
 
             <tr>
                 <td>1</td>
-                <th><a href="#!">공지사항 안내입니다. 이용해주셔서 감사합니다</a></th>
+                <th><a href="detail">공지사항 안내입니다. 이용해주셔서 감사합니다</a></th>
                 <td>2017.06.15</td>
             </tr>
             </tbody>
