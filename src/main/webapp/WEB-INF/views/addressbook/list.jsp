@@ -20,12 +20,15 @@
       <div class="lnb" style="position: fixed;">
         <ul class="">
           <li class="">
-            <a href="">text1</a>
+            <a href="/user/myinfo">내 정보 수정</a>
+          </li>
+          <li class="">
+            <a href="/address-book/list">사원 목록</a>
           </li>
         </ul>
       </div>
       <main>
-        <h3 class="title1">주소록</h3>
+        <h3 class="title1">사원 목록</h3>
         <div class="content">
           <section class="member-search-container">
             <!-- 검색 바 -->
