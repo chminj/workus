@@ -8,7 +8,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <%@ include file="../common/common.jsp" %>
 <title>채팅방</title>
-
+<style>
+	main {
+		padding: 20px 25px;
+		width: calc(100% - 76px);
+		margin-left: 45px;
+	}
+</style>
 </head>
 <body>
 	<div id="divWrapper">
@@ -64,23 +70,23 @@
 						<!-- 오른쪽 정보 영역 -->
 						<div class="col-8">
 							<div class="mb-3">
-								<h5 class="fw-bold">홍길동</h5>
+								<h5 class="fw-bold" id="profileName">홍길동</h5>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">직책:</span>
-								<span>책임연구원</span>
+								<span id="profilePosition">책임연구원</span>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">부서:</span>
-								<span>AI연구소</span>
+								<span id="profileDept">AI연구소</span>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">이메일:</span>
-								<span>hong@example.com</span>
+								<span id="profileEmail">hong@example.com</span>
 							</div>
 							<div class="mt-3">
 								<span class="text-muted">한 줄 소개:</span>
-								<p class="mt-1">AI 기술 연구 및 개발을 담당하고 있습니다. 새로운 기술에 대한 열정이 넘치며 팀워크를 중요시합니다.</p>
+								<p class="mt-1" id="profilePr">AI 기술 연구 및 개발을 담당하고 있습니다. 새로운 기술에 대한 열정이 넘치며 팀워크를 중요시합니다.</p>
 							</div>
 						</div>
 					</div>
@@ -97,9 +103,30 @@
 		const myModal = new bootstrap.Modal('#profileModal');
 
 		// 모달 등장
-		$('#chat').on('click', '.participant-name', function(e) {
-			e.preventDefault();
-			myModal.show();
+		$('#chat').on('click', '.participant-name', async function() {
+			try {
+				// 모달 열기
+				myModal.show();
+				const userNo = $(this).data("userNo");
+
+				// ajax로 이름을 클릭하면 data-user-no의 값으로 유저 정보들을 가져온다.
+				const response = await fetch('/ajax/chat/profile/' + userNo);
+				const result = await response.json();
+				const data = await result.data;
+
+				// 가져온 정보들을 집어넣는다.
+				if (response.ok) {
+					$('#profileName').text(data.name);
+					$('#profilePosition').text(data.positionName);
+					$('#profileDept').text(data.deptName);
+					$('#profileEmail').text(data.email);
+					$('#profilePr').text(data.pr);
+				} else {
+					console.log('프로필 불러오기 실패', data.message);
+				}
+			} catch (error) {
+				console.log('에러 메시지', error);
+			}
 		});
 
 		// 날짜와 시간 포맷
@@ -191,7 +218,7 @@
 									\${data.users.map((user) => `
 										<div class="d-flex align-items-center my-2">
 										<img src="" alt="프로필" class="rounded-circle me-2">
-										<span role="button" class="participant-name">\${user.name}</span>
+										<span role="button" class="participant-name" data-user-no="\${user.no}">\${user.name}</span>
 										</div>
 									`).join('')}
 								</li>

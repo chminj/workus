@@ -28,6 +28,9 @@ public class User {
     private String phone;
     private double unusedAnnualLeave;
     private long positionNo;
+    private String positionName;
     private long deptNo;
+    private String deptName;
     private long roleNo;
+    private String roleName;
 }
