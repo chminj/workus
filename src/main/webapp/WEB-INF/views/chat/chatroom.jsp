@@ -26,7 +26,13 @@
 					<div class="container-fluid vh-100">
 						<div class="row h-100">
 							<!-- 채팅방 목록 -->
-							<div class="col-4 border-end p-0 overflow-auto">
+							<div class="col-4 border-end p-0" style="overflow-y: auto;">
+							  <!-- 채팅방 생성 버튼 -->
+								<div class="border-bottom p-3">
+								<button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
+								  <i class="bi bi-plus-circle me-2"></i>새 채팅방 만들기
+								</button>
+								</div>
 								<!-- 채팅방 -->
 								<c:forEach var="chatroom" items="${chatrooms}">
 								<div class="border-bottom p-3 chatroom" role="button" data-chatroom-no="${chatroom.chatroomNo}">
@@ -70,23 +76,23 @@
 						<!-- 오른쪽 정보 영역 -->
 						<div class="col-8">
 							<div class="mb-3">
-								<h5 class="fw-bold" id="profileName">홍길동</h5>
+								<h5 class="fw-bold" id="profileName"></h5>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">직책:</span>
-								<span id="profilePosition">책임연구원</span>
+								<span id="profilePosition"></span>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">부서:</span>
-								<span id="profileDept">AI연구소</span>
+								<span id="profileDept"></span>
 							</div>
 							<div class="mb-2">
 								<span class="text-muted">이메일:</span>
-								<span id="profileEmail">hong@example.com</span>
+								<span id="profileEmail"></span>
 							</div>
 							<div class="mt-3">
 								<span class="text-muted">한 줄 소개:</span>
-								<p class="mt-1" id="profilePr">AI 기술 연구 및 개발을 담당하고 있습니다. 새로운 기술에 대한 열정이 넘치며 팀워크를 중요시합니다.</p>
+								<p class="mt-1" id="profilePr"></p>
 							</div>
 						</div>
 					</div>
@@ -98,15 +104,69 @@
 			</div>
 		</div>
 	</div>
+
+<!-- 채팅방 생성 모달 -->
+<div class="modal fade" id="createChatroomModal" tabindex="-1" aria-labelledby="createChatroomModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="createChatroomModalLabel">새 채팅방 만들기</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="createChatroomForm">
+          <div class="mb-4">
+            <label for="chatroomTitle" class="form-label">채팅방 제목</label>
+            <input type="text" class="form-control" id="chatroomTitle" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">참여자 선택</label>
+            <input type="text" class="form-control mb-3" id="userSearch" placeholder="이름 또는 부서로 검색">
+
+            <!-- 부서별 사용자 목록 -->
+            <div class="border rounded p-3" style="height: 300px; overflow-y: auto;">
+<%--				부서--%>
+                <div class="department-group mb-3">
+                  <div class="form-check">
+                    <input class="form-check-input dept-check" type="checkbox" id="">IT 부서
+                  </div>
+                  <div class="ms-4 mt-2">
+<%--					  부서에 속한 유저--%>
+						<div class="form-check mb-2">
+							<input class="form-check-input user-check" type="checkbox" value="" id="" data-dept="">
+							  <span class="text-muted">[부장]</span> 홍길동
+						</div>
+						<div class="form-check mb-2">
+							<input class="form-check-input user-check" type="checkbox" value="" id="" data-dept="" checked disabled>
+								<span class="text-muted">[부장]</span> 홍길동
+						</div>
+<%--					  부서에 속한 또 다른 유저--%>
+                  </div>
+                </div>
+
+<%--				다른 부서--%>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+        <button type="submit" form="createChatroomForm" class="btn btn-primary">생성</button>
+      </div>
+    </div>
+  </div>
+</div>
 	<script>
 		// 모달 객체 생성
-		const myModal = new bootstrap.Modal('#profileModal');
+		const profileModal = new bootstrap.Modal('#profileModal');
+		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
 
-		// 모달 등장
+		// 프로필 모달 등장
 		$('#chat').on('click', '.participant-name', async function() {
 			try {
-				// 모달 열기
-				myModal.show();
+				// 프로필 모달 열기
+				profileModal.show();
 				const userNo = $(this).data("userNo");
 
 				// ajax로 이름을 클릭하면 data-user-no의 값으로 유저 정보들을 가져온다.
@@ -233,7 +293,7 @@
 		function loadChats(data) {
 			return `
 					<!-- 채팅 내용 영역 -->
-					<div class="flex-grow-1 overflow-auto p-3">
+					<div class="flex-grow-1 p-3" style="overflow-y: auto;">
 						<!-- 날짜 구분선 -->
 						<div class="d-flex align-items-center my-4">
 							<div class="border-bottom flex-grow-1"></div>
