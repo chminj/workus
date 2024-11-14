@@ -24,7 +24,7 @@ public class RestChatroomController {
     }
 
     @GetMapping("/chatroom/{chatroomNo}")
-    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfo(@PathVariable("chatroomNo") Long chatroomNo) {
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfo(@PathVariable("chatroomNo") long chatroomNo) {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfo(chatroomNo)));
     }
 }
