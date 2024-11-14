@@ -1,0 +1,47 @@
+@charset "UTF-8";
+
+.lnb li a {position:relative; z-index:1;}
+.lnb li a:after {content:""; left:0; top:0; width:0; height:100%; z-index:-1; background-color:#ddd; opacity:0.5; position:absolute; display:inline-block; transition: all 0.3s ease;}
+.lnb li a:hover:after {width:100%;}
+
+/* 내 근태 현황 */
+.applyItem {display:flex;}
+.btn.applyBtn, .btn.applyWaitBtn {text-align:left; font-size:17px; width:18rem; padding:1.1rem 1.2rem; display:inline-block;}
+
+.btn.applyBtn {transition: all 0.25s ease;}
+.btn.applyBtn i , .btn.applyWaitBtn i {position:relative; right:0; transition: right 0.3s ease-in-out;}
+.btn.applyBtn:hover, .btn.applyWaitBtn:hover {background-color:#2c3e50; color:#fff; border:1px solid #2c3e50;}
+.btn.applyBtn:hover .holiday>span, .btn.applyWaitBtn:hover span {color:#fff;}
+.btn.applyBtn:hover i , .btn.applyWaitBtn:hover i {right:-5px;}
+
+.applyItem .applyBtn .holiday {margin-left:10px; color:#666e77;}
+.applyItem .applyBtn .usable, .applyWaitBtn .data{color:#000; font-weight:700;}
+
+.applyWaitBtn {margin-left:2rem; width:20rem; font-size:16px;}
+.applyWaitBtn span.count {align-items:flex-end; display:inline-flex; margin-left:10px;}
+
+#fullCalendarInAtd table th {font-size:16px; font-weight:normal; min-height:40px;}
+#fullCalendarInAtd .fc-col-header-cell-cushion {padding:7px 4px;}
+
+#fullCalendarInAtd .fc-toolbar-title {font-size:20px;}
+
+.fc-col-header-cell-cushion, .fc-daygrid-day-number {
+    text-decoration: none;
+}
+/* week/weekend 구별 */
+.fc-scrollgrid-sync-inner > .fc-col-header-cell-cushion,
+.fc-day-mon .fc-daygrid-day-number,
+.fc-day-tue .fc-daygrid-day-number,
+.fc-day-wed .fc-daygrid-day-number,
+.fc-day-thu .fc-daygrid-day-number,
+.fc-day-fri .fc-daygrid-day-number {
+    color: black;
+}
+.fc-day-sun .fc-col-header-cell-cushion,
+.fc-day-sun a, .fc-day-sun a:hover {
+    color : rgba(55, 49, 186, 0.8);
+}
+.fc-day-sat .fc-col-header-cell-cushion,
+.fc-day-sat a, .fc-day-sat a:hover {
+    color : rgba(55, 49, 186, 0.8);
+}

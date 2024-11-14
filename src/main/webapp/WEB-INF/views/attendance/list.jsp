@@ -7,6 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
+  <link rel="stylesheet" href="/resources/css/attendance.css">
   <title>workus template</title>
 </head>
 <body>
@@ -27,31 +28,43 @@
         </ul>
       </div>
       <main>
-        <h3 class="title1">내 근태 현황</h3>
+        <h3 class="title1">
+          내 근태 현황
+        </h3>
         <div id="atdCheck" class="content">
           <div class="applyItem">
-            <button type="button" class="applyBtn btn btn-lg border border-secondary" id="atdApplyBtnForModal">
-              <span>휴가 신청</span>
+            <button type="button" class="applyBtn btn btn-lg border border-secondary d-flex justify-content-between align-items-center" id="atdApplyBtnForModal">
+              <span>
+                휴가 신청
                 <span class="holiday">
                     <span class="usable">17</span>
                     <span class="slash">/</span>
                     <span class="total">20</span>
                 </span>
-                <i class="bi bi-airplane-fill"></i>
               </span>
+              <i class="bi bi-arrow-right"></i>
             </button>
-            <a href="/attendance/documents/my-payment/" class="applyWaitBtn btn btn-lg border border-secondary">
-              결재 대기
-                <span class="flex">
-                  <span class="data">0</span>건
+            <a href="/attendance/my-approval/" class="applyWaitBtn btn btn-lg border border-secondary d-flex justify-content-between align-items-center">
+                <span>
+                  결재 대기
+                  <span class="flex count">
+                    <span class="data">0</span>건
+                  </span>
                 </span>
-              </span>
+                <i class="bi bi-arrow-right"></i>
             </a>
           </div>
-          <div id="fullCalendarInAtd" class="mgt20">
+          <div id="fullCalendarInAtd" class="mgt40">
           </div>
         </div>
       </main>
+      <dialog id="atdRequestForm">
+        <p>연차 신청하기</p>
+        <form method="dialog" class="flex justify-between">
+          <button value="cancel" class="btn btn-sm btn-secondary">취소하기</button>
+          <button value="confirm" class="btn btn-sm btn-primary">신청하기</button>
+        </form>
+      </dialog>
     </section>
   </div>
 </div>

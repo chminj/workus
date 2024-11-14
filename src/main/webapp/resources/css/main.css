@@ -290,21 +290,11 @@ header.header {
     padding:25px; position: relative; width: 230px; max-width: 350px; min-width: 230px; box-sizing: border-box; flex-shrink: 0; margin-left: 76px; min-height:calc(100vh - 60px);
 }
 
-.lnb .list1 li, .lnb .list2 li {font-size:15px; line-height:1.7;}
-.lnb .listTitle {font-size:16px; font-weight:700; margin:35px 0 10px; padding-bottom:6px; border-bottom:1px solid #ddd;}
+.lnb .list1 li, .lnb .list2 li {font-size:16px; line-height:1.9;}
+.lnb .listTitle {font-size:17px; font-weight:700; margin:35px 0 10px; padding-bottom:6px; border-bottom:1px solid #ddd;}
 
 main {padding:20px 25px; width:calc(100% - 230px)}
 
 .title1 {font-size:21px;}
 
 .content {margin-top:20px;}
-
-
-.applyItem {display:flex;}
-.applyBtn, .applyWaitBtn {text-align:left; font-size:16px; width:20rem; padding:0.75rem 1.3rem;}
-
-.applyItem .applyBtn .holiday {margin-left:10px; color:#666e77;}
-.applyItem .applyBtn .usable, .applyWaitBtn .data{color:#000; font-weight:700;}
-
-.applyWaitBtn {margin-left:2rem; width:20rem; font-size:16px;}
-.applyWaitBtn span.flex {align-items:flex-end; display:inline-flex; margin-left:2rem;}
