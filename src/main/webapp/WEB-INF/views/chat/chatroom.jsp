@@ -294,25 +294,27 @@
 			return `
 					<!-- 채팅 내용 영역 -->
 					<div class="flex-grow-1 p-3" style="overflow-y: auto;">
-						<!-- 날짜 구분선 -->
-						<div class="d-flex align-items-center my-4">
-							<div class="border-bottom flex-grow-1"></div>
-							<span class="mx-3 text-muted">2024년 3월 7일</span>
-							<div class="border-bottom flex-grow-1"></div>
-						</div>
-
-						\${data.map((d) => `
+						\${data.map((chat) => `
+							\${chat.isFirst === 'Y' ? `
+								<!-- 날짜 구분선 -->
+								<div class="d-flex align-items-center my-4">
+									<div class="border-bottom flex-grow-1"></div>
+									<span class="mx-3 text-muted">\${chat.time.date}</span>
+									<div class="border-bottom flex-grow-1"></div>
+								</div>
+							` : ``}
+							<!-- 메시지 -->
 							<div class="mb-3 w-75">
 								<div class="d-flex align-items-center mb-1">
 									<img src="" alt="프로필" class="rounded-circle me-2">
-									<strong>\${d.user.name}</strong>
+									<strong>\${chat.user.name}</strong>
 								</div>
 								<div class="d-flex">
 									<div class="bg-light rounded p-2 mb-1">
-										\${d.content}
+										\${chat.content}
 									</div>
 								</div>
-								<small class="text-muted">\${d.time.time}</small>
+								<small class="text-muted">\${chat.time.time}</small>
 							</div>
 						`).join('')}
 
