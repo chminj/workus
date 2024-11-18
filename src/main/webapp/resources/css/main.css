@@ -137,10 +137,13 @@ ul.flex li {margin:0 10px}
 .wdp30{width: 30%!important;}
 .wdp20{width: 20%!important;}
 .wd100{width: 100px!important;}
+.wd150{width: 150px!important;}
 .wd200{width: 200px!important;}
 .wd300{width: 300px!important;}
 .wd400{width: 400px!important;}
 .wd500{width: 500px!important;}
+
+.inlineBlock {display:inline-block !important;}
 
 #divWrapper {
     height: 100%
