@@ -8,6 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
   <link rel="stylesheet" href="/resources/css/attendance.css">
+  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.15/index.global.js"></script>
   <title>workus ㅣ 근태</title>
 </head>
 <body>
@@ -138,7 +139,7 @@
   </div>
 </div>
 <script>
-  $(function(){
+  $(function(){ // 이중 모달 구현 예정
     $("#confirmModalBtn").on("click",function (){
       confirm("해당 정보로 연차를 신청하겠습니까?");
     });
