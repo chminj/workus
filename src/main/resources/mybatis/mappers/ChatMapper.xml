@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.chat.mapper.ChatMapper">
+    <insert id="insertChat">
+        insert into WORKUS_CHAT
+        (CHAT_CONTENT, CHAT_FILE_SRC, CHAT_IS_FIRST, USER_NO, CHATROOM_NO)
+        values
+        (#{chat.content}, #{chat.file}, #{chat.isFirst}, #{chat.user.no}, #{chat.chatroom.no})
+        <selectKey keyProperty="chat.no" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    
+    <select id="getChatByChatNo" resultType="Chat">
+        select
+            C.CHAT_NO as no
+            , C.CHAT_CONTENT as content
+            , C.CHAT_TIME as time
+            , C.CHAT_FILE_SRC
+            , C.CHAT_IS_FIRST
+            , U.USER_NO as "user.no"
+            , U.USER_NAME as "user.name"
+        from
+            WORKUS_CHAT C
+        inner join
+            WORKUS_USERS U
+        on
+            C.USER_NO = U.USER_NO
+        where
+            C.CHAT_NO = #{chatNo}
+    </select>
+
     <select id="getAllChatsByChatroomNo" resultType="Chat">
         select
             C.CHAT_NO as no
@@ -10,6 +39,7 @@
             , C.CHAT_IS_FIRST as isFirst
             , U.USER_NO as "user.no"
             , U.USER_NAME as "user.name"
+            , C.CHATROOM_NO as "chatroom.no"
         from
             WORKUS_CHAT C
         inner join

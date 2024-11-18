@@ -6,11 +6,13 @@ import com.example.workus.chat.mapper.ChatroomMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Transactional
 @Service
 public class ChatroomServcie {
 
@@ -24,17 +26,17 @@ public class ChatroomServcie {
     /**
      * @return 로그인한 유저no가 참여중인 채팅방들
      */
-    public List<ChatroomDto> getAllChatrooms(long userNo) {
-        List<Integer> chatroomNumbers = chatroomMapper.getChatroomNoByUserNo(userNo);
+    public List<ChatroomDto> getAllChatrooms(Long userNo) {
+        List<Long> chatroomNumbers = chatroomMapper.getChatroomNoByUserNo(userNo);
         List<ChatroomDto> chatrooms = new ArrayList<>();
-        for (int chatroomNo : chatroomNumbers) {
+        for (Long chatroomNo : chatroomNumbers) {
             chatrooms.add(chatroomMapper.getChatRoomInMenuByChatroomNo(chatroomNo));
         }
 
         return chatrooms;
     }
 
-    public ChatroomInfoDto getChatroomInfo(long chatroomNo) {
+    public ChatroomInfoDto getChatroomInfo(Long chatroomNo) {
         return chatroomMapper.getChatroomInfoByChatroomNo(chatroomNo);
     }
 }

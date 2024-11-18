@@ -24,7 +24,7 @@ public class RestUserController {
     }
 
     @GetMapping("/chat/profile/{userNo}")
-    ResponseEntity<RestResponseDto<User>> getProfileByUserNo(@PathVariable("userNo") long userNo) {
+    ResponseEntity<RestResponseDto<User>> getProfileByUserNo(@PathVariable("userNo") Long userNo) {
         return ResponseEntity.ok(RestResponseDto.success(userService.getUserByUserNo(userNo)));
     }
 }

@@ -15,19 +15,19 @@ public interface ChatroomMapper {
      * @param userNo 로그인 유저no
      * @return 채팅방 번호
      */
-    List<Integer> getChatroomNoByUserNo(@Param("userNo") long userNo);
+    List<Long> getChatroomNoByUserNo(@Param("userNo") Long userNo);
 
     /**
      * 채팅방 번호를 받아서 채팅방 list에 들어가기 위한 dto를 반환한다.
      * @param chatroomNo
      * @return list에 보여줄 dto
      */
-    ChatroomDto getChatRoomInMenuByChatroomNo(@Param("chatroomNo") long chatroomNo);
+    ChatroomDto getChatRoomInMenuByChatroomNo(@Param("chatroomNo") Long chatroomNo);
 
     /**
      * 채팅방 번호를 받아서 채팅방 제목과 그 방에 참여중인 유저들 목록을 불러온다.
      * @param chatroomNo
      * @return 채팅방 제목과 방에 참여중인 유저들
      */
-    ChatroomInfoDto getChatroomInfoByChatroomNo(@Param("chatroomNo") long chatroomNo);
+    ChatroomInfoDto getChatroomInfoByChatroomNo(@Param("chatroomNo") Long chatroomNo);
 }

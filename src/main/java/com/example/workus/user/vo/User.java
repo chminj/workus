@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @Alias("User")
 public class User {
-    private long no;
+    private Long no;
     private String id;
     private String name;
     private String password;
