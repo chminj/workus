@@ -189,6 +189,52 @@
 			}
 		});
 
+		// 채팅 전송 후 화면에 내 채팅 보이기
+		function appearSubmittedMyChat(data) {
+			return `
+					<div class="mb-3 w-75 ms-auto">
+						<div class="text-end mb-1">
+							<strong>나</strong>
+						</div>
+						<div class="d-flex justify-content-end">
+							<div class="bg-primary text-white rounded p-2 mb-1">
+								\${data.content}
+							</div>
+						</div>
+						<div class="text-end">
+							<small class="text-muted">\${data.time.time}</small>
+						</div>
+					</div>
+			`;
+		}
+
+		// 채팅 전송
+		$('#chat').on('click', '#submitChat', async function() {
+			try {
+				// closest: 가장 가까운 form을 찾는다.
+				// [0]: jquery객체를 벗어던지고 일반 DOM요소로 반환한다.
+				const form = $(this).closest('form')[0];
+				const formData = new FormData(form);
+				const chatroomNo = $('.chat-text').data('chatroomNo');
+				const response = await fetch(`/ajax/chat/\${chatroomNo}`, {
+					method: 'POST',
+					body: formData
+				});
+				const result = await response.json();
+				const data = await result.data;
+				if (response.ok) {
+					replaceFormatTime(data);
+					const div = appearSubmittedMyChat(data);
+					$('.chat-div').append(div);
+					$('input[name=content]').val('');
+				} else {
+					console.log('채팅이 정상적으로 전송되지 않았습니다.');
+				}
+			} catch (error) {
+				console.log('에러메시지', error);
+			}
+		});
+
 		// 날짜와 시간 포맷
 		function formatTime(unformattedTime) {
 			const time = new Date(unformattedTime);
@@ -213,9 +259,7 @@
 
 		// data의 기존의 date타입 대신 포맷된 date타입을 집어넣는다.
 		function replaceFormatTime(data) {
-			data.forEach(data => {
-				data.time = formatTime(data.time);
-			})
+			data.time = formatTime(data.time);
 		}
 
 		// 채팅방 입장
@@ -224,7 +268,8 @@
 			const chatroomNo = $(this).data("chatroomNo");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
 			const chatDiv = await ajaxChatsData(chatroomNo);
-			const div = titleAndUsersDiv + chatDiv;
+			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
+			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
 			await $('#chat').html(div);
 		});
 
@@ -249,10 +294,12 @@
 			try {
 				const response = await fetch('/ajax/chat/' + chatroomNo);
 				const result = await response.json();
-				const data = result.data;
+				const datas = result.data;
 				if (response.ok) {
-					replaceFormatTime(data);
-					return loadChats(data);
+					datas.forEach(data => {
+						data = replaceFormatTime(data);
+					})
+					return loadChats(datas);
 				} else {
 					console.log('채팅을 불러오는데 실패했습니다.', result.message);
 				}
@@ -293,7 +340,7 @@
 		function loadChats(data) {
 			return `
 					<!-- 채팅 내용 영역 -->
-					<div class="flex-grow-1 p-3" style="overflow-y: auto;">
+					<div class="flex-grow-1 p-3 chat-div" style="overflow-y: auto;">
 						\${data.map((chat) => `
 							\${chat.isFirst === 'Y' ? `
 								<!-- 날짜 구분선 -->
@@ -349,15 +396,25 @@
 						</div>
 						-->
 					</div>
-
-					<!-- 메시지 입력 영역 -->
-					<div class="border-top p-3">
-						<div class="input-group">
-							<input type="text" class="form-control" placeholder="메시지를 입력하세요.">
-							<button class="btn btn-primary">전송</button>
-						</div>
-					</div>
 				`;
+		}
+
+		// 메시지 입력 폼 영역 불러오기
+		function loadSubmitChatForm(chatroomNo) {
+			return `
+					<!-- 메시지 입력 영역 -->
+					<form action="ajax/chat" method="post" encType="multipart/form-data">
+						<div class="border-top p-3">
+							<div class="input-group mb-3">
+								<input type="file" class="form-control" id="fileInput" name="file" />
+							</div>
+							<div class="input-group chat-text" data-chatroom-no="\${chatroomNo}">
+								<input type="text" class="form-control" name="content" required placeholder="메시지를 입력하세요." />
+								<button type="button" id="submitChat" class="btn btn-primary">전송</button>
+							</div>
+						</div>
+					</form>
+			`;
 		}
 	</script>
 </body>

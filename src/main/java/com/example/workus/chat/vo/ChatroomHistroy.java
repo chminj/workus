@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @Alias("ChatroomHistory")
 public class ChatroomHistroy {
-    private long no;
+    private Long no;
     private Date enterTime;
     private Date outTime;
     private Date conTime;

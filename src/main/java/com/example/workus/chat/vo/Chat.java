@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @ToString
 @Alias("Chat")
 public class Chat {
-    private long no;
+    private Long no;
     private String content;
     private String file;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")

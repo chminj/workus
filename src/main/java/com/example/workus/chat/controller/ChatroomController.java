@@ -25,7 +25,7 @@ public class ChatroomController {
 
     @GetMapping("/list")
     public String chatroom(Model model) {
-        List<ChatroomDto> chatrooms = chatroomServcie.getAllChatrooms(20133);
+        List<ChatroomDto> chatrooms = chatroomServcie.getAllChatrooms(20133L);
         model.addAttribute("chatrooms", chatrooms);
         return "chat/chatroom";
     }

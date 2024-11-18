@@ -14,7 +14,7 @@ import java.util.Date;
 @Alias("ChatroomDto")
 public class ChatroomDto {
 
-    private long chatroomNo;
+    private Long chatroomNo;
     private String chatroomTitle;
     private User lastChatAuthor;
     private String lastChat;

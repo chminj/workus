@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.chat.mapper.ChatroomMapper">
-    <select id="getChatroomNoByUserNo" resultType="Integer">
+    <select id="getChatroomNoByUserNo" resultType="Long">
         select CHATROOM_NO
         from WORKUS_CHATROOM_HISTORY
         where USER_NO = #{userNo}

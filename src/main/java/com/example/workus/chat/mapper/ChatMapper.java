@@ -14,5 +14,18 @@ public interface ChatMapper {
      * @param chatroomNo 채팅방 번호
      * @return 채팅 리스트
      */
-    List<Chat> getAllChatsByChatroomNo(@Param("chatroomNo") long chatroomNo);
+    List<Chat> getAllChatsByChatroomNo(@Param("chatroomNo") Long chatroomNo);
+
+    /**
+     * 채팅 번호로 채팅 객체를 반환한다.
+     * @param chatNo 채팅 번호
+     * @return 채팅 1개 객체
+     */
+    Chat getChatByChatNo(@Param("chatNo") Long chatNo);
+
+    /**
+     * 채팅 객체를 받아서 insert한다.
+     * @param chat 객체
+     */
+    void insertChat(@Param("chat") Chat chat);
 }
