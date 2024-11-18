@@ -8,7 +8,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
   <link rel="stylesheet" href="/resources/css/attendance.css">
-  <script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.15/index.global.js"></script>
+  <%-- day.js --%>
+  <script src="
+https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
+"></script>
   <title>workus ㅣ 근태</title>
 </head>
 <body>
@@ -99,11 +102,11 @@
                   </p>
                 </div>
                 <div class="reqFormSec">
-                  <label for="toDate" class="reqFormTit">기간</label>
-                  <input type="date" name="toDate" id="toDate" class="form-control wd150 inlineBlock">
+                  <label for="atdFromDate" class="reqFormTit">기간</label>
+                  <input type="date" name="fromDate" id="atdFromDate" class="form-control wd150 inlineBlock">
                   ~
-                  <label for="fromDate">
-                    <input type="date" name="fromDate" id="fromDate" class="form-control wd150">
+                  <label for="atdToDate">
+                    <input type="date" name="toDate" id="atdToDate" class="form-control wd150">
                   </label>
                   <span class="dayCheck">총 <span class="dayTotal">1</span>일</span>
                 </div>

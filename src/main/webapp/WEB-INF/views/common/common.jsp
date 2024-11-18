@@ -8,6 +8,8 @@
 <script type="module">
     import fullcalendarScheduler from 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/+esm'
 </script>
+<%-- full calendar + google calendar --%>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.15/index.global.js"></script>
 <script src="/resources/js/main.js"></script>
 <%-- 채팅방 bootstrap
     혹시 위의 bootstrap의 css와 겹칠수도 있을 것 같음 --%>
