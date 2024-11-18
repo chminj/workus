@@ -43,6 +43,12 @@ public class SecurityConfig {
                         .defaultSuccessUrl("/home", true)
                         .permitAll()
                 )
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login")
+                        .invalidateHttpSession(true) // 세션 무효화
+                        .deleteCookies("JSESSONID") // 쿠키 삭제
+                )
                 .userDetailsService(customUserDetailsService);
 
         return http.build();
