@@ -13,8 +13,8 @@ public class CommunityController {
         return "community/list";
     }
 
-//    @GetMapping(/"form")
-//    public String form(){
-//        return "community/form";
-//    }
+    @GetMapping("/form")
+   public String form(){
+       return "community/form";
+   }
 }
