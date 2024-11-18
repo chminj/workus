@@ -13,4 +13,6 @@ public interface UserMapper {
      * @return 유저 모든 정보가 담긴 객체
      */
     User getUserByUserNo(@Param("userNo") long userNo);
+    User getUserById(@Param("id") String id);
+    void insertUser(User user);
 }

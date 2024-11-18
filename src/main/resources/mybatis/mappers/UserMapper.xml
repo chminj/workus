@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.user.mapper.UserMapper">
-<!--    User getUserByUserNo(@Param("userNo") long userNo);-->
+    <!--    User getUserByUserNo(@Param("userNo") long userNo);-->
     <select id="getUserByUserNo" resultType="User">
         select
             U.USER_NO as no
@@ -26,19 +26,44 @@
             , R.ROLE_NAME as roleName
         from
             WORKUS_USERS U
-        inner join
+            inner join
             WORKUS_POSITION P
         on
             U.POSITION_NO = P.POSITION_NO
-        inner join
+            inner join
             WORKUS_DEPT D
-        on
+            on
             U.DEPT_NO = D.DEPT_NO
-        inner join
+            inner join
             WORKUS_ATH_ROLE R
-        on
+            on
             U.ROLE_NO = R.ROLE_NO
         where
             U.USER_NO = #{userNo}
+    </select>
+
+    <select id="getUserById" resultType="User">
+        select
+            USER_NO as no
+            , USER_ID as id
+            , USER_NAME as name
+            , USER_PASSWORD as password
+            , USER_EMAIL as email
+            , USER_ADDRESS as address
+            , USER_BIRTH_DATE as birthday
+            , USER_HIRE_DATE as hireDate
+            , USER_QUIT_DATE as quitDate
+            , USER_STATUS as status
+            , USER_PROFILE_SRC as profileSrc
+            , USER_PR as pr
+            , USER_PHONE as phone
+            , USER_UNUSED_ANNUAL_LEAVE as unusedAnnualLeave
+            , POSITION_NO as positionNo
+            , DEPT_NO as deptNo
+            , ROLE_NO as roleNo
+        from
+            WORKUS_USERS
+        where
+            USER_ID = #{id}
     </select>
 </mapper>

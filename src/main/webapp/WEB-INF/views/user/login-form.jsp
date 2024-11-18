@@ -12,29 +12,29 @@
     <!-- Links -->
     <ul class="links">
         <li>
-            <a href="/user/login" id="signin">로그인</a>
+            <a href="/login" id="signin">로그인</a>
         </li>
         <li>
-            <a href="/user/signup" id="signup">회원가입</a>
+            <a href="/signup" id="signup">회원가입</a>
         </li>
         <li>
-            <a href="/user/findpw" id="reset">비밀번호 찾기</a>
+            <a href="/findpw" id="reset">비밀번호 찾기</a>
         </li>
     </ul>
 
     <!-- Form -->
-    <form  action="" method="post">
+    <form action="/login" method="post" novalidate="novalidate" id="login">
         <!-- email input -->
         <div class="first-input input__block first-input__block">
-            <input type="email" placeholder="ID 또는 사번을 입력해주세요" class="input" name="email"   />
+            <input type="text" placeholder="ID를 입력해주세요" class="input" name="id" id="id" />
         </div>
         <!-- password input -->
         <div class="input__block">
-            <input type="password" placeholder="비밀번호를 입력해주세요" class="input" name="password"    />
+            <input type="password" placeholder="비밀번호를 입력해주세요" class="input" name="password" id="password"   />
         </div>
         <!-- sign in button -->
-        <button class="signin__btn">
-            Sign in
+        <button class="signin__btn" type="submit">
+            로그인
         </button>
     </form>
     <!-- separator -->

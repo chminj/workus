@@ -20,12 +20,12 @@
     <form action="" method="post">
 
         <div class="input__block">
-            <input type="text" placeholder="사번을 입력해주세요" name="userNo" required />
+            <input type="text" placeholder="사번을 입력해주세요" name="no" required />
             <button type="button" class="google__btn">사번확인</button>
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="ID를 입력해주세요" name="userId" required />
+            <input type="text" placeholder="ID를 입력해주세요" name="id" required />
             <button type="button" class="google__btn">중복확인</button>
         </div>
 
@@ -49,14 +49,14 @@
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="주소" name="address" required readonly/>
+            <input type="text" placeholder="주소" name="" required readonly/>
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="상세주소" name="detailed_address" required />
+            <input type="text" placeholder="상세주소" name="address" required />
         </div>
 
-        <button class="signup__btn">회원가입</button>
+        <button class="signup__btn" type="submit">회원가입</button>
 
     </form>
 </div>

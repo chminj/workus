@@ -5,11 +5,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/user")
 public class UserController {
 
     @GetMapping("/login")
     public String login() {
+        System.out.println("Login page accessed");
         return "user/login-form";
     }
 
@@ -23,7 +23,7 @@ public class UserController {
         return "user/findpw-form";
     }
 
-    @GetMapping("/myinfo")
+    @GetMapping("/user/myinfo")
     public String myinfo() {
         return "user/myinfo-form";
     }
