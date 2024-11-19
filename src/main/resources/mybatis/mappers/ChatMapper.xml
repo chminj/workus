@@ -3,14 +3,14 @@
 <mapper namespace="com.example.workus.chat.mapper.ChatMapper">
     <insert id="insertChat">
         insert into WORKUS_CHAT
-        (CHAT_CONTENT, CHAT_FILE_SRC, CHAT_IS_FIRST, USER_NO, CHATROOM_NO)
+        (CHAT_CONTENT, CHAT_FILE_SRC, CHAT_IS_FIRST, USER_NO, CHATROOM_NO, CHAT_TIME)
         values
-        (#{chat.content}, #{chat.file}, #{chat.isFirst}, #{chat.user.no}, #{chat.chatroom.no})
+        (#{chat.content}, #{chat.file}, #{chat.isFirst}, #{chat.user.no}, #{chat.chatroom.no}, #{chat.time})
         <selectKey keyProperty="chat.no" resultType="Long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
     </insert>
-    
+
     <select id="getChatByChatNo" resultType="Chat">
         select
             C.CHAT_NO as no
@@ -48,5 +48,23 @@
             C.USER_NO = U.USER_NO
         where
             C.CHATROOM_NO = #{chatroomNo}
+    </select>
+
+    <select id="checkDailyFirstChat" resultType="java.lang.Character">
+        select
+            case
+                when exists (
+                    select
+                        1
+                    from
+                        WORKUS_CHAT
+                    where
+                        DATE_FORMAT(CHAT_TIME, '%Y-%m-%d') = DATE_FORMAT(#{chat.time}, '%Y-%m-%d')
+                    and
+                        CHATROOM_NO = #{chat.chatroom.no}
+                        )
+                    then 'Y'
+                else 'N'
+                end as CHAT_EXISTS
     </select>
 </mapper>
