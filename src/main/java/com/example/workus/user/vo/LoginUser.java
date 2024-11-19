@@ -1,4 +1,4 @@
-package com.example.workus.security;
+package com.example.workus.user.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
