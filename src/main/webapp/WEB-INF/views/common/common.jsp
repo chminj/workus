@@ -2,14 +2,12 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<!-- fullcalendar CDN -->
-<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/main.min.css' rel='stylesheet' />
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
-<script type="module">
-    import fullcalendarScheduler from 'https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/+esm'
-</script>
-<%-- full calendar + google calendar --%>
-<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/google-calendar@6.1.15/index.global.js"></script>
+<%--
+    full calendar + google calendar
+    schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', 이거 넣기
+--%>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>
+
 <script src="/resources/js/main.js"></script>
 <%-- 채팅방 bootstrap
     혹시 위의 bootstrap의 css와 겹칠수도 있을 것 같음 --%>

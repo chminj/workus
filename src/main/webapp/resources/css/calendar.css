@@ -1,0 +1,18 @@
+/* 전체 페이지 스타일 */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden; /* 페이지에서 스크롤을 없앰 */
+}
+
+/* 버튼의 너비를 100%로 설정 */
+.lnb .btn {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    position: relative;  /* 구분선 위치를 버튼 아래에 정확히 놓기 위해 */
+}
+
+
+
