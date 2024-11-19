@@ -11,9 +11,9 @@ import java.util.Date;
 @Getter
 @Setter
 @ToString
-@Alias("Board")
-public class Board {
-    private long nO;
+@Alias("Feed")
+public class Feed {
+    private long no;
     private String title;
     private String content;
     private String mediaUrl;

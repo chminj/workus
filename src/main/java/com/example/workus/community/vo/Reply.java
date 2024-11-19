@@ -17,7 +17,7 @@ public class Reply {
     private String content;
     private Date CreatedDate;
 
-    private Board board;
+    private Feed feed;
 
     private User user;
 

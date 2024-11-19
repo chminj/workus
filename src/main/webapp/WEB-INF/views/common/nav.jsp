@@ -184,7 +184,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="">
+                    <a href="../notice/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topTask"></use>
@@ -194,7 +194,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="">
+                    <a href="../community/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topBoard"></use>

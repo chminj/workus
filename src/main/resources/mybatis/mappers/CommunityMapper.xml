@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.workus.community.mapper.CommunityMapper">
+
+    <!--
+        List<Feed> getFeeds(@Param("begin") int begin, @Param("end") int end);
+    -->
+    <select id="getFeeds" resultType="Feed">
+        select
+            x.*
+        from (select
+                    row_number() over (order by B.community_no desc) rn
+                    , B.community_no as no
+                    , B.COMMUNITY_TITLE as title
+                    , B.COMMUNITY_CONTENT as content
+                    , B.COMMUNITY_MEDIA_URL as mediaUrl
+                    , B.COMMUNITY_MEDIA_TYPE as mediaType
+                    , B.COMMUNITY_CREATED_DATE as createDate
+                    , B.COMMUNITY_UPDATED_DATE as updateDate
+                    , B.USER_NO as "user.no"
+                    , U.USER_NAME as "user.name"
+              from
+                  WORKUS_COMMUNITY B
+                  INNER JOIN
+                  WORKUS_USERS U
+              ON
+                  B.USER_NO = U.USER_NO) x
+        where x.rn between #{begin} and #{end}
+    </select>
+
+    <!--
+    int getTotalRows();
+ -->
+    <select id="getTotalRows"  resultType="int">
+        select
+            count(*)
+        from
+            WORKUS_COMMUNITY
+    </select>
+</mapper>

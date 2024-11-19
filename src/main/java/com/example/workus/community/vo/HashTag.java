@@ -13,5 +13,5 @@ public class HashTag {
     private Long no;
     private String name;
 
-    private Board board;
+    private Feed feed;
 }
