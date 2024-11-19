@@ -27,8 +27,7 @@ public class ChatroomController {
 
     @GetMapping("/list")
     public String chatroom(@AuthenticationPrincipal LoginUser loginUser, Model model) {
-        log.info("로그인 유저번호: " + loginUser.getNo());
-        List<ChatroomDto> chatrooms = chatroomServcie.getAllChatrooms(20133L);
+        List<ChatroomDto> chatrooms = chatroomServcie.getAllChatrooms(loginUser.getNo());
         model.addAttribute("chatrooms", chatrooms);
         return "chat/chatroom";
     }
