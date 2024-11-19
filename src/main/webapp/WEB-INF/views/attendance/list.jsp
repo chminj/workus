@@ -96,9 +96,9 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 
                   </div>
                   <p class="description">* 근속 연차 :
-                    <span class="current">20.00</span>
+                    <span class="current">${attendanceDto.unusedAnnualLeave}</span>
                     /
-                    <span class="total">20.00</span>일
+                    <span class="total">${attendanceDto.annualLeaveCount}</span>일
                   </p>
                 </div>
                 <div class="reqFormSec">
@@ -116,18 +116,67 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 </div>
               </div>
               <div class="modalRight">
-                <div class="wholeList">
-                  <ul>
-                    <li></li>
-                  </ul>
-                </div>
-                <div class="checkedList">
-                  <ul>
-                    <li></li>
-                  </ul>
-                  <ul>
-                    <li></li>
-                  </ul>
+                <p class="reqFormTit mgb10">결재 및 참조선</p>
+                <div class="d-flex">
+                  <div class="listSec wholeList">
+                    <ul class="atdList">
+                      <li class="d-flex">
+                        <input type="checkbox" id="checkingUser1" class="mgr5">
+                        <label for="checkingUser1">
+                          <span class="name mgr5">김재언</span>
+                        </label>
+                        <span class="gray">
+                              <span class="dept">개발1팀</span>
+                              <span>/</span>
+                              <span class="position">부장</span>
+                            </span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="listSec checkedList">
+                    <div class="d-flex">
+                      <div class="btnW">
+                        <button type="button" id="apvLineAdd">
+                          <i class="bi bi-caret-right-square"></i>
+                        </button>
+                        <button type="button" id="apvLineCancel">
+                          <i class="bi bi-caret-left-square"></i>
+                        </button>
+                      </div>
+                      <div class="atdList">
+                        <p class="sTit">결재선</p>
+                        <ul>
+                          <li class="d-flex">
+                            <input type="checkbox" id="checkingUser" class="mgr5">
+                            <label for="checkingUser">
+                              <span class="name mgr5">김재언</span>
+                            </label>
+                            <span class="gray">
+                              <span class="dept">개발1팀</span>
+                              <span>/</span>
+                              <span class="position">부장</span>
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
+                    <div class="d-flex">
+                      <div class="btnW">
+                        <button type="button" id="refLineAdd">
+                          <i class="bi bi-caret-right-square"></i>
+                        </button>
+                        <button type="button" id="refLineCancel">
+                          <i class="bi bi-caret-left-square"></i>
+                        </button>
+                      </div>
+                      <div class="atdList">
+                        <p class="sTit">참조선</p>
+                        <ul>
+                          <li></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

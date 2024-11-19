@@ -23,9 +23,6 @@ public class AttendanceController {
         AttendanceDto attendanceDto = attendanceService.getAttendance(loginUser.getNo());
         model.addAttribute("attendanceDto", attendanceDto);
 
-        System.out.println("loginUser.getNo: " + loginUser.getNo());
-        System.out.println("attendanceDto: " + attendanceDto);
-
         return "attendance/list";
     }
 }

@@ -89,3 +89,17 @@ dialog .modalFooter button:not(:last-child) {margin-right:10px;}
 textarea {width:100%; border:1px solid #9f9f9f; border-radius:3px; appearance: none; min-height:80px; background:transparent;}
 
 .annualLeaveOnly label {display:inline-flex;}
+
+.modalRight .listSec {width:50%; font-size:14px;}
+.modalRight>.d-flex {height:calc(100% - 40px);}
+.atdList {border:1px solid #ddd; border-radius:3px; padding:10px; box-sizing:border-box; height:100%; width:95%;}
+.checkedList {display:flex; flex-direction: column; justify-content: space-between}
+.checkedList>div {height:48%;}
+
+.btnW {display:flex; flex-direction: column; justify-content:center; width:10%; margin-right:8px;}
+.btnW button {border:none; background:transparent; margin:3px 0;}
+
+div.atdList {padding:0;}
+div.atdList>ul {padding:10px;}
+.sTit {border-radius:3px 3px 0 0; background-color:#0f132a; color:#fff; font-size:14px; padding:5px 8px;}
+.gray {color:#7c7c7c;}
