@@ -11,4 +11,7 @@ public class AttendanceDto {
     private int roleNo;
     private double unusedAnnualLeave;
     private double annualLeaveCount;
+
+    private String currentAnnualLeave = String.format("%.2f", unusedAnnualLeave);
+    private String totalAnnualLeave = String.format("%.2f", annualLeaveCount);
 }
