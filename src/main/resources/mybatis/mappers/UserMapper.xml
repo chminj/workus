@@ -27,17 +27,17 @@
             , R.ROLE_NAME as roleName
         from
             WORKUS_USERS U
-            inner join
+        inner join
             WORKUS_POSITION P
         on
             U.POSITION_NO = P.POSITION_NO
-            inner join
+        inner join
             WORKUS_DEPT D
-            on
+        on
             U.DEPT_NO = D.DEPT_NO
-            inner join
+        inner join
             WORKUS_ATH_ROLE R
-            on
+        on
             U.ROLE_NO = R.ROLE_NO
         where
             U.USER_NO = #{userNo}
@@ -45,27 +45,42 @@
 
     <select id="getUserById" resultType="User">
         select
-            USER_NO as no
-            , USER_ID as id
-            , USER_NAME as name
-            , USER_PASSWORD as password
-            , USER_EMAIL as email
-            , USER_ADDRESS as address
-            , USER_BIRTH_DATE as birthday
-            , USER_HIRE_DATE as hireDate
-            , USER_QUIT_DATE as quitDate
-            , USER_STATUS as status
-            , USER_PROFILE_SRC as profileSrc
-            , USER_PR as pr
-            , USER_PHONE as phone
-            , USER_UNUSED_ANNUAL_LEAVE as unusedAnnualLeave
-            , POSITION_NO as positionNo
-            , DEPT_NO as deptNo
-            , ROLE_NO as roleNo
+            U.USER_NO as no
+            , U.USER_ID as id
+            , U.USER_NAME as name
+            , U.USER_PASSWORD as password
+            , U.USER_EMAIL as email
+            , U.USER_ADDRESS as address
+            , U.USER_BIRTH_DATE as birthday
+            , U.USER_HIRE_DATE as hireDate
+            , U.USER_QUIT_DATE as quitDate
+            , U.USER_STATUS as status
+            , U.USER_PROFILE_SRC as profileSrc
+            , U.USER_PR as pr
+            , U.USER_PHONE as phone
+            , U.USER_UNUSED_ANNUAL_LEAVE as unusedAnnualLeave
+            , P.POSITION_NO as positionNo
+            , P.POSITION_NAME as positionName
+            , D.DEPT_NO as deptNo
+            , D.DEPT_NAME as deptName
+            , R.ROLE_NO as roleNo
+            , R.ROLE_NAME as roleName
         from
-            WORKUS_USERS
+            WORKUS_USERS U
+        inner join
+            WORKUS_POSITION P
+        on
+            U.POSITION_NO = P.POSITION_NO
+        inner join
+            WORKUS_DEPT D
+        on
+            U.DEPT_NO = D.DEPT_NO
+        inner join
+            WORKUS_ATH_ROLE R
+        on
+            U.ROLE_NO = R.ROLE_NO
         where
-            USER_ID = #{id}
+            U.USER_ID = #{id}
     </select>
 
 </mapper>
