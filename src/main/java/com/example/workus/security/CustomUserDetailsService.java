@@ -2,6 +2,7 @@ package com.example.workus.security;
 
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,11 +13,10 @@ import org.springframework.stereotype.Service;
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserMapper userMapper;
-    private final PasswordEncoder passwordEncoder;
 
-    public CustomUserDetailsService(UserMapper userMapper, PasswordEncoder passwordEncoder) {
+    @Autowired
+    public CustomUserDetailsService(UserMapper userMapper) {
         this.userMapper = userMapper;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
