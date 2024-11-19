@@ -41,9 +41,9 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
               <span>
                 휴가 신청
                 <span class="holiday">
-                    <span class="usable">17</span>
+                    <span class="usable">${attendanceDto.unusedAnnualLeave}</span>
                     <span class="slash">/</span>
-                    <span class="total">20</span>
+                    <span class="total">${attendanceDto.annualLeaveCount}</span>
                 </span>
               </span>
               <i class="bi bi-arrow-right"></i>
