@@ -10,10 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class LoginUser {
-
     private Long no;
     private String id;
     private String name;
-    private int roleNo;
-
 }
