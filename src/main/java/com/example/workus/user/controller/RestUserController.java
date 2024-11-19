@@ -27,4 +27,18 @@ public class RestUserController {
     ResponseEntity<RestResponseDto<User>> getProfileByUserNo(@PathVariable("userNo") Long userNo) {
         return ResponseEntity.ok(RestResponseDto.success(userService.getUserByUserNo(userNo)));
     }
+
+    @GetMapping("/user/check-no/{userNo}")
+    ResponseEntity<RestResponseDto<Boolean>> checkUserNo(@PathVariable("userNo") Long userNo) {
+        boolean isUserExist = userService.isUserExistByUserNo(userNo);
+        System.out.println(isUserExist);
+        return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
+    }
+
+    @GetMapping("/user/check-id/{userId}")
+    ResponseEntity<RestResponseDto<Boolean>> checkUserId(@PathVariable("userId") String userId) {
+        boolean isUserExist = userService.isUserExistByUserId(userId);
+        System.out.println(isUserExist);
+        return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
+    }
 }
