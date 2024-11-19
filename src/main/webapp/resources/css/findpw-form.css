@@ -7,7 +7,7 @@ body {
     display: block;
     max-width: 680px;
     width: 80%;
-    margin: 80px auto; /* 상단 여백을 줄임 */
+    margin: 120px auto; /* 상단 여백을 줄임 */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
