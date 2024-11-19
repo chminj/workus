@@ -45,7 +45,6 @@ public class RestChatController {
         User user = new User();
         user.setNo(20140L);
         chat.setUser(user);
-        chat = chatService.insertChat(chat);
-        return ResponseEntity.ok(RestResponseDto.success(chat));
+        return ResponseEntity.ok(RestResponseDto.success(chatService.insertChat(chat)));
     }
 }

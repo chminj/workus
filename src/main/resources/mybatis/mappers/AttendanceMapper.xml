@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.workus.attendance.mapper.AttendanceMapper">
+    <select id="getAttendanceByUserNo" resultType="AttendanceDto">
+        select
+            U.USER_NO as no
+            , U.ROLE_NO as roleNo
+            , U.USER_UNUSED_ANNUAL_LEAVE as unusedAnnualLeave
+            , P.ANNUAL_LEAVE_COUNT as annualLeaveCount
+        from WORKUS_USERS U
+           , WORKUS_POSITION P
+        where U.POSITION_NO = P.POSITION_NO
+          and U.User_NO = #{userNo}
+    </select>
+</mapper>

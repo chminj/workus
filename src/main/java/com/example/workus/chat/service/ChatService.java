@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -25,9 +26,12 @@ public class ChatService {
         return chatMapper.getAllChatsByChatroomNo(chatroomNo);
     }
 
-    // chat을 insert후에 no를 가져와서 Chat객체를 반환한다.
     public Chat insertChat(Chat chat) {
+        chat.setTime(LocalDateTime.now());
+        if (chatMapper.checkDailyFirstChat(chat).equals('N')) {
+            chat.setIsFirst('Y');
+        }
         chatMapper.insertChat(chat);
-        return chatMapper.getChatByChatNo(chat.getNo());
+        return chat;
     }
 }

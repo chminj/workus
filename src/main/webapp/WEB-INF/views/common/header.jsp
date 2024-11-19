@@ -5,7 +5,7 @@
         <span>WORKUS</span>
     </a>
     <div class="globalMenu">
-        <a href="#" onclick="toggleModal(); return false;">
+        <a href="#">
             <i class="bi bi-person-circle"></i>
         </a>
     </div>
@@ -14,7 +14,7 @@
 <!-- 모달창 -->
 <div id="myModal" class="modal">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
+        <span class="close" >&times;</span>
         <div class="modal-header">
             <img src="path/to/profile.jpg" alt="Profile Picture" class="profile-pic">
             <h2 class="member-name">이름을 여기에 넣으세요</h2>
@@ -28,6 +28,7 @@
     </div>
 </div>
 
+<!-- 모달창 제어 스크립트 -->
 <script>
 
 </script>

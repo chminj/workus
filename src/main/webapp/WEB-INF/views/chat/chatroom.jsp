@@ -8,13 +8,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <%@ include file="../common/common.jsp" %>
 <title>채팅방</title>
-<style>
-	main {
-		padding: 20px 25px;
-		width: calc(100% - 76px);
-		margin-left: 45px;
-	}
-</style>
 </head>
 <body>
 	<div id="divWrapper">
@@ -22,7 +15,7 @@
 			<%@ include file="../common/header.jsp" %>
 			<section class="verticalLayoutFixedSection">
 				<%@ include file="../common/nav.jsp" %>
-				<main>
+				<main class="noLnb">
 					<div class="container-fluid vh-100">
 						<div class="row h-100">
 							<!-- 채팅방 목록 -->
@@ -192,6 +185,14 @@
 		// 채팅 전송 후 화면에 내 채팅 보이기
 		function appearSubmittedMyChat(data) {
 			return `
+					\${data.isFirst === 'Y' ? `
+						<!-- 날짜 구분선 -->
+						<div class="d-flex align-items-center my-4">
+							<div class="border-bottom flex-grow-1"></div>
+							<span class="mx-3 text-muted">\${data.time.date}</span>
+							<div class="border-bottom flex-grow-1"></div>
+						</div>
+					` : ``}
 					<div class="mb-3 w-75 ms-auto">
 						<div class="text-end mb-1">
 							<strong>나</strong>
@@ -294,12 +295,10 @@
 			try {
 				const response = await fetch('/ajax/chat/' + chatroomNo);
 				const result = await response.json();
-				const datas = result.data;
+				const data = result.data;
 				if (response.ok) {
-					datas.forEach(data => {
-						data = replaceFormatTime(data);
-					})
-					return loadChats(datas);
+					data.map(item => replaceFormatTime(item));
+					return loadChats(data);
 				} else {
 					console.log('채팅을 불러오는데 실패했습니다.', result.message);
 				}

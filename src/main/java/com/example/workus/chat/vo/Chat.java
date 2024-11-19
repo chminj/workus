@@ -19,7 +19,7 @@ public class Chat {
     private String file;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
-    private String isFirst;
+    private Character isFirst;
     private User user;
     private Chatroom chatroom;
 }
