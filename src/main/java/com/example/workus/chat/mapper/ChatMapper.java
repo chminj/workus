@@ -10,6 +10,13 @@ import java.util.List;
 public interface ChatMapper {
 
     /**
+     * chat 객체를 받아서 그 날 첫 번째 채팅인지 확인한다.
+     * @param chat 객체
+     * @return 'Y' 혹은 'N'
+     */
+    Character checkDailyFirstChat(@Param("chat") Chat chat);
+
+    /**
      * 채팅방 번호를 받아서 방번호에 해당하는 채팅들을 출력한다.
      * @param chatroomNo 채팅방 번호
      * @return 채팅 리스트
@@ -28,4 +35,10 @@ public interface ChatMapper {
      * @param chat 객체
      */
     void insertChat(@Param("chat") Chat chat);
+
+    /**
+     * 채팅 객체를 받아서 isFirst를 'Y'로 업데이트 한다.
+     * @param chat
+     */
+    void updateIsFirst(@Param("chat") Chat chat);
 }
