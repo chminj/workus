@@ -31,6 +31,6 @@ public class User {
     private String positionName;
     private long deptNo;
     private String deptName;
-    private long roleNo;
+    private int roleNo;
     private String roleName;
 }
