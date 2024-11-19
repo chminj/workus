@@ -14,7 +14,7 @@ public class Like {
 
     private long no;
 
-    private Board board;
+    private Feed feed;
 
     private User user;
 
