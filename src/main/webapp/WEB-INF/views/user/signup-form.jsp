@@ -21,12 +21,12 @@
 
         <div class="input__block">
             <input type="text" placeholder="사번을 입력해주세요" name="no" required />
-            <button type="button" class="google__btn">사번확인</button>
+            <button type="button" class="google__btn user-check">사번확인</button>
         </div>
 
         <div class="input__block">
             <input type="text" placeholder="ID를 입력해주세요" name="id" required />
-            <button type="button" class="google__btn">중복확인</button>
+            <button type="button" class="google__btn id-check">중복확인</button>
         </div>
 
         <div class="input__block">
@@ -49,16 +49,44 @@
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="주소" name="" required readonly/>
+            <input type="text" placeholder="주소" name="address" required readonly/>
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="상세주소" name="address" required />
+            <input type="text" placeholder="상세주소" name="detailAddress" required />
         </div>
 
         <button class="signup__btn" type="submit">회원가입</button>
 
     </form>
 </div>
+<script>
+    document.querySelector('.user-check').addEventListener('click', function() {
+        const userNo = document.querySelector('input[name="no"]').value;
+        fetch(`/ajax/user/check-no/` + userNo) // fetch 요청
+            .then(response => response.json()) // JSON 파싱
+            .then(data => {
+                console.log(userNo); // userNo 테스트
+                if (data.data) {
+                    alert("사번이 확인되었습니다.");
+                } else {
+                    alert("존재하지 않는 사번입니다.");
+                }
+            });
+    })
+    document.querySelector('.id-check').addEventListener('click', function() {
+        const userId = document.querySelector('input[name="id"]').value;
+        fetch(`ajax/user/check-id/` + userId)
+            .then(response => response.json())
+            .then(data => {
+                console.log(userId)
+                if (data.data) {
+                    alert("이미 존재하는 아이디입니다.")
+                } else {
+                    alert("사용 가능한 아이디입니다.")
+                }
+            })
+    })
+</script>
 </body>
 </html>
