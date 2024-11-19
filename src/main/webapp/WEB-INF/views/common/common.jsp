@@ -7,7 +7,6 @@
     schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives', 이거 넣기
 --%>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar-scheduler@6.1.15/index.global.min.js"></script>
-
 <script src="/resources/js/main.js"></script>
 <%-- 채팅방 bootstrap
     혹시 위의 bootstrap의 css와 겹칠수도 있을 것 같음 --%>
