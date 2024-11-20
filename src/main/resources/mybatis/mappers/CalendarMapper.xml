@@ -5,9 +5,9 @@
     <!-- void insertCalendar(@Param("calendar") Calendar calendar); -->
     <insert id="insertCalendar">
         insert into WORKUS_CALENDAR
-            (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no, dept_no)
+            (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no)
         values
-            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no}, #{calendar.deptNo})
+            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no})
 
         <selectKey resultType="Long" keyProperty="calendar.no" keyColumn="calendar_no" order="AFTER">
             select last_insert_id()
@@ -32,6 +32,9 @@
             calendar_start_date &gt;= #{start}
             AND calendar_end_date &lt;= #{end}
             AND user_no = #{loginUser.no}
+            <if test="division != null">
+                AND calendar_division = #{division}
+            </if>
     </select>
 
 

@@ -4,6 +4,7 @@ import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.mapper.CalendarMapper;
 import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,18 +34,18 @@ public class CalendarService {
         calendar.setContent(form.getContent());
 
         calendar.setNo(form.getNo());
-//        calendar.setDeptNO(form.getDeptNo());
+        calendar.setDeptNo(form.getDeptNo());
 
         calendarMapper.insertCalendar(calendar);
 
         return calendar;
     }
 
-
-    public List<Calendar> getEventsByDateRange(Date start, Date end, LoginUser loginUser) {
+    public List<Calendar> getEventsByDateRange(Date start, Date end, Integer division, LoginUser loginUser) {
         LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
-        return calendarMapper.selectEventsByDateRange(startDateTime, endDateTime, loginUser);
+        return calendarMapper.selectEventsByDateRange(startDateTime, endDateTime, division, loginUser);
     }
+
 }

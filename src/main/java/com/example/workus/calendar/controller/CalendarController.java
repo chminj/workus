@@ -4,6 +4,7 @@ import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.service.CalendarService;
 import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,9 +26,8 @@ public class CalendarController {
     @ResponseBody
     public Calendar add(CalendarForm form, @AuthenticationPrincipal LoginUser loginUser) {
 
+        form.setDeptNo(1003L);
         form.setNo(loginUser.getNo());
-        form.setDeptNo(1001L);
-        System.out.println(form);
 
         Calendar calendar = calendarService.addNewCalendar(form);
 
@@ -45,9 +45,10 @@ public class CalendarController {
     public List<Calendar> events(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+            @RequestParam("division") Integer division,
             @AuthenticationPrincipal LoginUser loginUser) {
 
-        List<Calendar> events = calendarService.getEventsByDateRange(start, end, loginUser);
+        List<Calendar> events = calendarService.getEventsByDateRange(start, end, division, loginUser);
 
         return events;
     }
