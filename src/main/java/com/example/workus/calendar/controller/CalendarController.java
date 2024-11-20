@@ -3,10 +3,16 @@ package com.example.workus.calendar.controller;
 import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.service.CalendarService;
 import com.example.workus.calendar.vo.Calendar;
+import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/calendar")
@@ -17,8 +23,12 @@ public class CalendarController {
 
     @PostMapping("/add")
     @ResponseBody
-    public Calendar add(CalendarForm form) {
+    public Calendar add(CalendarForm form, @AuthenticationPrincipal LoginUser loginUser) {
+
+        form.setNo(loginUser.getNo());
+        form.setDeptNo(1001L);
         System.out.println(form);
+
         Calendar calendar = calendarService.addNewCalendar(form);
 
         return calendar;
@@ -26,10 +36,20 @@ public class CalendarController {
 
     // 일정 목록 페이지 반환
     @GetMapping("/list")
-    public String list(Model model) {
-
+    public String list() {
         return "calendar/list";  // calendar/list.jsp로 이동
     }
 
+    @GetMapping("/events")
+    @ResponseBody
+    public List<Calendar> events(
+            @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
+            @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+            @AuthenticationPrincipal LoginUser loginUser) {
+
+        List<Calendar> events = calendarService.getEventsByDateRange(start, end, loginUser);
+
+        return events;
+    }
 
 }

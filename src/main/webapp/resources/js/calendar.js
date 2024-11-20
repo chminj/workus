@@ -32,6 +32,38 @@ $(document).ready(function() {
             nowIndicator: true,          // 현재 시간 표시
             dayMaxEvents: true,          // 일정 초과 시 "+N개" 형식으로 표시
             locale: 'ko',                // 한국어 설정
+            eventClick: function(info) {
+                alert(info.event.id);
+            },
+            events: function(info, successCallback, failureCallback) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/calendar/events',
+                    data: {
+                        start: info.startStr.split("T")[0],
+                        end: info.endStr.split("T")[0]
+                    },
+                    success: function(calendars) {
+                        let events = calendars.map(function(calendar) {
+                            let event = {};
+                            event.id= calendar.no;
+                            event.title = calendar.name;
+                            event.start = calendar.startDate;
+                            event.end = calendar.endDate;
+
+                            return event;
+                        });
+
+                        console.log(events);
+
+                        successCallback(events); // FullCalendar에 이벤트 렌더링
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("일정 불러오기 실패:", error);
+                        failureCallback(error);
+                    }
+                })
+            },
 
             // 이벤트가 추가될 때
             eventAdd: function (obj) {
@@ -45,28 +77,10 @@ $(document).ready(function() {
             eventRemove: function (obj) {
                 console.log('Event Removed:', obj);
             },
-
             select: function (arg) {
                 $("#calendarModal").modal("show");
-
                 calendar.unselect();
-            },
-
-            // 기본 이벤트 목록
-            events: [
-                {title: 'All Day Event', start: '2024-11-01'},
-                {title: 'Long Event', start: '2024-11-03', end: '2024-11-05'},
-                {groupId: 999, title: 'Repeating Event', start: '2024-11-11T16:00:00'},
-                {groupId: 999, title: 'Repeating Event', start: '2024-11-18T16:00:00'},
-                {title: 'Conference', start: '2021-07-11', end: '2021-07-13'},
-                {title: 'Meeting', start: '2021-07-12T10:30:00', end: '2021-07-12T12:30:00'},
-                {title: 'Lunch', start: '2021-07-12T12:00:00'},
-                {title: 'Meeting', start: '2021-07-12T14:30:00'},
-                {title: 'Happy Hour', start: '2021-07-12T17:30:00'},
-                {title: 'Dinner', start: '2021-07-12T20:00:00'},
-                {title: 'Birthday Party', start: '2021-07-13T07:00:00'},
-                {title: 'Click for Google', url: 'http://google.com/', start: '2021-07-28'}
-            ]
+            }
         });
 
         $("#save").on("click", function () {
@@ -76,7 +90,8 @@ $(document).ready(function() {
                 startDate: new Date($("#startDate").val()).toISOString(),
                 endDate: new Date($("#endDate").val()).toISOString(),
                 division: $("#division").val(),
-                content: $("#content").val()
+                content: $("#content").val(),
+                deptNo: 1001
             };
 
             if (!eventData.name || !eventData.startDate || !eventData.endDate) {
@@ -103,7 +118,7 @@ $(document).ready(function() {
                             location: result.location,
                             division: result.division,
                             content: result.content,
-                            userNo: result.userNo,
+                            userNo: result.no,
                             deptNo: result.deptNo
                         }
                     });
