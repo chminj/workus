@@ -16,13 +16,7 @@ public interface CalendarMapper {
     List<Calendar> selectEventsByDateRange(
             @Param("start") LocalDateTime startDateTime,
             @Param("end") LocalDateTime endDateTime,
+            @Param("division") Integer division,
             @Param("loginUser") LoginUser loginUser);
-
-
-
-
-
-
-
 
 }

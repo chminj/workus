@@ -7,7 +7,6 @@
     <%@ include file="../common/common.jsp" %>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/calendar.css' />">
-    <script src="/resources/js/calendar.js"></script>
 
     <title>Calendar</title>
 </head>
@@ -38,7 +37,7 @@
                         <h4 class="font-weight-bold mb-3">내 캘린더</h4>
                         <!-- 체크박스 - 내 캘린더 -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input personal-checkbox" type="checkbox" checked="checked" id="division1">
+                            <input class="form-check-input personal-checkbox" type="checkbox" checked="checked" id="division1" value="1" onchange="refreshCalendar()">
                             <label class="form-check-label" for="division1">
                                 [기본] 내 캘린더
                             </label>
@@ -50,7 +49,7 @@
                         <h4 class="font-weight-bold mb-3">팀 캘린더</h4>
                         <!-- 체크박스 - 팀 캘린더 -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input team-checkbox" type="checkbox" id="division0">
+                            <input class="form-check-input team-checkbox" type="checkbox" id="division0" value="0" onchange="refreshCalendar()">
                             <label class="form-check-label" for="division0">
                                 팀 캘린더
                             </label>
@@ -127,6 +126,6 @@
         </div>
     </div>
 </div>
-
+<script src="/resources/js/calendar.js"></script>
 </body>
 </html>
