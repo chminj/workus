@@ -22,7 +22,7 @@ public class SecurityConfig {
                         .disable())
                 .authorizeHttpRequests(auth -> auth
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()     //
-                        .requestMatchers("/login", "/signup", "/findpw", "/resources/**").permitAll()
+                        .requestMatchers("/login", "/signup", "/findpw", "/resources/**", "ajax/user/**").permitAll()
                         .anyRequest().authenticated())
                 .formLogin(login -> login
                         .loginPage("/login")
