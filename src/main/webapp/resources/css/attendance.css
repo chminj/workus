@@ -52,7 +52,7 @@ dialog {
     border: none;
     box-shadow: 1px 2px 5px 2px rgba(0,0,0,0.2);
     border-radius: 5px;
-    width: 55rem;
+    width: 60rem;
     position: absolute;
     left: 50%;
     top: 50%;
@@ -93,6 +93,7 @@ textarea {width:100%; border:1px solid #9f9f9f; border-radius:3px; appearance: n
 .modalRight .listSec {width:50%; font-size:14px;}
 .modalRight>.d-flex {height:calc(100% - 40px);}
 .atdList {border:1px solid #ddd; border-radius:3px; padding:10px; box-sizing:border-box; height:100%; width:95%;}
+.atdList li {line-height:1.9;}
 .checkedList {display:flex; flex-direction: column; justify-content: space-between}
 .checkedList>div {height:48%;}
 
