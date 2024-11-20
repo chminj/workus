@@ -36,7 +36,9 @@
 									<p class="mb-1 text-muted">${chatroom.lastChatAuthor.name}</p>
 									<div class="d-flex justify-content-between align-items-center">
 										<small class="text-muted text-truncate me-2">${chatroom.lastChat}</small>
-										<span class="badge bg-primary rounded-pill">읽지 않은 메시지 수</span>
+										<c:if test="${chatroom.notReadCount != 0}">
+										<span class="badge bg-primary rounded-pill not-read-count${chatroom.chatroomNo}">${chatroom.notReadCount}</span>
+										</c:if>
 									</div>
 								</div>
 								</c:forEach>
@@ -268,6 +270,8 @@
 		$(".chatroom").on('click', async function () {
 			// data-chatroom-no 속성 가져오기
 			const chatroomNo = $(this).data("chatroomNo");
+			// 읽지 않은 메시지 수 화면에서 삭제
+			$(`.not-read-count\${chatroomNo}`).text("");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
 			const chatDiv = await ajaxChatsData(chatroomNo);
 			const chatSubmitForm = loadSubmitChatForm(chatroomNo);

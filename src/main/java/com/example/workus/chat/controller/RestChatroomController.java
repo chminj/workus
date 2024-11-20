@@ -3,9 +3,11 @@ package com.example.workus.chat.controller;
 import com.example.workus.chat.dto.ChatroomInfoDto;
 import com.example.workus.chat.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatroomServcie;
+import com.example.workus.security.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +26,10 @@ public class RestChatroomController {
     }
 
     @GetMapping("/chatroom/{chatroomNo}")
-    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfo(@PathVariable("chatroomNo") long chatroomNo) {
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfo(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @PathVariable("chatroomNo") Long chatroomNo) {
+        chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfo(chatroomNo)));
     }
 }
