@@ -7,6 +7,7 @@
     <div class="globalMenu">
         <i class="bi bi-person-circle"></i>
         <sec:authorize access="isAuthenticated()">
+            <sec:authentication property="principal.no" var="LOGIN_USERNO" scope="request"/>
             <sec:authentication property="principal.name"/> 님 환영합니다.
         </sec:authorize>
         <div>

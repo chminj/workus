@@ -151,6 +151,7 @@
   </div>
 </div>
 	<script>
+		const LOGIN_USERNO = ${LOGIN_USERNO};
 		// 모달 객체 생성
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
@@ -349,10 +350,25 @@
 									<div class="border-bottom flex-grow-1"></div>
 								</div>
 							` : ``}
-							<!-- 메시지 -->
+							\${LOGIN_USERNO === chat.user.no ? `
+								<div class="mb-3 w-75 ms-auto">
+									<div class="text-end mb-1">
+										<strong>나</strong>
+									</div>
+									<div class="d-flex justify-content-end">
+										<div class="bg-primary text-white rounded p-2 mb-1">
+											\${chat.content}
+										</div>
+									</div>
+									<div class="text-end">
+										<small class="text-muted">\${chat.time.time}</small>
+									</div>
+								</div>
+							` : `
+							<!-- 상대 메시지 -->
 							<div class="mb-3 w-75">
 								<div class="d-flex align-items-center mb-1">
-									<img src="" alt="프로필" class="rounded-circle me-2">
+									<img src="" alt="프로필" class="rounded-circle me-2"/>
 									<strong>\${chat.user.name}</strong>
 								</div>
 								<div class="d-flex">
@@ -362,6 +378,7 @@
 								</div>
 								<small class="text-muted">\${chat.time.time}</small>
 							</div>
+							`}
 						`).join('')}
 
 						<!-- 상대방 메시지
