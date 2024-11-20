@@ -3,6 +3,7 @@ package com.example.workus.calendar.service;
 import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.mapper.CalendarMapper;
 import com.example.workus.calendar.vo.Calendar;
+import com.example.workus.security.LoginUser;
 import com.example.workus.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,8 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional
@@ -29,14 +32,19 @@ public class CalendarService {
         calendar.setDivision(form.getDivision());
         calendar.setContent(form.getContent());
 
+        calendar.setNo(form.getNo());
+//        calendar.setDeptNO(form.getDeptNo());
+
         calendarMapper.insertCalendar(calendar);
 
         return calendar;
     }
 
 
+    public List<Calendar> getEventsByDateRange(Date start, Date end, LoginUser loginUser) {
+        LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
+        LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
-
-
-
+        return calendarMapper.selectEventsByDateRange(startDateTime, endDateTime, loginUser);
+    }
 }

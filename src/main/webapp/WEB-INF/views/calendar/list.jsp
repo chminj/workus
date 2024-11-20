@@ -38,7 +38,7 @@
                         <h4 class="font-weight-bold mb-3">내 캘린더</h4>
                         <!-- 체크박스 - 내 캘린더 -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input personal-checkbox" type="checkbox" value="" id="division1">
+                            <input class="form-check-input personal-checkbox" type="checkbox" checked="checked" id="division1">
                             <label class="form-check-label" for="division1">
                                 [기본] 내 캘린더
                             </label>
@@ -50,7 +50,7 @@
                         <h4 class="font-weight-bold mb-3">팀 캘린더</h4>
                         <!-- 체크박스 - 팀 캘린더 -->
                         <div class="form-check mb-2">
-                            <input class="form-check-input team-checkbox" type="checkbox" value="" id="division0">
+                            <input class="form-check-input team-checkbox" type="checkbox" id="division0">
                             <label class="form-check-label" for="division0">
                                 팀 캘린더
                             </label>
@@ -70,53 +70,63 @@
     </div>
 </div>
 <!-- Modal -->
-<div
-        class="modal fade"
-        id="calendarModal"
-        tabindex="-1"
-        aria-labelledby="calendarModalLabel"
-        aria-hidden="true"
->
+<div class="modal fade" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
     <div class="modal-dialog row mb-3">
         <div class="modal-content col-12">
             <div class="modal-header">
                 <h5 class="modal-title" id="calendarModalLabel">일정 추가하기</h5>
-                <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                ></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                일정이름 : <input type="text" id="name" /><br />
-                장소     : <input type="text" id="location" /><br />
-                시작시간 : <input type="datetime-local" id="startDate" /><br />
-                종료시간 : <input type="datetime-local" id="endDate" /><br />
-                캘린더 : <select id="division">
-                            <option value="1">
-                                내 캘린더
-                            </option>
-                            <option value="0">
-                                팀 캘린더
-                            </option>
-                        </select><br />
-                내용 : <input type="text" id="content" /><br />
-            </div>
-            <div class="modal-footer">
-                <button
-                        type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal"
-                >
-                    취소
-                </button>
-                <button type="button" class="btn btn-primary" id="save">
-                    추가
-                </button>
-            </div>
+            <form method="dialog">
+                <div class="modal-body">
+                    <!-- 일정 이름 입력 -->
+                    <div class="reqFormSec">
+                        <label for="name" class="reqFormTit">일정 이름</label>
+                        <input type="text" id="name" class="form-control" required />
+                    </div>
+
+                    <!-- 장소 입력 -->
+                    <div class="reqFormSec">
+                        <label for="location" class="reqFormTit">장소</label>
+                        <input type="text" id="location" class="form-control" required />
+                    </div>
+
+                    <!-- 시작 시간 입력 -->
+                    <div class="reqFormSec">
+                        <label for="startDate" class="reqFormTit">시작시간</label>
+                        <input type="datetime-local" id="startDate" class="form-control" required />
+                    </div>
+
+                    <!-- 종료 시간 입력 -->
+                    <div class="reqFormSec">
+                        <label for="endDate" class="reqFormTit">종료시간</label>
+                        <input type="datetime-local" id="endDate" class="form-control" required />
+                    </div>
+
+                    <!-- 캘린더 선택 -->
+                    <div class="reqFormSec">
+                        <label for="division" class="reqFormTit">캘린더</label>
+                        <select id="division" class="form-select" required>
+                            <option value="1">내 캘린더</option>
+                            <option value="0">팀 캘린더</option>
+                        </select>
+                    </div>
+
+                    <!-- 내용 입력 -->
+                    <div class="reqFormSec">
+                        <label for="content" class="reqFormTit">내용</label>
+                        <input type="text" id="content" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" id="save">추가</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 </body>
 </html>

@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class DateTimeUtil {
 
@@ -22,4 +23,17 @@ public class DateTimeUtil {
                 ).atZone(DEFAULT_ZONE_ID)
         );
     }
+
+    // java.util.Date를 LocalDateTime으로 변환
+    public static LocalDateTime toLocalDateTime(Date date) {
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+
+
+
+
+
+
+
 }

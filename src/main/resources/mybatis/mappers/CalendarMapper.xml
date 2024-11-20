@@ -7,13 +7,32 @@
         insert into WORKUS_CALENDAR
             (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no, dept_no)
         values
-            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, 20135, 1003)
+            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no}, #{calendar.deptNo})
 
         <selectKey resultType="Long" keyProperty="calendar.no" keyColumn="calendar_no" order="AFTER">
             select last_insert_id()
         </selectKey>
-
     </insert>
+
+    <!-- List<Calendar> selectEventsByDateRange(@Param("start") LocalDateTime startDateTime, @Param("end") LocalDateTime endDateTime); -->
+    <select id="selectEventsByDateRange" resultType="Calendar">
+        SELECT
+            calendar_no AS no,
+            calendar_name AS name,
+            calendar_content AS content,
+            calendar_start_date AS startDate,
+            calendar_end_date AS endDate,
+            calendar_location AS location,
+            calendar_division AS division,
+            user_no AS userNo,
+            dept_no AS deptNo
+        FROM
+            WORKUS_CALENDAR
+        WHERE
+            calendar_start_date &gt;= #{start}
+            AND calendar_end_date &lt;= #{end}
+            AND user_no = #{loginUser.no}
+    </select>
 
 
 

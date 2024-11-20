@@ -12,4 +12,7 @@ public class CalendarForm {
      private String endDate;
      private String division;
      private String content;
+
+     private Long no;
+     private Long deptNo;
 }
