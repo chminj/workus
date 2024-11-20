@@ -35,10 +35,4 @@ public interface ChatMapper {
      * @param chat 객체
      */
     void insertChat(@Param("chat") Chat chat);
-
-    /**
-     * 채팅 객체를 받아서 isFirst를 'Y'로 업데이트 한다.
-     * @param chat
-     */
-    void updateIsFirst(@Param("chat") Chat chat);
 }

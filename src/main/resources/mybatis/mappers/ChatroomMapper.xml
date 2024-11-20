@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.chat.mapper.ChatroomMapper">
+
+    <update id="updateChatroomConTime">
+        update
+            WORKUS_CHATROOM_HISTORY
+        set
+            CHATROOM_CON_TIME = #{now}
+        where
+            CHATROOM_NO = #{chatroomNo}
+          and
+            USER_NO = #{userNo}
+    </update>
+
     <select id="getChatroomNoByUserNo" resultType="Long">
         select CHATROOM_NO
         from WORKUS_CHATROOM_HISTORY
@@ -25,8 +37,10 @@
             WORKUS_USERS U
         on
             U.USER_NO = C.USER_NO
-        where R.CHATROOM_NO = #{chatroomNo}
-        order by C.CHAT_TIME desc
+        where
+            R.CHATROOM_NO = #{chatroomNo}
+        order by
+            C.CHAT_TIME desc
         limit 1
     </select>
 
@@ -47,17 +61,33 @@
             , U.USER_PROFILE_SRC
         from
             WORKUS_CHATROOM_HISTORY H
-        INNER JOIN
+        inner join
             WORKUS_USERS U
-        ON
+        on
             H.USER_NO = U.USER_NO
-        INNER JOIN
+        inner join
             WORKUS_CHATROOM R
-        ON
+        on
             H.CHATROOM_NO = R.CHATROOM_NO
-        WHERE
+        where
             H.CHATROOM_NO = #{chatroomNo}
-        AND
+        and
             H.CHATROOM_OUT_TIME IS NULL
+    </select>
+
+    <select id="getNotReadCount" resultType="int">
+        select count(1)
+        from
+            WORKUS_CHAT C
+        inner join
+            WORKUS_CHATROOM_HISTORY H
+        on
+            C.CHATROOM_NO = H.CHATROOM_NO
+        where
+            H.CHATROOM_NO = #{chatroomNo}
+        and
+            H.USER_NO = #{userNo}
+        and
+            H.CHATROOM_CON_TIME <![CDATA[<]]> C.CHAT_TIME
     </select>
 </mapper>
