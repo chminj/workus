@@ -12,6 +12,7 @@
   <script src="
 https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 "></script>
+  <script src="/resources/js/attendance.js"></script>
   <title>workus ㅣ 근태</title>
 </head>
 <body>
@@ -119,18 +120,8 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 <p class="reqFormTit mgb10">결재 및 참조선</p>
                 <div class="d-flex">
                   <div class="listSec wholeList">
-                    <ul class="atdList">
-                      <li class="d-flex">
-                        <input type="checkbox" id="checkingUser1" class="mgr5">
-                        <label for="checkingUser1">
-                          <span class="name mgr5">김재언</span>
-                        </label>
-                        <span class="gray">
-                              <span class="dept">개발1팀</span>
-                              <span>/</span>
-                              <span class="position">부장</span>
-                            </span>
-                      </li>
+                    <ul class="atdList" id="atdFormUser">
+                      <%-- atdForm --%>
                     </ul>
                   </div>
                   <div class="listSec checkedList">
@@ -146,17 +137,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                       <div class="atdList">
                         <p class="sTit">결재선</p>
                         <ul>
-                          <li class="d-flex">
-                            <input type="checkbox" id="checkingUser" class="mgr5">
-                            <label for="checkingUser">
-                              <span class="name mgr5">김재언</span>
-                            </label>
-                            <span class="gray">
-                              <span class="dept">개발1팀</span>
-                              <span>/</span>
-                              <span class="position">부장</span>
-                            </span>
-                          </li>
+                          <%-- 결재선 자리 --%>
                         </ul>
                       </div>
                     </div>
@@ -172,7 +153,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                       <div class="atdList">
                         <p class="sTit">참조선</p>
                         <ul>
-                          <li></li>
+                          <%-- 참조선 자리 --%>
                         </ul>
                       </div>
                     </div>
@@ -190,12 +171,5 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
     </section>
   </div>
 </div>
-<script>
-  $(function(){ // 이중 모달 구현 예정
-    $("#confirmModalBtn").on("click",function (){
-      confirm("해당 정보로 연차를 신청하겠습니까?");
-    });
-  })
-</script>
 </body>
 </html>

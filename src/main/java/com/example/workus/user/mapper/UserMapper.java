@@ -4,14 +4,12 @@ import com.example.workus.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 @Mapper
 public interface UserMapper {
 
-    /**
-     * user번호를 받아서 user객체를 반환한다.
-     * @param userNo
-     * @return 유저 모든 정보가 담긴 객체
-     */
+    List<User> getAllUsers();
     User getUserByUserNo(@Param("userNo") long userNo);
     User getUserById(@Param("id") String id);
     void insertUser(User user);
