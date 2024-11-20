@@ -55,41 +55,85 @@ $(function(){
 
     // dayTotal count in modal
     $('#atdFromDate').on("change", function(){
-       $('#atdToDate').focus();
+        let nowFromDate = $(this).val();
+       $('#atdToDate').focus().attr('min', nowFromDate);
     });
 
-    $('#atdToDate').on("change", function(){
-        let fromDate = $('#atdFromDate').val();
-        let toDate = $('#atdToDate').val();
-        toDate = new Date(toDate);
-        fromDate = new Date(fromDate);
+    $('#atdToDate').on("change", function() {
+        let fromDateStr = $('#atdFromDate').val();
+        let toDateStr = $('#atdToDate').val();
+
+        // Date 객체를 한 번만 생성
+        let fromDate = new Date(fromDateStr);
+        let toDate = new Date(toDateStr);
 
         let totalTime = 0;
-        let dates = getDates(fromDate, toDate);
 
-        for (let value of dates) {
-            let date = new Date(value);
-            let dayOfWeek = date.getDay();
+        // 주중과 주말을 구분하기 위한 상수
+        const WEEKDAY_START = 1; // 월요일
+        const WEEKDAY_END = 5;   // 금요일
 
-            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+        // 날짜 계산을 위한 변수
+        let currentDate = new Date(fromDate);
+
+        // 날짜 범위 내 주중 날짜 계산
+        while (currentDate <= toDate) {
+            let dayOfWeek = currentDate.getDay();
+
+            // 주말 제외
+            if (dayOfWeek >= WEEKDAY_START && dayOfWeek <= WEEKDAY_END) {
                 totalTime++;
             }
+
+            // 다음 날짜로 이동
+            currentDate.setDate(currentDate.getDate() + 1);
         }
 
         $('.dayTotal').html(totalTime);
     });
 
-    // 두 날짜 사이에 존재하는 날짜를 배열로 반환한다.
-    function getDates(startDate, endDate) {
-        let dates = [];
+    const serviceKey = 'A7%2FHaEQe1yP2IrM2iyJqZyrLs9SFLwZ788isUppVC7woA1J7J0n316aNTU7RL7B1GJUhjQDHpXhwBq7ud7u14A%3D%3D'
+    /* Javascript 샘플 코드 */
 
-        while (startDate <= endDate) {
-            // 날짜에서 'yyyy-MM-dd'만 배열에 저장한다.
-            dates.push(startDate.toISOString().split('T')[0]);
-
-            startDate.setDate(startDate.getDate() + 1);
+    var xhr = new XMLHttpRequest();
+    var url = 'http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo'; /*URL*/
+    var queryParams = '?' + encodeURIComponent('serviceKey') + '='+ serviceKey; /*Service Key*/
+    queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* 임의의 수 */
+    queryParams += '&' + encodeURIComponent('solYear') + '=' + encodeURIComponent('2024'); /**/
+    queryParams += '&' + encodeURIComponent('_type') + '=' + encodeURIComponent('json'); /**/
+    xhr.open('GET', url + queryParams);
+    xhr.onreadystatechange = function () {
+        if (this.readyState == 4) {
+            parseJSON(this.responseText);
         }
-        return dates;
+    };
+
+    xhr.send('');
+
+    function parseJSON(jsonText) {
+        let jsonObj = JSON.parse(jsonText);
+        let items = jsonObj.response.body.items.item; // items의 item 배열에 접근
+
+        let locdateArray = []; // locdate를 저장할 배열
+
+        // 각 item에 대해 locdate를 추출하고 요일을 확인
+        for (let item of items) {
+            if (item && item.locdate) { // item과 locdate가 존재하는지 확인
+                locdateArray.push(item.locdate); // locdate를 배열에 추가
+
+                // locdate의 요일 확인
+                let date = new Date(item.locdate.toString().replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3')); // locdate를 YYYY-MM-DD 형식으로 변환
+                let dayOfWeek = date.getDay(); // 요일 숫자 (0: 일요일, 1: 월요일, ..., 6: 토요일)
+
+                // 토요일(6)과 일요일(0) 제외
+                if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+                    console.log(`locdate: ${item.locdate}, 요일: ${date.toLocaleDateString('ko-KR', { weekday: 'long' })}`); // locdate와 요일 출력
+                }
+            }
+        }
+
+        console.log(locdateArray); // locdate 배열 출력
     }
     /* // attendance */
+
 });
