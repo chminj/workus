@@ -1,5 +1,6 @@
 package com.example.workus.attendance.controller;
 
+import com.example.workus.attendance.dto.AttendanceCategoryDto;
 import com.example.workus.attendance.dto.AttendanceDto;
 import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.security.LoginUser;
@@ -33,9 +34,15 @@ public class AttendanceController {
         return "attendance/list";
     }
 
-    @GetMapping("/attendanceForm")
+    @GetMapping("/atdFormInUser")
     @ResponseBody
     public List<User> usersInAtdForm() {
         return (List<User>) userService.getAllUsers();
+    }
+
+    @GetMapping("/atdFormInCtgr")
+    @ResponseBody
+    public List<AttendanceCategoryDto> categoriesInAtdForm() {
+        return (List<AttendanceCategoryDto>) attendanceService.getCategories();
     }
 }

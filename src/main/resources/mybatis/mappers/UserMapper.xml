@@ -37,7 +37,7 @@
             WORKUS_ATH_ROLE R
             on
             U.ROLE_NO = R.ROLE_NO
-        order by U.USER_NAME ASC
+        order by U.DEPT_NO ASC, U.POSITION_NO ASC
     </select>
     <!--    User getUserByUserNo(@Param("userNo") long userNo);-->
     <select id="getUserByUserNo" resultType="User">
