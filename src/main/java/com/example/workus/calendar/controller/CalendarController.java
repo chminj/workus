@@ -5,6 +5,7 @@ import com.example.workus.calendar.service.CalendarService;
 import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
+import com.example.workus.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -34,6 +35,27 @@ public class CalendarController {
         Calendar calendar = calendarService.addNewCalendar(form);
 
         return calendar;
+    }
+
+    @PostMapping("/update")
+    @ResponseBody
+    public Calendar update(@RequestParam("id") Long eventId, CalendarForm form) {
+        Calendar calendar = calendarService.getCalendarByNo(eventId); // 수정할 일정을 가져옴
+        if (calendar != null) {
+            // 수정할 정보를 폼 데이터에서 가져와서 설정
+            calendar.setName(form.getName());
+            calendar.setLocation(form.getLocation());
+            calendar.setStartDate(DateTimeUtil.getLocalDateTime(form.getStartDate()));
+            calendar.setEndDate(DateTimeUtil.getLocalDateTime(form.getEndDate()));
+            calendar.setDivision(form.getDivision());
+            calendar.setContent(form.getContent());
+
+            calendarService.updateCalendar(calendar); // 업데이트 처리
+
+            return calendar;
+        } else {
+            throw new RuntimeException("일정을 찾을 수 없습니다.");
+        }
     }
 
     @PostMapping("/detail")

@@ -20,4 +20,6 @@ public interface CalendarMapper {
             @Param("loginUser") LoginUser loginUser);
 
     Calendar selectCalendarByNo(Long calendarNo);
+
+    void updateCalendar(@Param("calendar") Calendar calendar);
 }

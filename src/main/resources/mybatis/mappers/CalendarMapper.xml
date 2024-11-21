@@ -57,11 +57,16 @@
             calendar_no = #{calendarNo}
     </select>
 
-
-
-
-
-
-
+    <update id="updateCalendar">
+        UPDATE WORKUS_CALENDAR
+        SET
+            calendar_name = #{calendar.name},
+            calendar_content = #{calendar.content},
+            calendar_start_date = #{calendar.startDate},
+            calendar_end_date = #{calendar.endDate},
+            calendar_location = #{calendar.location},
+            calendar_division = #{calendar.division}
+        WHERE calendar_no = #{calendar.no}
+    </update>
 
 </mapper>

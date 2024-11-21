@@ -120,7 +120,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="save">추가</button>
+                    <button type="button" class="btn btn-primary" id="save">저장</button>
                 </div>
             </form>
         </div>

@@ -51,4 +51,8 @@ public class CalendarService {
     public Calendar getCalendarByNo(Long calendarNo) {
         return calendarMapper.selectCalendarByNo(calendarNo);
     }
+
+    public void updateCalendar(Calendar calendar) {
+        calendarMapper.updateCalendar(calendar);
+    }
 }

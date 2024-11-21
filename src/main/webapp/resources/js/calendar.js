@@ -3,12 +3,16 @@
         // "일정 추가하기" 버튼 클릭 시 모달 열기
         $("#addScheduleBtn").on("click", function () {
 
+            $("#calendarModalLabel").text("일정 추가하기");
+
             $("#calendarModal #name").val("");
             $("#calendarModal #location").val("");
             $("#calendarModal #startDate").val("");
             $("#calendarModal #endDate").val("");
             $("#calendarModal #division").val("1");
             $("#calendarModal #content").val("");
+
+            $("#save").text("저장");
 
             $("#calendarModal").modal("show");
         });
@@ -59,10 +63,14 @@
                     $("#calendarModal #content").val(response.content);
 
                     $("#calendarModalLabel").text("일정 상세정보");
-
+                    
+                    // 변경 사항 저장
                     $("#save").text("저장");
 
+                    $("#calendarModal").data("eventId", eventId);
+
                     $("#calendarModal").modal("show");
+
                 },
                 error: function(xhr, status, error) {
                     console.error("일정 상세 정보 가져오기 실패:", error);
@@ -131,6 +139,8 @@
 
             let startDateParts = startDate.split("T");
 
+            $("#calendarModalLabel").text("일정 추가하기");
+
             $("#calendarModal #name").val("");
             $("#calendarModal #location").val("");
             $("#calendarModal #endDate").val("");
@@ -164,34 +174,65 @@
             return;
         }
 
-        $.ajax({
-            type: "post",
-            url: "/calendar/add",
-            data: eventData,
-            success: function (result) {
-                calendar.addEvent({
-                    id: result.no,
-                    title: result.name,
-                    start: result.startDate,
-                    end: result.endDate,
-                    color: divisionColors[result.division] || '#6c757d',
-                    extendedProps: {
-                        location: result.location,
-                        division: result.division,
-                        content: result.content,
-                        userNo: result.no,
-                        deptNo: result.deptNo
-                    }
-                });
+        var eventId = $("#calendarModal").data("eventId");
 
-                $("#calendarModal").modal("hide");
-                $("#name, #location, #startDate, #endDate, #division, #content").val("");
-                console.log("일정이 추가되었습니다.");
-            },
-            error: function (xhr, status, error) {
-                console.error("일정 추가 실패:", error);
-            }
-        });
+        console.log(eventId)
+
+        if (eventId) {
+            $.ajax({
+                type: "post",
+                url: "/calendar/update",  // 수정 요청 URL
+                data: { id: eventId, ...eventData },
+                success: function (result) {
+
+                    var event = calendar.getEventById(eventId);
+                    event.setProp('title', result.name);
+                    event.setStart(result.startDate);
+                    event.setEnd(result.endDate);
+                    event.setExtendedProp('content', result.content);
+                    event.setExtendedProp('location', result.location);
+                    event.setExtendedProp('division', result.division);
+
+                    $("#calendarModal").modal("hide");
+
+                    $("#name, #location, #startDate, #endDate, #division, #content").val("");
+                },
+                error: function(xhr, status, error) {
+                    console.error("일정 수정 실패:", error);
+                }
+            });
+        } else {
+            $.ajax({
+                type: "post",
+                url: "/calendar/add",
+                data: eventData,
+                success: function (result) {
+                    calendar.addEvent({
+                        id: result.no,
+                        title: result.name,
+                        start: result.startDate,
+                        end: result.endDate,
+                        color: divisionColors[result.division] || '#6c757d',
+                        extendedProps: {
+                            location: result.location,
+                            division: result.division,
+                            content: result.content,
+                            userNo: result.no,
+                            deptNo: result.deptNo
+                        }
+                    });
+
+                    $("#calendarModal").modal("hide");
+                    $("#name, #location, #startDate, #endDate, #division, #content").val("");
+                    console.log("일정이 추가되었습니다.");
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 추가 실패:", error);
+                }
+            });
+        }
+
+
     });
 
     // FullCalendar 렌더링
