@@ -3,6 +3,8 @@ package com.example.workus.chat.service;
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
 import com.example.workus.chat.mapper.ChatroomMapper;
+import com.example.workus.user.dto.DeptInChatroomDto;
+import com.example.workus.user.dto.ParticipantInChatroomDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Transactional
@@ -46,5 +50,16 @@ public class ChatroomServcie {
     public void updateChatroomConTime(Long userNo, Long chatroomNo) {
         LocalDateTime now = LocalDateTime.now();
         chatroomMapper.updateChatroomConTime(userNo, chatroomNo, now);
+    }
+
+    public List<DeptInChatroomDto> getAllDepts() {
+        return chatroomMapper.getAllDepts();
+    }
+
+    public Map<String, List<ParticipantInChatroomDto>> getAllUsersByDeptName(String deptName) {
+        Map<String, List<ParticipantInChatroomDto>> map = new HashMap<>();
+        List<ParticipantInChatroomDto> usersByDeptName = chatroomMapper.getAllUsersByDeptName(deptName);
+        map.put(deptName, usersByDeptName);
+        return map;
     }
 }

@@ -90,4 +90,31 @@
         and
             H.CHATROOM_CON_TIME <![CDATA[<]]> C.CHAT_TIME
     </select>
+
+    <select id="getAllDepts" resultType="DeptInChatroomDto">
+        select
+            DEPT_NO as deptNo
+            , DEPT_NAME as deptName
+        from
+            WORKUS_DEPT
+    </select>
+
+    <select id="getAllUsersByDeptName" resultType="ParticipantInChatroomDto">
+        select
+            U.USER_NO as userNo
+            , U.USER_NAME as userName
+            , P.POSITION_NAME as positionName
+        from
+            WORKUS_USERS U
+        inner join
+            WORKUS_POSITION P
+        on
+            U.POSITION_NO = P.POSITION_NO
+        inner join
+            WORKUS_DEPT D
+        on
+            D.DEPT_NO = U.DEPT_NO
+        where
+            D.DEPT_NAME = #{deptName}
+    </select>
 </mapper>
