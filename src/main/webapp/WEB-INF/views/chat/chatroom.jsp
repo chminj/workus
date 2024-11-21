@@ -117,30 +117,35 @@
 
           <div class="mb-3">
             <label class="form-label">참여자 선택</label>
-            <input type="text" class="form-control mb-3" id="userSearch" placeholder="이름 또는 부서로 검색">
+            <input type="text" class="form-control mb-3" id="userSearch" placeholder="이름 검색">
 
             <!-- 부서별 사용자 목록 -->
             <div class="border rounded p-3" style="height: 300px; overflow-y: auto;">
-<%--				부서--%>
+            	<%-- 부서 --%>
+				<c:forEach var="dept" items="${depts}" varStatus="deptStatus">
                 <div class="department-group mb-3">
                   <div class="form-check">
-                    <input class="form-check-input dept-check" type="checkbox" id="">IT 부서
+                    <input class="form-check-input dept-check" type="checkbox" id="dept${dept.deptNo}" data-dept="${dept.deptNo}">
+                    <button class="btn btn-link p-0 text-decoration-none" type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#deptCollapse${dept.deptNo}"
+                        aria-expanded="true">
+                        ${dept.deptName}
+					</button>
                   </div>
-                  <div class="ms-4 mt-2">
-<%--					  부서에 속한 유저--%>
-						<div class="form-check mb-2">
-							<input class="form-check-input user-check" type="checkbox" value="" id="" data-dept="">
-							  <span class="text-muted">[부장]</span> 홍길동
-						</div>
-						<div class="form-check mb-2">
-							<input class="form-check-input user-check" type="checkbox" value="" id="" data-dept="" checked disabled>
-								<span class="text-muted">[부장]</span> 홍길동
-						</div>
-<%--					  부서에 속한 또 다른 유저--%>
+                  <div class="collapse ms-4 mt-2" id="deptCollapse${dept.deptNo}">
+                  	<%-- 부서에 속한 유저 --%>
+					<c:forEach var="map" items="${participantInfos[deptStatus.index]}">
+					<c:forEach var="participantInfo" items="${map.value}">
+					<div class="form-check mb-2">
+						<input class="form-check-input user-check" type="checkbox" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept="${dept.deptNo}">
+						  <span class="text-muted">[${participantInfo.positionName}]</span> ${participantInfo.userName}
+					</div>
+					</c:forEach>
+					</c:forEach>
                   </div>
                 </div>
-
-<%--				다른 부서--%>
+				</c:forEach>
             </div>
           </div>
         </form>
@@ -158,6 +163,20 @@
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
 
+		// 부서 체크박스 체크와 해제 이벤트
+		$('.dept-check').change(function() {
+			if ($('.dept-check').is(':checked')) {
+				let deptNo = $(this).data('dept');
+				console.log('deptNo: ', deptNo);
+				$(`[data-dept=\${deptNo}]`).prop("checked", true);
+			} else {
+				let deptNo = $(this).data('dept');
+				console.log('deptNo: ', deptNo);
+				$(`[data-dept=\${deptNo}]`).prop("checked", false);
+			}
+		})
+
+		// 페이지 변화 시 연결 시간 업데이트
 		$(document).on('visibilitychange', async function() {
 			const chatroomNo = $('.chat-text').data('chatroomNo');
 			try {

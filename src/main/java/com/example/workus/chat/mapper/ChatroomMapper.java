@@ -2,6 +2,8 @@ package com.example.workus.chat.mapper;
 
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
+import com.example.workus.user.dto.DeptInChatroomDto;
+import com.example.workus.user.dto.ParticipantInChatroomDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -44,4 +46,12 @@ public interface ChatroomMapper {
      * @return 읽지 앟은 메시지 수
      */
     int getNotReadCount(@Param("userNo") Long userNo, @Param("chatroomNo") Long chatroomNo);
+
+    /**
+     * 채팅방 만들기에 표시할 모든 부서목록을 가져온다.
+     * @return 부서 목록
+     */
+    List<DeptInChatroomDto> getAllDepts();
+
+    List<ParticipantInChatroomDto> getAllUsersByDeptName(@Param("deptName") String deptName);
 }
