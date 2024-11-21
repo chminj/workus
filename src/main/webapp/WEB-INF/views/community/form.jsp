@@ -1,126 +1,204 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@ include file="../common/tags.jsp" %>
+<!doctype html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>게시물 작성 | Workus Community</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <%@ include file="../common/common.jsp" %>
   <link href="../../../resources/css/communitymain.css" rel="stylesheet"/>
-  <%@ include file="../home.jsp" %>
+  <title>workus template</title>
+  <!-- 소스 다운 -->
+  <script src="https://unpkg.com/@yaireo/tagify"></script>
+  <!-- 폴리필 (구버젼 브라우저 지원) -->
+  <script src="https://unpkg.com/@yaireo/tagify/dist/tagify.polyfills.min.js"></script>
+  <link href="https://unpkg.com/@yaireo/tagify/dist/tagify.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
+<div id="divWrapper">
+  <div id="divContents">
+    <%@ include file="../common/header.jsp" %>
+    <section class="verticalLayoutFixedSection">
+      <%@ include file="../common/nav.jsp" %>
+      <div class="container">
+        <!-- 미리보기 영역 -->
+        <div class="left-section">
+          <div class="header">미리보기</div>
+          <div id="filePreview" class="file-preview"></div>
+        </div>
 
-  <div class="container">
-    <div class="left-section">
-      <!-- 미리보기 영역 -->
-      <div class="preview-section" id="previewSection">
-        <div class="preview-content">
-          <div class="file-preview" id="filePreview"></div>
-          <div class="preview-text" id="previewText"></div>
-          <div class="preview-hashtags" id="previewHashtags"></div>
+        <!-- 게시글 작성 폼 -->
+        <div class="right-section">
+          <div class="header">새 게시물 작성</div>
+          <form id="postForm" method="post" action="add" enctype="multipart/form-data">
+          <div> <p id="text"></p></div>
+
+            <!-- 제목 입력 -->
+            <div class="form-group">
+              <input type="text" name="title" id="postTitle" placeholder="게시물 제목을 입력하세요" >
+            </div>
+
+            <!-- 내용 입력 -->
+            <div class="form-group">
+              <textarea name="content"id="postContent" rows="5" placeholder="게시물 내용을 작성하세요" ></textarea>
+            </div>
+
+            <!-- 해시태그 입력 -->
+            <div>
+              <input name='tags' class='some_class_name' placeholder='예시 "#해쉬태그" 해쉬태그를 입력해주세요' value=''>
+              <button type="button" id="resetTags">태그 초기화</button>
+            </div>
+
+            <!-- 이미지/동영상 업로드 -->
+            <div class="form-group file-input-wrapper">
+              <input type="file" name="upfile" id="postFiles" accept="image/*, video/*" multiple>
+            </div>
+
+            <!-- 게시 버튼 -->
+            <button type="submit" class="btn-post" id="upfile">게시하기</button>
+            <button type="button" class="btn-cancel" onclick="cancelPost()">
+              <a href="list">취소</a>
+            </button>
+          </form>
         </div>
       </div>
-    </div>
-
-    <div class="right-section">
-      <div class="header">새 게시물 작성</div>
-      <form id="postForm" enctype="multipart/form-data">
-        
-        <!-- 내용 입력 -->
-        <div class="form-group">
-          <textarea id="postContent" rows="5" placeholder="게시물 내용을 작성하세요" required></textarea>
-        </div>
-
-        <!-- 해시태그 입력 -->
-        <div class="form-group">
-          <input type="text" id="postHashtags" placeholder="예: #여행 #개발 #인스타그램">
-        </div>
-
-        <!-- 이미지/동영상 업로드 -->
-        <div class="form-group file-input-wrapper">
-          <input type="file" id="postFiles" accept="image/*, video/*" multiple>
-        </div>
-
-        <!-- 게시 버튼 -->
-        <button type="submit" class="btn-post">게시하기</button>
-        <button type="button" class="btn-cancel" onclick="cancelPost()">취소</button>
-      </form>
-    </div>
+      </main>
+    </section>
   </div>
-
-  <script>
-    // 파일 미리보기 기능
-    document.getElementById('postFiles').addEventListener('change', function(event) {
-      const files = event.target.files;
-      const previewContainer = document.getElementById('filePreview');
-      previewContainer.innerHTML = ''; // 기존 미리보기 내용 초기화
-
-      for (const file of files) {
-        const reader = new FileReader();
-        const fileType = file.type.split('/')[0]; // 'image' 또는 'video'
-
-        reader.onload = function(e) {
-          const fileUrl = e.target.result;
-          const fileElement = document.createElement(fileType === 'image' ? 'img' : 'video');
-          
-          fileElement.src = fileUrl;
-          fileElement.classList.add('file-preview-item');
-          fileElement.controls = (fileType === 'video'); // 비디오일 경우 컨트롤러 표시
-
-          previewContainer.appendChild(fileElement);
-        };
-
-        reader.readAsDataURL(file); // 파일을 base64로 읽어오기
-      }
-
-      // 파일이 있으면 미리보기 내용의 위치 조정
-      updatePreviewLayout();
-    });
-
-    // 게시물 미리보기 업데이트
-    document.getElementById('postForm').addEventListener('input', function() {
-      const content = document.getElementById('postContent').value;
-      const hashtags = document.getElementById('postHashtags').value;
-      
-      // 미리보기 업데이트
-      document.getElementById('previewText').innerText = content;
-      document.getElementById('previewHashtags').innerHTML = hashtags.split(' ').map(tag => `<span class="hashtag">${tag}</span>`).join(' ');
-
-      // 미리보기 레이아웃 업데이트
-      updatePreviewLayout();
-    });
-
-    // 미리보기 레이아웃 업데이트
-    function updatePreviewLayout() {
-      const previewText = document.getElementById('previewText').innerText;
-      const previewContainer = document.getElementById('filePreview');
-
-      if (previewContainer.children.length > 0) {
-        // 이미지나 비디오가 있으면, 내용이 아래로 배치
-        document.getElementById('previewText').style.marginTop = '20px';
-      } else {
-        // 이미지나 비디오가 없으면, 내용이 바로 위에 배치
-        document.getElementById('previewText').style.marginTop = '0px';
-      }
-    }
-
-    // 폼 제출 시 동작 (예시로 alert만 추가)
-    document.getElementById('postForm').addEventListener('submit', function(event) {
-      event.preventDefault(); // 폼 제출 기본 동작 방지
-      alert('게시물이 작성되었습니다!');
-    });
-
-    // 취소 버튼 클릭 시 동작
-    function cancelPost() {
-      if (confirm('게시물을 취소하시겠습니까?')) {
-        document.getElementById('postForm').reset(); // 폼 리셋
-        document.getElementById('filePreview').innerHTML = ''; // 미리보기 초기화
-        document.getElementById('previewText').innerText = ''; // 내용 초기화
-        document.getElementById('previewHashtags').innerHTML = ''; // 해시태그 초기화
-      }
-    }
-  </script>
-  
+</div>
 </body>
+<script>
+  // 파일 미리보기 기능
+  document.getElementById('postFiles').addEventListener('change', function(event) {
+    const files = event.target.files;
+    const previewContainer = document.getElementById('filePreview');
+    previewContainer.innerHTML = ''; // 기존 미리보기 내용 초기화
+
+    for (const file of files) {
+      const reader = new FileReader();
+      const fileType = file.type.split('/')[0]; // 'image' 또는 'video'
+
+      reader.onload = function(e) {
+        const fileUrl = e.target.result;
+        const fileElement = document.createElement(fileType === 'image' ? 'img' : 'video');
+
+        fileElement.src = fileUrl;
+        fileElement.classList.add('file-preview-item');
+        fileElement.controls = (fileType === 'video'); // 비디오일 경우 컨트롤러 표시
+
+        previewContainer.appendChild(fileElement);
+      };
+
+      reader.readAsDataURL(file); // 파일을 base64로 읽어오기
+    }
+  });
+
+  // 폼 제출 시 동작 (예시로 alert만 추가)
+
+  // 해시태그를 위한 Tagify 초기화
+  // LocalStorage에서 기존 저장된 태그 불러오기
+  // LocalStorage에서 기존 저장된 태그 불러오기
+  // LocalStorage에서 저장된 태그 불러오기
+  var storedTags = JSON.parse(localStorage.getItem("savedTags")) || [];
+  var whitelist = [...new Set(storedTags)]; // 중복 제거
+
+  // Tagify 초기화
+  var input = document.querySelector('input[name="tags"]');
+  var tagify = new Tagify(input, {
+    whitelist: whitelist,
+    maxTags: 20,
+    dropdown: {
+      maxItems: 20, // 최대 드롭다운 항목 수
+      classname: "tags-look",
+      enabled: 0, // 드롭다운 비활성화
+      closeOnSelect: false
+    },
+    delimiters: "\n" // 엔터 키로만 태그 추가 가능
+  });
+
+  // 태그 추가 전 자동으로 # 붙이기
+  tagify.settings.transformTag = function (tagData) {
+    if (!tagData.value.startsWith("#")) {
+      tagData.value = "#" + tagData.value.trim(); // 앞에 # 추가
+    }
+    return tagData;
+  };
+
+  // 태그 추가 이벤트 처리
+  tagify.on('add', function (e) {
+    const newTag = e.detail.data.value;
+
+    // 한 글에서 중복된 태그를 허용하지 않음
+    const currentTags = tagify.value.map(tag => tag.value);
+    if (currentTags.filter(tag => tag === newTag).length > 1) {
+      tagify.removeTags(newTag); // 중복된 태그 삭제
+      alert("중복된 태그는 추가할 수 없습니다.");
+      return;
+    }
+
+    // 태그를 whitelist와 LocalStorage에 추가
+    if (!whitelist.includes(newTag)) {
+      whitelist.push(newTag); // whitelist에 추가
+      localStorage.setItem("savedTags", JSON.stringify(whitelist)); // LocalStorage에 저장
+    }
+  });
+
+  // 태그 초기화 버튼 이벤트 처리
+  document.getElementById("resetTags").addEventListener("click", function () {
+    // whitelist와 LocalStorage 초기화
+    whitelist = []; // whitelist 초기화
+    localStorage.removeItem("savedTags"); // LocalStorage에서 삭제
+    tagify.whitelist = whitelist; // Tagify에 반영
+    tagify.dropdown.hide(); // 드롭다운 닫기
+    alert("태그가 초기화되었습니다."); // 알림 표시
+  });
+
+
+
+
+  // 폼 제출 이벤트 처리
+  document.getElementById("postForm").addEventListener("submit", function(event) {
+    let formValid = true; // 폼이 유효한지 체크하는 변수
+
+    // 경고 메시지 초기화
+    document.getElementById("text").innerHTML = "";
+
+    // 제목, 내용, 해시태그, 파일 첨부 확인w
+    const title = document.getElementById("postTitle").value;
+    const content = document.getElementById("postContent").value;
+    const tags = document.querySelector('input[name="tags"]').value;
+    const files = document.getElementById("postFiles").files;
+
+    // 제목이 비어있으면 경고 메시지 표시
+    if (!title.trim()) {
+      formValid = false;
+      document.getElementById("text").innerHTML += "❌ 제목을 입력해주세요. <br>";
+    }
+
+    // 내용이 비어있으면 경고 메시지 표시
+    if (!content.trim()) {
+      formValid = false;
+      document.getElementById("text").innerHTML += "❌ 내용을 입력해주세요. <br>";
+    }
+
+    // 해시태그가 비어있으면 경고 메시지 표시
+    if (!tags.trim()) {
+      formValid = false;
+      document.getElementById("text").innerHTML += "❌ 해시태그를 입력해주세요. <br>";
+    }
+
+    // 파일이 첨부되지 않으면 경고 메시지 표시
+    if (files.length === 0) {
+      formValid = false;
+      document.getElementById("text").innerHTML += "❌ 파일을 첨부해주세요. <br>";
+    }
+
+    // 폼 유효성 검사 실패 시 제출을 막고 경고 메시지 표시
+    if (!formValid) {
+      event.preventDefault(); // 폼 제출을 막습니다.
+      document.getElementById("text").style.color = "red"; // 경고 메시지 색상을 빨간색으로 설정
+    }
+  });
+</script>
 </html>

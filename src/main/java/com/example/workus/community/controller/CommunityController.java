@@ -1,16 +1,17 @@
 package com.example.workus.community.controller;
 
+import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
+import com.example.workus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @RequestMapping("/community")
@@ -31,8 +32,16 @@ public class CommunityController {
         return feeds;
     }
 
-    @GetMapping("/form")
-   public String form(){
+    @GetMapping("form")
+    public String form(){
        return "community/form";
+    }
+
+    @PostMapping("/add")
+    public String addFeed(FeedForm form){
+        Long userNo = 20133L;
+
+        communityService.addNewFeed(form, userNo);
+        return "redirect:/community/list";
    }
 }

@@ -16,7 +16,7 @@
     <%@ include file="../common/header.jsp" %>
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
-      <main>
+      <main class="noLnb">
         <h3 class="title1">Workus Community</h3>
         <div class="content">
           <div class="wrap">
@@ -28,6 +28,10 @@
                 </svg>
               </button>
             </div>
+            <div>
+              <button type="button" class="btn btn-outline-dark"><a href="form">글 작성</a></button>
+            </div>
+
           </div>
           <!---MAIN--->
           <main class="container wrap">
@@ -76,16 +80,18 @@
     }
   });
 
-  // 팝업 열기
+ */
+
+  //팝업 열기
   function openPopup() {
     document.getElementById("popupOverlay").style.display = "flex";
   }
 
-  // 팝업 닫기
+ //팝업 닫기
   function closePopup() {
     document.getElementById("popupOverlay").style.display = "none";
   }
-
+/*
   // 좋아요 토글
   function toggleLike() {
     isLiked = !isLiked; // 좋아요 상태 토글
@@ -181,7 +187,7 @@ function getFeeds(page) {
         <!--top-->
         <div class="new_poster">
           <div class="poster_img">
-            <img alt="follower profile image" class="round_img" src="../../../resources/images/img.jpg" />
+            <img alt="follower profile image" class="round_img" src="../../../resources/images/\${feed.mediaUrl}" />
           </div>
           <a href="#n" class="poster_id txt_id">\${feed.user.name}</a>
           <div class="dropdown-container">
@@ -219,13 +225,13 @@ function getFeeds(page) {
               <div class="popup-overlay" id="popupOverlay">
                 <div class="popup">
                   <div class="popup-left">
-                    <img src="../../../resources/images/img.jpg" alt="Post Image">
+                    <img src="../../../resources/images/\${feed.mediaUrl}" alt="Post Image">
                   </div>
                   <div class="popup-right">
                     <!-- 버튼 -->
                     <div class="popup-header">
-                      <img src="https://via.placeholder.com/40" alt="Profile Picture" class="profile">
-                      <div class="username">유저 닉네임 입력란</div>
+                      <img src="../../../resources/images/\${feed.mediaUrl}" alt="Profile Picture" class="profile">
+                      <div class="username">\${feed.user.name}</div>
                       <div class="more-options" onclick="toggleDropdown()">⋮</div>
                       <div class="dropdown-menu" id="dropdownMenu2">
                         <div>수정</div>
@@ -234,9 +240,10 @@ function getFeeds(page) {
                       <div class="popup-close" onclick="closePopup()">×</div>
                     </div>
                     <div class="popup-content">
-                      <p><span class="bold">제목</span> 내용</p>
-                      <p>내용 입력란🔥</p>
+                      <p><span class="bold">\${feed.title}</span></p>
+                      <p>\${feed.content}}</p>
                     </div>
+                    <div id="tags-popup\${feed.no}" style="margin-left: 30px;"></div>
                     <div class="comments-section" id="commentsSection"></div>
                     <!-- 팝업 내 하트 버튼 -->
                     <div class="popup-footer">
@@ -258,7 +265,7 @@ function getFeeds(page) {
 
             <p>
               <a href="#n" class="like_user">
-                <img alt="like user image" class="round_img" src="../../../resources/images/img.jpg" />
+                <img alt="like user image" class="round_img" src="../../../resources/images/\${feed.mediaUrl}" />
                 <span class="txt_id">좋아요누른 유저이름</span>
               </a>
               님
@@ -270,9 +277,9 @@ function getFeeds(page) {
 
         <!--feed text-->
         <section class="feed_txt">
-          <a href="#n" class="txt_id">\${feed.title}</a>
-          <span> <br/> \${feed.content}</span>
-          <a href="#n" class="more">더보기</a>
+            <div><strong>\${feed.title}</strong><div>
+            <p>\${feed.content}  <a href="#n" class="more">더보기</a></p>
+            <div id="tags-\${feed.no}" style="margin: 10px 0;"></div>
         </section>
 
 
@@ -299,6 +306,18 @@ function getFeeds(page) {
     `;
 
       $("div.feed_board").append(content);
+
+      let tags = "";
+      for (let tag of feed.hashTags) {
+        tags += `
+         <a href=""><span style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span></a>
+        `
+      }
+      console.log(tags);
+
+      $("#tags-" + feed.no).append(tags);
+      $("#tags-popup" + feed.no).append(tags);
+
     }
   }
 </script>
