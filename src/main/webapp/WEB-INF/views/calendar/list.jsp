@@ -69,7 +69,7 @@
     </div>
 </div>
 <!-- Modal -->
-<div class="modal fade" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+<div class="modal" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
     <div class="modal-dialog row mb-3">
         <div class="modal-content col-12">
             <div class="modal-header">

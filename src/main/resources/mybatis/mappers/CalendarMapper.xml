@@ -5,9 +5,9 @@
     <!-- void insertCalendar(@Param("calendar") Calendar calendar); -->
     <insert id="insertCalendar">
         insert into WORKUS_CALENDAR
-            (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no)
+            (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no, dept_no)
         values
-            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no})
+            (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no}, 1003)
 
         <selectKey resultType="Long" keyProperty="calendar.no" keyColumn="calendar_no" order="AFTER">
             select last_insert_id()
@@ -32,10 +32,35 @@
             calendar_start_date &gt;= #{start}
             AND calendar_end_date &lt;= #{end}
             AND user_no = #{loginUser.no}
-            <if test="division != null">
-                AND calendar_division = #{division}
+            <if test="division != null and division.size() > 0">
+                AND calendar_division IN
+                <foreach collection="division" item="item" index="index" open="(" close=")" separator=",">
+                    #{item}
+                </foreach>
             </if>
     </select>
+
+    <!-- Calendar selectCalendarByNo(Long calendarNo); -->
+    <select id="selectCalendarByNo" parameterType="Long" resultType="com.example.workus.calendar.vo.Calendar">
+        SELECT
+            calendar_no AS no,
+            calendar_name AS name,
+            calendar_location AS location,
+            calendar_start_date AS startDate,
+            calendar_end_date AS endDate,
+            calendar_division AS division,
+            calendar_content AS content,
+            dept_no AS deptNo
+        FROM
+            WORKUS_CALENDAR
+        WHERE
+            calendar_no = #{calendarNo}
+    </select>
+
+
+
+
+
 
 
 

@@ -41,11 +41,14 @@ public class CalendarService {
         return calendar;
     }
 
-    public List<Calendar> getEventsByDateRange(Date start, Date end, Integer division, LoginUser loginUser) {
+    public List<Calendar> getEventsByDateRange(Date start, Date end, List<Integer> division, LoginUser loginUser) {
         LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
         return calendarMapper.selectEventsByDateRange(startDateTime, endDateTime, division, loginUser);
     }
 
+    public Calendar getCalendarByNo(Long calendarNo) {
+        return calendarMapper.selectCalendarByNo(calendarNo);
+    }
 }
