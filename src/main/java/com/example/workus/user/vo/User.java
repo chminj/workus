@@ -1,5 +1,6 @@
 package com.example.workus.user.vo;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
@@ -16,6 +17,7 @@ public class User {
     private Long no;
     private String id;
     private String name;
+    @JsonIgnore
     private String password;
     private String email;
     private String address;

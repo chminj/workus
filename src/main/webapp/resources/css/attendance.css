@@ -69,10 +69,11 @@ dialog::backdrop {
 dialog .modalHeader {border-bottom:1px solid #ddd; padding:12px;}
 dialog .close {border:none; font-size:20px; background:transparent;}
 
+dialog form {height:auto;}
 dialog .modalBody {padding:12px; font-size:16px;}
 dialog .modalBody .reqFormSec {margin-bottom:20px;}
 
-dialog .modalBody.sec2 {display:flex;}
+dialog .modalBody.sec2 {display:flex; height:370px;}
 dialog .modalBody.sec2>div {width:50%; padding:0 12px; box-sizing:border-box;}
 /*dialog .modalBody.sec2 .modalRight {display:none;}*/
 dialog .modalBody.sec2 .modalRight{border-left:1px solid #ddd;}
@@ -88,12 +89,15 @@ dialog .modalFooter button:not(:last-child) {margin-right:10px;}
 
 textarea {width:100%; border:1px solid #9f9f9f; border-radius:3px; appearance: none; min-height:80px; background:transparent;}
 
-.annualLeaveOnly label {display:inline-flex;}
+.annualLeaveOnly, .partOpt {display:inline-block; height:24px;}
+.annualLeaveOnly label, .partOpt label {display:inline-flex;}
+.partOpt {padding-left:15px; margin-left:5px; border-left:1px solid #ddd;}
 
 .modalRight .listSec {width:50%; font-size:14px;}
 .modalRight>.d-flex {height:calc(100% - 40px);}
-.atdList {border:1px solid #ddd; border-radius:3px; padding:10px; box-sizing:border-box; height:100%; width:95%;}
+.atdList {border:1px solid #ddd; border-radius:3px; padding:10px; box-sizing:border-box; height:100%; width:95%; overflow-y:auto;}
 .atdList li {line-height:1.9;}
+
 .checkedList {display:flex; flex-direction: column; justify-content: space-between}
 .checkedList>div {height:48%;}
 

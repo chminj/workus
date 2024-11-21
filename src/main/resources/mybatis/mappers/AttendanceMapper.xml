@@ -12,4 +12,13 @@
         where U.POSITION_NO = P.POSITION_NO
           and U.User_NO = #{userNo}
     </select>
+    <select id="getAllCategories" resultType="atdCategoryDto">
+        select
+            ATD_CATEGORY_NO as no
+            , ATD_CATEGORY_NAME as name
+            , ATD_CATEGORY_COUNT as count
+            , ATD_CATEGORY_TIME as time
+        from
+            WORKUS_ATTENDANCE_CATEGORY;
+    </select>
 </mapper>

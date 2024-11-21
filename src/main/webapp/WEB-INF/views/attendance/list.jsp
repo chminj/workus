@@ -75,27 +75,21 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
             <div class="modalBody sec2">
               <div class="modalLeft">
                 <div class="reqFormSec">
-                  <label for="category" class="reqFormTit">종류</label>
-                  <select id="category" class="form-select w-25">
-                    <option>연차</option>
-                    <option>병가</option>
+                  <label for="atdCtgr" class="reqFormTit">종류</label>
+                  <select id="atdCtgr" class="form-select w-25">
                   </select>
-                  <%-- 연차일 경우, 병가일 경우 밑에 옵션 안보이게 처리할 것 --%>
-                  <div class="annualLeaveOnly mgt10">
-                    <label for="oneDay">
-                      <input type="radio" name="dayCategory" value="oneDay" id="oneDay">
-                      <span class="mgr10 mgl5">연차</span>
+                  <span class="annualLeaveOnly mgt10">
+                  </span>
+                  <span class="partOpt d-none">
+                    <label for="morningOff">
+                      <input type="radio" name="timeCategory" value="morningOff" id="morningOff">
+                      <span class="mgr10 mgl5">오전</span>
                     </label>
-                    <label for="halfDay">
-                      <input type="radio" name="dayCategory" value="halfDay" id="halfDay">
-                      <span class="mgr10 mgl5">반차</span>
+                    <label for="afternoonOff">
+                      <input type="radio" name="timeCategory" value="afternoonOff" id="afternoonOff">
+                      <span class="mgr10 mgl5">오후</span>
                     </label>
-                    <label for="quarterDay">
-                      <input type="radio" name="dayCategory" value="quarterDay" id="quarterDay">
-                      <span class="mgr10 mgl5">반반차</span>
-                    </label>
-
-                  </div>
+                  </span>
                   <p class="description">* 근속 연차 :
                     <span class="current">${attendanceDto.unusedAnnualLeave}</span>
                     /
@@ -104,10 +98,10 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 </div>
                 <div class="reqFormSec">
                   <label for="atdFromDate" class="reqFormTit">기간</label>
-                  <input type="date" name="fromDate" id="atdFromDate" class="form-control wd150 inlineBlock">
+                  <input type="date" name="fromDate" id="atdFromDate" class="form-control wd150 inlineBlock" onkeydown="return false">
                   ~
                   <label for="atdToDate">
-                    <input type="date" name="toDate" id="atdToDate" class="form-control wd150">
+                    <input type="date" name="toDate" id="atdToDate" class="form-control wd150" onkeydown="return false">
                   </label>
                   <span class="dayCheck">총 <span class="dayTotal">1</span>일</span>
                 </div>
@@ -136,7 +130,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                       </div>
                       <div class="atdList">
                         <p class="sTit">결재선</p>
-                        <ul>
+                        <ul id="apv">
                           <%-- 결재선 자리 --%>
                         </ul>
                       </div>
@@ -152,7 +146,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                       </div>
                       <div class="atdList">
                         <p class="sTit">참조선</p>
-                        <ul>
+                        <ul id="ref">
                           <%-- 참조선 자리 --%>
                         </ul>
                       </div>
