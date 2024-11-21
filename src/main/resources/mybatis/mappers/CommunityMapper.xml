@@ -9,7 +9,7 @@
         select
             x.*
         from (select
-                    row_number() over (order by B.community_no desc) rn
+                  row_number() over (order by B.community_no desc) rn
                     , B.community_no as no
                     , B.COMMUNITY_TITLE as title
                     , B.COMMUNITY_CONTENT as content
@@ -21,7 +21,7 @@
                     , U.USER_NAME as "user.name"
               from
                   WORKUS_COMMUNITY B
-                  INNER JOIN
+              INNER JOIN
                   WORKUS_USERS U
               ON
                   B.USER_NO = U.USER_NO) x
@@ -29,7 +29,7 @@
     </select>
 
     <!--
-    int getTotalRows();
+     int getTotalRows();
  -->
     <select id="getTotalRows"  resultType="int">
         select
@@ -37,4 +37,53 @@
         from
             WORKUS_COMMUNITY
     </select>
+    <!--
+         List<HashTag> getHashTags(@Param("feedNo") int feedNo);
+    -->
+    <select id="getHashTags" resultType="HashTag">
+        SELECT
+        H.HASHTAG_NO    as no,
+        H.HASHTAG_NAME  as name
+        FROM
+        WORKUS_HASHTAG H
+        WHERE
+       H.COMMUNITY_NO = #{feedNo}
+    </select>
+
+
+    
+    <!--   
+     void addNewFeed(@Param("feed") Feed feed);
+    -->
+    <insert id="addNewFeed">
+    insert into WORKUS_COMMUNITY
+        (COMMUNITY_TITLE
+        ,COMMUNITY_CONTENT
+        ,COMMUNITY_MEDIA_URL
+        ,COMMUNITY_MEDIA_TYPE
+        ,USER_NO)
+    values
+        (#{feed.title}
+        ,#{feed.content}
+        ,#{feed.mediaUrl}
+        ,#{feed.mediaType}
+        ,#{feed.user.no})
+
+        <selectKey resultType="Long" keyProperty="feed.no" keyColumn="community_no" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+
+    </insert>
+    <!--
+        void addHashTag(@Param("hashTag") HashTag hashTag);
+    -->
+    <insert id="addHashTag">
+        insert into WORKUS_HASHTAG
+        (HASHTAG_NAME
+        ,COMMUNITY_NO)
+        values
+        (#{hashTag.name}
+        ,#{hashTag.feed.no})
+    </insert>
+
 </mapper>

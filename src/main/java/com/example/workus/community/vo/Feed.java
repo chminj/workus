@@ -5,6 +5,7 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.util.Date;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,4 +23,7 @@ public class Feed {
     private Date updateDate;
 
     private User user;
+
+    private List<HashTag> hashTags;
+
 }

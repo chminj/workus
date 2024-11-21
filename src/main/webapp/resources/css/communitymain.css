@@ -806,22 +806,19 @@ form .add-comment button {
 .container {
     display: flex;
     justify-content: space-between;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
-    background-color: #fff;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .left-section, .right-section {
-    width: 48%;
+    flex: 1; /* 두 섹션을 동일하게 확장 */
+    box-sizing: border-box;
+    margin-right: 20px; /* 오른쪽 섹션과 구분을 위한 마진 */
 }
 
-.header {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 20px;
+.right-section {
+    margin-right: 0; /* 오른쪽 섹션 끝에는 마진 없앰 */
 }
 
 .form-group {
@@ -836,53 +833,32 @@ input[type="text"], textarea {
     border-radius: 4px;
 }
 
-textarea {
-    resize: vertical;
-}
-
 .file-input-wrapper {
     margin-top: 15px;
 }
 
-.file-preview img, .file-preview video {
-    max-width: 100%;
+/* 미리보기 영역 */
+#filePreview {
     margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* 영역을 채우도록 설정 */
+    height: 500px; /* 고정 높이 */
+    overflow: hidden; /* 넘치는 부분 숨기지 않고, 비율 맞추기 */
 }
 
-.hashtag {
-    color: #007BFF;
+.file-preview-item {
+    width: 100%;
+    height: 100%; /* 미리보기 영역의 크기에 맞춰서 크기 조정 */
+    object-fit: contain; /* 비율을 유지하며 영역 내에 맞게 조정 */
+    display: block;
 }
 
-.preview-section {
-    margin-top: 20px;
-}
-
-.preview-content {
-    padding: 10px;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    margin-top: 20px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.preview-header {
-    font-weight: bold;
-    font-size: 18px;
-    margin-bottom: 10px;
-}
-
-.preview-text {
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-.preview-hashtags {
-    color: #007BFF;
-    margin-bottom: 10px;
-}
-
-.file-preview {
-    margin-top: 15px;
+.file-preview-item img, .file-preview-item video {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* 이미지나 동영상 비율 유지하면서 크기 조정 */
 }
 
 .btn-post, .btn-cancel {
@@ -913,29 +889,50 @@ textarea {
     background-color: #d32f2f;
 }
 
-/* 미리보기 영역 수정 */
-.file-preview-item {
-    display: block;
-    margin-top: 10px;
+/* 태그 css */
+.tagify{
     width: 100%;
+    max-width: 700px;
 }
 
-.preview-content {
-    padding: 20px;
-    background-color: #f9f9f9;
-    border-radius: 8px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    margin-top: 20px;
+.tags-look .tagify__dropdown__item{
+    display: inline-block;
+    border-radius: 3px;
+    padding: .3em .5em;
+    border: 1px solid #CCC;
+    background: #F3F3F3;
+    margin: .2em;
+    font-size: .85em;
+    color: black;
+    transition: 0s;
 }
 
-.preview-header {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 10px;
+.tags-look .tagify__dropdown__item--active{
+    color: black;
 }
 
-.preview-text {
-    font-size: 16px;
-    margin-bottom: 10px;
+.tags-look .tagify__dropdown__item:hover{
+    background: lightyellow;
+    border-color: gold;
 }
 
+.tags-look .tagify__dropdown__item{
+    display: inline-block;
+    border-radius: 3px;
+    padding: .3em .5em;
+    border: 1px solid #CCC;
+    background: #F3F3F3;
+    margin: .2em;
+    font-size: .85em;
+    color: black;
+    transition: 0s;
+}
+
+.tags-look .tagify__dropdown__item--active{
+    color: black;
+}
+
+.tags-look .tagify__dropdown__item:hover{
+    background: lightyellow;
+    border-color: gold;
+}
