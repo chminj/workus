@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -31,5 +28,13 @@ public class RestChatroomController {
             @PathVariable("chatroomNo") Long chatroomNo) {
         chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfo(chatroomNo)));
+    }
+
+    @PutMapping("/chatroom/{chatroomNo}")
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> updateChatroomInfo(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @PathVariable("chatroomNo") Long chatroomNo) {
+        chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
+        return ResponseEntity.ok(RestResponseDto.success(null));
     }
 }
