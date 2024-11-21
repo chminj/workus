@@ -158,6 +158,17 @@
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
 
+		$(document).on('visibilitychange', async function() {
+			const chatroomNo = $('.chat-text').data('chatroomNo');
+			try {
+				await fetch('/ajax/chatroom/' + chatroomNo, {
+					method: 'PUT'
+				})
+			} catch (error) {
+				console.log('페이지 변화에 대한 이벤트 에러가 발생했습니다.', error);
+			}
+		})
+
 		// 프로필 모달 등장
 		$('#chat').on('click', '.participant-name', async function() {
 			try {
