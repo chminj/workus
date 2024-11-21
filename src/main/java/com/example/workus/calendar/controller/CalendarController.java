@@ -7,6 +7,8 @@ import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,10 +36,21 @@ public class CalendarController {
         return calendar;
     }
 
-    // 일정 목록 페이지 반환
+    @PostMapping("/detail")
+    @ResponseBody
+    public ResponseEntity<Calendar> getCalendarDetail(@RequestParam("id") Long calendarNo) {
+        Calendar calendar = calendarService.getCalendarByNo(calendarNo);
+
+        if (calendar != null) {
+            return ResponseEntity.ok(calendar);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @GetMapping("/list")
     public String list() {
-        return "calendar/list";  // calendar/list.jsp로 이동
+        return "calendar/list";
     }
 
     @GetMapping("/events")
@@ -45,12 +58,15 @@ public class CalendarController {
     public List<Calendar> events(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
-            @RequestParam("division") Integer division,
+            @RequestParam("division") List<Integer> division,
             @AuthenticationPrincipal LoginUser loginUser) {
 
         List<Calendar> events = calendarService.getEventsByDateRange(start, end, division, loginUser);
 
         return events;
     }
+
+
+
 
 }
