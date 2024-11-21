@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +31,9 @@ public class ChatroomServcie {
         List<Long> chatroomNumbers = chatroomMapper.getChatroomNoByUserNo(userNo);
         List<ChatroomDto> chatrooms = new ArrayList<>();
         for (Long chatroomNo : chatroomNumbers) {
-            chatrooms.add(chatroomMapper.getChatRoomInMenuByChatroomNo(chatroomNo));
+            ChatroomDto chatroomDto = chatroomMapper.getChatRoomInMenuByChatroomNo(chatroomNo);
+            chatroomDto.setNotReadCount(chatroomMapper.getNotReadCount(userNo, chatroomNo));
+            chatrooms.add(chatroomDto);
         }
 
         return chatrooms;
@@ -38,5 +41,10 @@ public class ChatroomServcie {
 
     public ChatroomInfoDto getChatroomInfo(Long chatroomNo) {
         return chatroomMapper.getChatroomInfoByChatroomNo(chatroomNo);
+    }
+
+    public void updateChatroomConTime(Long userNo, Long chatroomNo) {
+        LocalDateTime now = LocalDateTime.now();
+        chatroomMapper.updateChatroomConTime(userNo, chatroomNo, now);
     }
 }

@@ -4,10 +4,11 @@ import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -22,6 +23,14 @@ public class UserService {
     public UserService(UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userMapper = userMapper;
         this.passwordEncoder = passwordEncoder;
+    }
+
+    /**
+     * 유저 전체를 조회한다.
+     * @return 유저 정보 전체 리스트
+     */
+    public List<User> getAllUsers() {
+        return userMapper.getAllUsers();
     }
 
     public void registerUser(String id, String password) {

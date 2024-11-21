@@ -19,4 +19,5 @@ public class ChatroomDto {
     private User lastChatAuthor;
     private String lastChat;
     private Date lastChatDate;
+    private int notReadCount;
 }
