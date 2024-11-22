@@ -26,8 +26,8 @@
                 <div class="lnb-menu">
                     <div class="mb-5">
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" value="" id="selectAll" onclick="toggleCheckBoxes('personal')">
-                            <label class="form-check-label" for="selectAll">
+                            <input class="form-check-input all-checkbox" type="checkbox" id="divisionAll"  onchange="divisionAll()">
+                            <label class="form-check-label" for="divisionAll">
                                 전체 선택
                             </label>
                         </div>
