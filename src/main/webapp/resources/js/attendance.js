@@ -207,7 +207,11 @@ $(function(){
 
         $("#" + targetId).empty(); // reset
         labels.each(function() {
-            $("#" + targetId).append($(this).parent()); // li 태그 추가
+            $("#" + targetId).append($(this).parent(
+
+
+
+            )); // li 태그 추가
         });
     }
 

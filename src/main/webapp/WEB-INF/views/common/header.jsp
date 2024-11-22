@@ -4,17 +4,22 @@
     <a href="/home" class="logo">
         <span>WORKUS</span>
     </a>
-    <div class="globalMenu">
-        <i class="bi bi-person-circle"></i>
+    <ul class="globalMenu d-flex">
+        <li class="d-flex align-items-center">
         <sec:authorize access="isAuthenticated()">
             <sec:authentication property="principal.no" var="LOGIN_USERNO" scope="request"/>
             <sec:authentication property="principal.name"/> 님 환영합니다.
         </sec:authorize>
-        <div>
-            <i class="bi bi-box-arrow-left"></i>
-            <a href="/logout">logout</a>
-        </div>
-    </div>
+            <a href="/user/myinfo" class="mgl5">
+                <span class="badge text-bg-success modify">수정</span>
+            </a>
+        </li>
+        <li class="d-flex align-items-center">
+            <a href="/logout" class="mgl">
+                <span class="badge text-bg-danger logout">로그아웃</span>
+            </a>
+        </li>
+    </ul>
 </header>
 
 
