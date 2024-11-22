@@ -1,4 +1,5 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <%--
   Created by IntelliJ IDEA.
   User: jhta
@@ -71,87 +72,91 @@
 </div>
 <script>
     // 사번 확인
-    document.querySelector('.user-check').addEventListener('click', function() {
-        const userNo = document.querySelector('input[name="no"]').value;
-        const checkIcon = document.querySelector('.no-icon');
+    $('.user-check').click(function() {
+        const userNo = $('input[name="no"]').val(); //
+        const checkIcon = $('.no-icon');
 
-        if (isNaN(userNo) || userNo.trim() === "") {
+        if (isNaN(userNo) || userNo.trim() === "") { // 숫자가 아니거나 값이 비어있는지 확인
             alert("사번은 숫자만 입력 가능합니다.");
             return;
         }
 
-        fetch(`/ajax/user/check-no/` + userNo) // fetch 요청
-            .then(response => response.json()) // JSON 파싱
-            .then(data => {
+        $.ajax({ // Ajax 요청 보내기
+            url: `/ajax/user/check-no/` + userNo, // 사번을 URL에 추가
+            method: 'GET', // GET 요청
+            success: function(data) { // 응답 성공 시 실행
                 if (data.data) {
                     alert("사번이 확인되었습니다.");
-                    checkIcon.style.display = 'inline';
+                    checkIcon.css('display', 'inline');
                 } else {
                     alert("존재하지 않는 사번입니다.");
                 }
-            });
-    })
-
-    document.querySelector('#user-no').addEventListener('input', function() { // 입력값 변경 시에
-        document.querySelector('.no-icon').style.display = 'none'; // 숨김
+            }
+        });
     });
 
+    // 사번 입력값 변경 시 아이콘 숨기기
+    $('#user-no').on('input', function() { // input 필드에서 값이 바뀔 때마다
+        $('.no-icon').css('display', 'none');
+    });
 
-    // ID 확인
-    document.querySelector('.id-check').addEventListener('click', function() {
-        const userId = document.querySelector('input[name="id"]').value;
-        const checkIcon = document.querySelector('.id-icon');
-        const idPattern = /^[a-zA-Z][a-zA-Z0-9]{0,17}$/; // 정규식 사용
+    // 아이디 확인
+    $('.id-check').click(function() {
+        const userId = $('input[name="id"]').val();
+        const checkIcon = $('.id-icon');
+        const idPattern = /^[a-zA-Z][a-zA-Z0-9]{0,17}$/; // 아이디의 정규식 패턴
 
-        if(!idPattern.test(userId)){
+        if (!idPattern.test(userId)) { // 아이디가 패턴에 맞는지 확인
             alert("아이디는 영문자로 시작하고, 영문자나 숫자만 포함가능하며, 최대 18자입니다.");
             return;
         }
 
-        fetch(`ajax/user/check-id/` + userId)
-            .then(response => response.json())
-            .then(data => {
-                console.log(userId)
+        $.ajax({ // Ajax 요청 보내기
+            url: `ajax/user/check-id/` + userId, // 아이디를 URL에 추가
+            method: 'GET', // GET 요청
+            success: function(data) {
                 if (data.data) {
                     alert("이미 존재하는 아이디입니다.");
                 } else {
                     alert("사용 가능한 아이디입니다.");
-                    checkIcon.style.display = 'inline';
+                    checkIcon.css('display', 'inline');
                 }
-            })
-    })
+            }
+        });
+    });
 
-    document.querySelector('#user-id').addEventListener('input', function() { // 입력값 변경 시에
-        document.querySelector('.id-icon').style.display = 'none'; // 숨김
+    // 아이디 입력값 변경 시 아이콘 숨기기
+    $('#user-id').on('input', function() {
+        $('.id-icon').css('display', 'none');
     });
 
     // 비밀번호 확인
-    document.querySelector('.password-check').addEventListener('click', function() {
-        const userPw = document.querySelector('input[name="password"]').value;
-        const userConfirmPw = document.querySelector('input[name="passwordConfirm"]').value;
-        const pwPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+={}:;"'<>,.?/~`-]{8,20}$/;
-        const checkIcon = document.querySelector('.pw-icon');
+    $('.password-check').click(function() {
+        const userPw = $('input[name="password"]').val();
+        const userConfirmPw = $('input[name="passwordConfirm"]').val();
+        const pwPattern = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d!@#$%^&*()_+={}:;"'<>,.?/~`-]{8,20}$/; // 비밀번호의 정규식 패턴
+        const checkIcon = $('.pw-icon');
 
-        if((!pwPattern.test(userPw)) || (!pwPattern.test(userConfirmPw))) {
+        if ((!pwPattern.test(userPw)) || (!pwPattern.test(userConfirmPw))) { // 패턴이 맞지 않으면
             alert("비밀번호는 영문자, 숫자, 특수문자가 포함되며 총 길이는 8자리 이상 20자리 이하입니다.");
             return;
         }
 
-        if(userPw === userConfirmPw) {
+        if (userPw === userConfirmPw) { // 비밀번호와 비밀번호 확인이 같으면
             alert("비밀번호가 일치합니다.");
-            checkIcon.style.display = 'inline';
+            checkIcon.css('display', 'inline');
         } else {
             alert("비밀번호가 일치하지 않습니다.");
         }
-    })
-
-    // 비밀번호, 비밀번호 확인 중 하나의 입력 필드만 변경되도 체크 표시 숨김
-    document.querySelector('#user-pw').addEventListener('input', function() { // 입력값 변경 시에
-        document.querySelector('.pw-icon').style.display = 'none'; // 숨김
     });
 
-    document.querySelector('#user-confirmpw').addEventListener('input', function() { // 입력값 변경 시에
-        document.querySelector('.pw-icon').style.display = 'none'; // 숨김
+    // 비밀번호 또는 비밀번호 확인 입력값 변경 시 아이콘 숨기기
+    $('#user-pw').on('input', function() {
+        $('.pw-icon').css('display', 'none');
+    });
+
+    $('#user-confirmpw').on('input', function() {
+        $('.pw-icon').css('display', 'none');
     });
 </script>
 </body>
