@@ -136,9 +136,11 @@
         eventRemove: function (obj) {
             console.log('Event Removed:', obj);
         },
-        select: function (arg) {
+        select: function (info) {
 
-            let startDate = arg.startStr;
+            let startDate = info.startStr;
+            let endDate = info.endStr;
+            console.log(info);
 
             let now = new Date();
             let koreaTimeOffset = 9 * 60 * 60 * 1000; // UTC+9 시간차 (밀리초 단위)
@@ -147,16 +149,17 @@
             let currentTime = koreaTime.toISOString().split("T")[1].substring(0, 5);
 
             let startDateParts = startDate.split("T");
+            let endDateParts = endDate.split("T");
 
             $("#calendarModalLabel").text("일정 추가하기");
 
             $("#calendarModal #name").val("");
             $("#calendarModal #location").val("");
-            $("#calendarModal #endDate").val("");
             $("#calendarModal #division").val("1");
             $("#calendarModal #content").val("");
 
             $("#calendarModal #startDate").val(`${startDateParts[0]}T${currentTime}`);
+            $("#calendarModal #endDate").val(`${endDateParts[0]}T${currentTime}`);
 
             $("#calendarModal").data("eventId", null);  // eventId 초기화
 
@@ -167,6 +170,16 @@
             calendar.unselect();
         }
     });
+
+    function getDate(date, days) {
+        days = days || 0;
+        date.setTime(date.getTime() + (60*60*24*1000*days));
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+       return year +  '-' + (month < 10 ? '0' + month : month) + '-' +(day < 10 ? '0' + day : day);
+    }
 
     $("#save").on("click", function () {
         var eventData = {
@@ -297,17 +310,40 @@
     // FullCalendar 렌더링
     calendar.render();
 
+    function divisionAll(){
+        let el1 = document.querySelector("input[id=division1]");
+        let el2 = document.querySelector("input[id=division0]");
+        let el3 = document.querySelector("input[id=divisionAll]");
+
+        if (el3.checked) {
+            el1.checked = true;
+            el2.checked = true;
+        } else {
+            el1.checked = false;
+            el2.checked = false;
+        }
+
+        refreshCalendar();
+    }
+
     function refreshCalendar() {
         let el1 = document.querySelector("input[id=division1]");
         let el2 = document.querySelector("input[id=division0]");
+        let el3 = document.querySelector("input[id=divisionAll]");
 
         let values = [];
+
         if (el1.checked) {
-            values.push(el1.value);
+            values.push(1);
+        }
+        if (el2.checked) {
+            values.push(0);
         }
 
-        if (el2.checked) {
-            values.push(el2.value);
+        if (el1.checked === false || el2.checked === false) {
+            el3.checked = false;
+        } else {
+            el3.checked = true;
         }
 
         // 기존 이벤트 소스 제거
@@ -315,33 +351,37 @@
             source.remove();
         });
 
-
         if (values.length > 0) {
             let queryString = values.map(function (value) {
                 return "division=" + value;
             }).join("&");
-            queryString += "&start=" + start + "&end=" + end;
+
+            let startDate = start || "2024-01-01"; // 기본 값 설정 (예시)
+            let endDate = end || "2024-12-31"; // 기본 값 설정 (예시)
+            queryString += `&start=${startDate}&end=${endDate}`;
 
             $.ajax({
                 type: 'GET',
                 url: '/calendar/events?' + queryString,
-
                 success: function (calendars) {
                     let events = calendars.map(function (calendar) {
-                        let event = {};
-                        event.id = calendar.no;
-                        event.title = calendar.name;
-                        event.start = calendar.startDate;
-                        event.end = calendar.endDate;
-                        event.color = divisionColors[calendar.division] || '#6c757d';
-                        event.extendedProps = {
-                            deptNo: calendar.deptNo
+                        return {
+                            id: calendar.no,
+                            title: calendar.name,
+                            start: calendar.startDate,
+                            end: calendar.endDate,
+                            color: divisionColors[calendar.division] || '#6c757d',
+                            extendedProps: {
+                                // deptNo: calendar.deptNo
+                            }
                         };
-                        return event;
                     });
 
                     calendar.addEventSource(events);
                     calendar.refetchEvents();
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 데이터 로드 실패:", error);
                 }
             });
         }
