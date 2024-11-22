@@ -175,6 +175,7 @@ header.header {
 
 .logo span {font-size:20px; font-weight:600;}
 
+.globalMenu li {margin:0px 2px;}
 .globalMenu i.bi {font-size:20px;}
 
 .verticalLayoutFixedSection {
@@ -208,7 +209,7 @@ header.header {
     height: 100%
 }
 
-.gnb.on .gnbIcon {
+.gnb.on span.gnbIcon {
     border-radius: 12px;
     background-color: #ffffff;
     border: 1px solid #ddd;
@@ -302,3 +303,6 @@ main.noLnb {margin-left:76px;}
 .title1 {font-size:21px;}
 
 .content {margin-top:20px;}
+
+.modify {background-color:#e91e63 !important; font-size:13px;}
+.logout {background-color:#0f132a !important; font-size:13px;}

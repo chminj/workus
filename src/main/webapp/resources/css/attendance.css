@@ -1,8 +1,10 @@
 @charset "UTF-8";
 
-.lnb li a {position:relative; z-index:1;}
-.lnb li a:after {content:""; left:0; top:0; width:0; height:100%; z-index:-1; background-color:#ddd; opacity:0.5; position:absolute; display:inline-block; transition: all 0.3s ease;}
+.lnb li a {position:relative; z-index:1; padding:4px 2px;}
+.lnb li a:after {content:""; left:0; bottom:0; width:0; height:2px; z-index:-1; background-color:#e91e63; opacity:0.6; position:absolute; display:inline-block; transition: all 0.3s ease;}
 .lnb li a:hover:after {width:100%;}
+
+.lnb li.on a:after {width:100%; opacity:1;}
 
 /* 내 근태 현황 */
 .applyItem {display:flex;}

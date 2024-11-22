@@ -18,12 +18,14 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 <body>
 <div id="divWrapper">
   <div id="divContents">
+    <c:set var="menu" value="attendance"/>
     <%@ include file="../common/header.jsp" %>
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
+      <c:set var="lnb" value="myAtdInfo"/>
       <div class="lnb">
         <ul class="list1 myAtdInfo">
-          <li class=""><a href="">내 근태 현황</a></li>
+          <li class="${lnb eq 'myAtdInfo' ? 'on' : '' }"><a href="">내 근태 현황</a></li>
         </ul>
         <p class="listTitle">근태 내역</p>
         <ul class="list2 myAtdList">
