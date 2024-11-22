@@ -70,7 +70,7 @@
 </div>
 <!-- Modal -->
 <div class="modal" id="calendarModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
-    <div class="modal-dialog row mb-3">
+    <div class="modal-dialog row mb-3 modal-dialog-centered modal-lg">
         <div class="modal-content col-12">
             <div class="modal-header">
                 <h5 class="modal-title" id="calendarModalLabel">일정 추가하기</h5>
@@ -118,14 +118,39 @@
                     </div>
                 </div>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-                    <button type="button" class="btn btn-primary" id="save">저장</button>
+                <div class="modal-footer container w-100 justify-content-between">
+                    <div>
+                        <button type="button" class="btn btn-danger" id="delete" style="display:none;">삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="save">추가</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    </div>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog row mb-3 modal-dialog-centered modal-sm">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">일정 삭제 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                정말로 이 일정을 삭제하시겠습니까?
+            </div>
+            <div class="modal-footer container w-100">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">확인</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="/resources/js/calendar.js"></script>
 </body>
 </html>

@@ -25,6 +25,11 @@ public class CalendarController {
     @Autowired
     private CalendarService calendarService;
 
+    @GetMapping("/list")
+    public String list() {
+        return "calendar/list";
+    }
+
     @PostMapping("/add")
     @ResponseBody
     public Calendar add(CalendarForm form, @AuthenticationPrincipal LoginUser loginUser) {
@@ -35,6 +40,17 @@ public class CalendarController {
         Calendar calendar = calendarService.addNewCalendar(form);
 
         return calendar;
+    }
+
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteEvent(@RequestParam("id") Long eventId) {
+        // 이벤트 삭제 로직
+        boolean success = calendarService.deleteCalendar(eventId);
+        if (success) {
+            return ResponseEntity.ok("삭제 성공");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("삭제 실패");
+        }
     }
 
     @PostMapping("/update")
@@ -68,11 +84,6 @@ public class CalendarController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-    }
-
-    @GetMapping("/list")
-    public String list() {
-        return "calendar/list";
     }
 
     @GetMapping("/events")

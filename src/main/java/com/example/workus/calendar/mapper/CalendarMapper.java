@@ -11,15 +11,14 @@ import java.util.List;
 @Mapper
 public interface CalendarMapper {
 
-    void insertCalendar(@Param("calendar") Calendar calendar);
-
+    Calendar selectCalendarByNo(Long calendarNo);
     List<Calendar> selectEventsByDateRange(
             @Param("start") LocalDateTime startDateTime,
             @Param("end") LocalDateTime endDateTime,
             @Param("division") List<Integer> division,
             @Param("loginUser") LoginUser loginUser);
 
-    Calendar selectCalendarByNo(Long calendarNo);
-
+    void insertCalendar(@Param("calendar") Calendar calendar);
+    void deleteCalendar(@Param("eventId") Long eventId);
     void updateCalendar(@Param("calendar") Calendar calendar);
 }
