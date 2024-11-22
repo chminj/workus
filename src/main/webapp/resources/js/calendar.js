@@ -12,7 +12,9 @@
             $("#calendarModal #division").val("1");
             $("#calendarModal #content").val("");
 
-            $("#save").text("저장");
+            $("#save").text("추가");
+
+            $("#calendarModal").data("eventId", null);
 
             $("#calendarModal").modal("show");
         });
@@ -30,7 +32,7 @@
     // FullCalendar 생성
     var calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-        height: '700px',             // 캘린더 높이
+        height: '800px',             // 캘린더 높이
         expandRows: true,            // 화면에 맞게 높이 조절
         slotMinTime: '08:00',        // Day 캘린더 시작 시간
         slotMaxTime: '20:00',        // Day 캘린더 종료 시간
@@ -49,6 +51,12 @@
         locale: 'ko',                // 한국어 설정
         eventClick: function(info) {
             var eventId = info.event.id;
+            console.log(eventId);  // 여기서 확인
+
+            if (!eventId) {
+                console.error("이벤트 ID가 없습니다.");
+                return;
+            }
 
             $.ajax({
                 type: 'post',
@@ -63,12 +71,11 @@
                     $("#calendarModal #content").val(response.content);
 
                     $("#calendarModalLabel").text("일정 상세정보");
-                    
-                    // 변경 사항 저장
+
                     $("#save").text("저장");
+                    $("#delete").show();
 
                     $("#calendarModal").data("eventId", eventId);
-
                     $("#calendarModal").modal("show");
 
                 },
@@ -99,6 +106,7 @@
                         event.start = calendar.startDate;
                         event.end = calendar.endDate;
                         event.color = divisionColors[calendar.division] || '#6c757d';
+
                         event.extendedProps = {
                             //deptNo: calendar.deptNo
                         };
@@ -112,6 +120,7 @@
                     console.error("일정 불러오기 실패:", error);
                     failureCallback(error);
                 }
+
             });
         },
 
@@ -149,6 +158,11 @@
 
             $("#calendarModal #startDate").val(`${startDateParts[0]}T${currentTime}`);
 
+            $("#calendarModal").data("eventId", null);  // eventId 초기화
+
+            $("#delete").hide();
+            $("#save").text("추가");
+            
             $("#calendarModal").modal("show");
             calendar.unselect();
         }
@@ -179,12 +193,12 @@
         console.log(eventId)
 
         if (eventId) {
+            // 기존 일정을 수정하는 경우
             $.ajax({
                 type: "post",
-                url: "/calendar/update",  // 수정 요청 URL
+                url: "/calendar/update",
                 data: { id: eventId, ...eventData },
                 success: function (result) {
-
                     var event = calendar.getEventById(eventId);
                     event.setProp('title', result.name);
                     event.setStart(result.startDate);
@@ -193,6 +207,7 @@
                     event.setExtendedProp('location', result.location);
                     event.setExtendedProp('division', result.division);
 
+                    $("#save").text("저장");
                     $("#calendarModal").modal("hide");
 
                     $("#name, #location, #startDate, #endDate, #division, #content").val("");
@@ -202,6 +217,7 @@
                 }
             });
         } else {
+            // 새로운 일정을 추가하는 경우
             $.ajax({
                 type: "post",
                 url: "/calendar/add",
@@ -224,6 +240,7 @@
 
                     $("#calendarModal").modal("hide");
                     $("#name, #location, #startDate, #endDate, #division, #content").val("");
+
                     console.log("일정이 추가되었습니다.");
                 },
                 error: function (xhr, status, error) {
@@ -234,6 +251,48 @@
 
 
     });
+
+    $("#delete").on("click", function (){
+        var eventId = $("#calendarModal").data("eventId");
+        if (!eventId) {
+            alert("삭제할 수 없습니다.");
+            return;
+        }
+
+        // 삭제 확인 모달 열기
+        $("#confirmDeleteModal").modal("show");
+
+        $("#confirmDeleteModal .btn-danger").off("click").on("click", function () {
+            $.ajax({
+                type: "POST",
+                url: "/calendar/delete",
+                data: { id: eventId },
+                success: function () {
+                    var event = calendar.getEventById(eventId);
+                    if (event) {
+                        event.remove();
+                    }
+
+                    alert("일정이 삭제되었습니다.");
+                    $("#calendarModal").data("eventId", null);
+
+                    $("#calendarModal").modal("hide");
+                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 삭제 실패:", error);
+                    alert("일정 삭제에 실패했습니다. 다시 시도해주세요.");
+                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                }
+            });
+        });
+
+        // 취소 버튼 클릭 시 경고창 닫기
+        $("#confirmDeleteModal .btn-secondary").off("click").on("click", function() {
+            $("#confirmDeleteModal").modal("hide");
+        });
+
+    })
 
     // FullCalendar 렌더링
     calendar.render();
@@ -287,30 +346,3 @@
             });
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

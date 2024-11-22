@@ -55,4 +55,14 @@ public class CalendarService {
     public void updateCalendar(Calendar calendar) {
         calendarMapper.updateCalendar(calendar);
     }
+
+    public boolean deleteCalendar(Long eventId) {
+        Calendar calendar = calendarMapper.selectCalendarByNo(eventId);
+        if (calendar != null) {
+            calendarMapper.deleteCalendar(eventId);
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
