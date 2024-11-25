@@ -9,6 +9,7 @@
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/calendar.css' />">
 
     <title>Calendar</title>
+
 </head>
 <body>
 <div id="divWrapper">
