@@ -49,7 +49,57 @@
         nowIndicator: true,          // 현재 시간 표시
         dayMaxEvents: true,          // 일정 초과 시 "+N개" 형식으로 표시
         locale: 'ko',                // 한국어 설정
+        googleCalendarApiKey: 'AIzaSyDIvWEKCFDKbJPdBUzOMSBSbf_cCtdRRTk',
+        eventSources: [
+            {
+                googleCalendarId: 'ko.south_korea#holiday@group.v.calendar.google.com'
+                , color: 'yellow'
+                , textColor: 'black'
+                , className : 'ko_event'
+            }
+        ],
+        events: function(info, successCallback, failureCallback) {
+            start = info.startStr.split("T")[0];
+            end = info.endStr.split("T")[0];
+
+            $.ajax({
+                type: 'GET',
+                url: '/calendar/events',
+                data: {
+                    start: info.startStr.split("T")[0],
+                    end: info.endStr.split("T")[0],
+                    division: 1
+                },
+                success: function(calendars) {
+                    let events = calendars.map(function(calendar) {
+                        let event = {};
+                        event.id = calendar.no;
+                        event.title = calendar.name;
+                        event.start = calendar.startDate;
+                        event.end = calendar.endDate;
+                        event.color = divisionColors[calendar.division] || '#6c757d';
+
+                        event.extendedProps = {
+                            division: calendar.division
+                        };
+                        return event;
+                    });
+
+                    console.log(events);
+                    successCallback(events); // FullCalendar에 이벤트 렌더링
+                },
+                error: function(xhr, status, error) {
+                    console.error("일정 불러오기 실패:", error);
+                    failureCallback(error);
+                }
+
+            });
+        },
+
         eventClick: function(info) {
+            info.jsEvent.stopPropagation();
+            info.jsEvent.preventDefault();
+
             var eventId = info.event.id;
             console.log(eventId);  // 여기서 확인
 
@@ -85,44 +135,30 @@
             });
 
         },
+        eventDrop: function(eventDropInfo ) {
+            let event = eventDropInfo.event;
 
-        events: function(info, successCallback, failureCallback) {
-            start = info.startStr.split("T")[0];
-            end = info.endStr.split("T")[0];
+            let updatedEventData = {
+                id: event.id,
+                name: event.title,
+                location: event.extendedProps.location,
+                startDate: event.start.toISOString(),
+                endDate: event.end.toISOString(),
+                division: event.extendedProps.division,
+                content: event.extendedProps.content
+            };
 
             $.ajax({
-                type: 'GET',
-                url: '/calendar/events',
-                data: {
-                    start: info.startStr.split("T")[0],
-                    end: info.endStr.split("T")[0],
-                    division: 1
-                },
-                success: function(calendars) {
-                    let events = calendars.map(function(calendar) {
-                        let event = {};
-                        event.id = calendar.no;
-                        event.title = calendar.name;
-                        event.start = calendar.startDate;
-                        event.end = calendar.endDate;
-                        event.color = divisionColors[calendar.division] || '#6c757d';
+                type: 'post',
+                url: '/calendar/update',
+                data: updatedEventData,    // 업데이트된 이벤트 데이터
 
-                        event.extendedProps = {
-                            //deptNo: calendar.deptNo
-                        };
-                        return event;
-                    });
-
-                    console.log(events);
-                    successCallback(events); // FullCalendar에 이벤트 렌더링
-                },
                 error: function(xhr, status, error) {
-                    console.error("일정 불러오기 실패:", error);
-                    failureCallback(error);
+                    console.error("이벤트 업데이트 실패:", error);
                 }
-
             });
         },
+
 
         // 이벤트가 추가될 때
         eventAdd: function (obj) {
