@@ -44,13 +44,14 @@
         </div>
 
         <div class="input__block">
-            <input type="tel" placeholder="연락처를 입력해주세요" name="phone" required />
-            <button type="button" class="google__btn">인증번호 전송</button>
+            <form:input placeholder="연락처를 입력해주세요" id="user-phone" path="phone" />
+            <button type="button" class="google__btn send-code">인증번호 전송</button>
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="인증번호를 입력해주세요" name="verification_code" required />
-            <button type="button" class="google__btn">인증번호 확인</button>
+            <input type="hidden" value="" id="real_verification_code"/>
+            <input type="text" id="input_verification_code" placeholder="인증번호를 입력해주세요"/>
+            <button type="button" class="google__btn confirm-code">인증번호 확인</button>
         </div>
 
         <div class="input__block">
@@ -112,7 +113,7 @@
         }
 
         $.ajax({ // Ajax 요청 보내기
-            url: `ajax/user/check-id/` + userId, // 아이디를 URL에 추가
+            url: `/ajax/user/check-id/` + userId, // 아이디를 URL에 추가
             method: 'GET', // GET 요청
             success: function(data) {
                 if (data.data) {
@@ -158,6 +159,59 @@
     $('#user-confirmpw').on('input', function() {
         $('.pw-icon').css('display', 'none');
     });
+
+    // 연락처 입력 및 휴대폰 인증 번호 전송
+    $('.send-code').click(function(){
+        const phoneNumber = $('input[name="phone"]').val();
+        const phoneNumberPattern = /^01[0-9][0-9]{8}$/;
+
+        // 휴대폰 번호가 패턴에 맞는지 검사한다.
+        if(!phoneNumberPattern.test(phoneNumber)) {
+            alert("올바른 휴대폰 번호를 입력해주세요.");
+            return;
+        }
+
+        $.ajax({ // 인증 문자 보내기
+            url: `/ajax/send-sms`,
+            method: 'GET',
+            data: { phoneNumber: phoneNumber },// GET 방식으로 전화번호 전달
+            success: function(data) {
+                console.log(data);
+                alert(data.success);
+                if (data.success) {
+                    alert("인증번호가 전송되었습니다.");
+                    $('#real_verification_code').val(data.checkNum); // 여기서 hidden으로 설정한 곳에 값을 담는다.
+                } else {
+                    alert("인증번호 전송에 실패했습니다. ");
+                    console.log(data.message);
+                }
+            }
+        });
+
+    });
+
+    // 인증번호 검증
+    $('.confirm-code').click(function() {
+        const realConfirmCode = $('#real_verification_code').val();
+        const inputConfirmCode = $('#input_verification_code').val();
+
+        console.log(realConfirmCode);
+
+        if (realConfirmCode === "") {
+            alert("인증을 진행해주세요.");
+        } else {
+            if (inputConfirmCode === "") {
+                alert("인증번호를 입력해주세요.");
+            } else {
+                if (inputConfirmCode === realConfirmCode) {
+                    alert("인증번호가 일치합니다.");
+                } else {
+                    alert("인증번호가 일치하지 않습니다.");
+                }
+            }
+        }
+    });
+
 </script>
 </body>
 </html>
