@@ -47,72 +47,72 @@
 </div>
 </body>
 <script>
-/*
-  let isLiked = false; // 좋아요 상태 초기화
-  let likes = 0; // 초기 좋아요 수
+  /*
+    let isLiked = false; // 좋아요 상태 초기화
+    let likes = 0; // 초기 좋아요 수
 
-  const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
-  const menu1 = document.getElementById('dropdownMenu1'); // 첫 번째 드롭다운 메뉴
-  const menu2 = document.getElementById('dropdownMenu2'); // 두 번째 드롭다운 메뉴
+    const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+    const menu1 = document.getElementById('dropdownMenu1'); // 첫 번째 드롭다운 메뉴
+    const menu2 = document.getElementById('dropdownMenu2'); // 두 번째 드롭다운 메뉴
 
-  // 드롭다운 토글 클릭 시 첫 번째 메뉴 표시/숨기기
-  toggle.addEventListener('click', (event) => {
-    event.stopPropagation(); // 클릭 이벤트 전파 방지
-    menu1.classList.toggle('show'); // 첫 번째 드롭다운 메뉴 표시/숨기기
-  });
+    // 드롭다운 토글 클릭 시 첫 번째 메뉴 표시/숨기기
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation(); // 클릭 이벤트 전파 방지
+      menu1.classList.toggle('show'); // 첫 번째 드롭다운 메뉴 표시/숨기기
+    });
 
-  // 클릭 외부 시 드롭다운 닫기
-  window.addEventListener('click', (event) => {
-    if (!toggle.contains(event.target) && !menu1.contains(event.target)) {
-      menu1.classList.remove('show'); // 첫 번째 드롭다운 숨기기
+    // 클릭 외부 시 드롭다운 닫기
+    window.addEventListener('click', (event) => {
+      if (!toggle.contains(event.target) && !menu1.contains(event.target)) {
+        menu1.classList.remove('show'); // 첫 번째 드롭다운 숨기기
+      }
+    });
+
+    // 팝업 헤더의 더 많은 옵션 클릭 시 두 번째 드롭다운 메뉴 표시/숨기기
+    function toggleDropdown() {
+      menu2.classList.toggle('show'); // 두 번째 드롭다운 메뉴 표시/숨기기
     }
-  });
 
-  // 팝업 헤더의 더 많은 옵션 클릭 시 두 번째 드롭다운 메뉴 표시/숨기기
-  function toggleDropdown() {
-    menu2.classList.toggle('show'); // 두 번째 드롭다운 메뉴 표시/숨기기
-  }
+    // 클릭 외부 시 두 번째 드롭다운 닫기
+    window.addEventListener('click', (event) => {
+      if (!document.querySelector('.more-options').contains(event.target) && !menu2.contains(event.target)) {
+        menu2.classList.remove('show'); // 두 번째 드롭다운 숨기기
+      }
+    });
 
-  // 클릭 외부 시 두 번째 드롭다운 닫기
-  window.addEventListener('click', (event) => {
-    if (!document.querySelector('.more-options').contains(event.target) && !menu2.contains(event.target)) {
-      menu2.classList.remove('show'); // 두 번째 드롭다운 숨기기
-    }
-  });
-
- */
+   */
 
   //팝업 열기
-  function openPopup() {
-    document.getElementById("popupOverlay").style.display = "flex";
-  }
-
- //팝업 닫기
-  function closePopup() {
-    document.getElementById("popupOverlay").style.display = "none";
-  }
-/*
-  // 좋아요 토글
-  function toggleLike() {
-    isLiked = !isLiked; // 좋아요 상태 토글
-    updateLikeButton(); // 버튼 업데이트
-  }
-
-  function updateLikeButton() {
-    const likeBtn = document.getElementById("likeBtn");
-    const popupLikeBtn = document.querySelector('.popup-footer .like-btn'); // 팝업 내 좋아요 버튼
-    const likesCount = document.getElementById("likesCount");
-
-    if (isLiked) {
-      likeBtn.innerHTML = '<i class="bi bi-heart-fill" style="color: red;"></i>'; // 채워진 하트
-      popupLikeBtn.innerHTML = '<i class="bi bi-heart-fill" style="color: red;"></i>'; // 팝업 내 버튼도 채워진 하트
-      likes++;
-    } else {
-      likeBtn.innerHTML = '<i class="bi bi-heart"></i>'; // 빈 하트
-      popupLikeBtn.innerHTML = '<i class="bi bi-heart"></i>'; // 팝업 내 버튼도 빈 하트
-      likes--;
+  //  function openPopup() {
+  //    document.getElementById("popupOverlay").style.display = "flex";
+  //  }
+  //
+  // //팝업 닫기
+  //  function closePopup() {
+  //    document.getElementById("popupOverlay").style.display = "none";
+  //  }
+  /*
+    // 좋아요 토글
+    function toggleLike() {
+      isLiked = !isLiked; // 좋아요 상태 토글
+      updateLikeButton(); // 버튼 업데이트
     }
-    likesCount.textContent = `좋아요 ${likes}개`;
+
+    function updateLikeButton() {
+      const likeBtn = document.getElementById("likeBtn");
+      const popupLikeBtn = document.querySelector('.popup-footer .like-btn'); // 팝업 내 좋아요 버튼
+      const likesCount = document.getElementById("likesCount");
+
+      if (isLiked) {
+        likeBtn.innerHTML = '<i class="bi bi-heart-fill" style="color: red;"></i>'; // 채워진 하트
+        popupLikeBtn.innerHTML = '<i class="bi bi-heart-fill" style="color: red;"></i>'; // 팝업 내 버튼도 채워진 하트
+        likes++;
+      } else {
+        likeBtn.innerHTML = '<i class="bi bi-heart"></i>'; // 빈 하트
+        popupLikeBtn.innerHTML = '<i class="bi bi-heart"></i>'; // 팝업 내 버튼도 빈 하트
+        likes--;
+      }
+      likesCount.textContent = `좋아요 ${likes}개`;
   }
 
   // 좋아요 버튼 업데이트
@@ -147,36 +147,36 @@
   }
   */
 
-let currentPage = 1;
-let canRequest = true;
+  let currentPage = 1;
+  let canRequest = true;
 
-$(window).scroll(function() {
-  let windowHeight = $(window).height();
-  let documentHeight = $(document).height();
-  let scrollHeight = $(window).scrollTop();
+  $(window).scroll(function() {
+    let windowHeight = $(window).height();
+    let documentHeight = $(document).height();
+    let scrollHeight = $(window).scrollTop();
 
-  if (windowHeight + scrollHeight + 100 > documentHeight) {
-    if (canRequest) {
-      canRequest = false;
-      getFeeds(currentPage);
+    if (windowHeight + scrollHeight + 100 > documentHeight) {
+      if (canRequest) {
+        canRequest = false;
+        getFeeds(currentPage);
+      }
     }
+  });
+
+  getFeeds(currentPage);
+
+  function getFeeds(page) {
+    $.ajax({
+      type: "get",
+      url: "items?page=" + page,
+      dataType: "json",
+      success: function (items) {
+        appendFeeds(items);
+        currentPage++;
+        canRequest = true;
+      }
+    })
   }
-});
-
-getFeeds(currentPage);
-
-function getFeeds(page) {
-  $.ajax({
-    type: "get",
-    url: "items?page=" + page,
-    dataType: "json",
-    success: function (items) {
-      appendFeeds(items);
-      currentPage++;
-      canRequest = true;
-    }
-  })
-}
 
   function appendFeeds(items) {
     for (let feed of items) {
@@ -278,7 +278,7 @@ function getFeeds(page) {
         <!--feed text-->
         <section class="feed_txt">
             <div><strong>\${feed.title}</strong><div>
-            <p>\${feed.content}  <a href="#n" class="more">더보기</a></p>
+            <p>\${feed.content}<a href="#n" class="more">더보기</a></p>
             <div id="tags-\${feed.no}" style="margin: 10px 0;"></div>
         </section>
 
@@ -293,11 +293,11 @@ function getFeeds(page) {
                       </span>
               <button id="delete" type="button">댓글삭제</button>
             </p>
-          </div>
-          <form>
+            <form method="post" action="insertComment">
             <div class="add-comment">
-              <input type="text" id="newComment" placeholder="댓글 달기...">
-              <button  onclick="addComment()">게시</button>
+              <input type="hidden" name="feedNo" value="\${feed.no}">
+              <input type="text" name="comment" placeholder="댓글 달기...">
+              <button  type="submit">게시</button>
             </div>
           </form>
         </div>

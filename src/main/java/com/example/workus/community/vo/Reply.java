@@ -15,7 +15,7 @@ import java.util.Date;
 public class Reply {
     private long no;
     private String content;
-    private Date CreatedDate;
+    private Date createdDate;
 
     private Feed feed;
 

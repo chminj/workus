@@ -597,28 +597,28 @@ form .add-comment button {
     margin-bottom: 10px;
 }
 
-.txt_comment{
+div.txt_comment{
     display:flex;
     margin-bottom: 5px;
 }
 
-.txt_comment > span{
+div.txt_comment > span{
     flex:9.8;
 }
 
-.txt_comment > span .txt_id{
+div.txt_comment > span .txt_id{
     margin-right: 10px;
 }
 
-.txt_comment > span span{
+div.txt_comment > span span{
     width: 100%;
 }
 
-.txt_comment button{
+div.txt_comment button{
     color: #ddd;
 }
 
-.txt_comment button:hover{
+div.txt_comment button:hover{
     color: #777;
 }
 
