@@ -105,6 +105,12 @@
             <version>3.0.3</version>
             <scope>test</scope>
         </dependency>
+        <!-- coolSms API 사용을 위한 의존성 추가 -->
+        <dependency>
+            <groupId>net.nurigo</groupId>
+            <artifactId>sdk</artifactId>
+            <version>4.3.0</version>
+        </dependency>
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
