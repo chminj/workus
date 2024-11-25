@@ -8,6 +8,7 @@
         <li class="d-flex align-items-center">
         <sec:authorize access="isAuthenticated()">
             <sec:authentication property="principal.no" var="LOGIN_USERNO" scope="request"/>
+            <sec:authentication property="principal.id" var="LOGIN_USERID" scope="request"/>
             <sec:authentication property="principal.name"/> 님 환영합니다.
         </sec:authorize>
             <a href="/user/myinfo" class="mgl5">
