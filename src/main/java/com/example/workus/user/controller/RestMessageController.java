@@ -7,7 +7,6 @@ import net.nurigo.sdk.message.model.Message;
 import net.nurigo.sdk.message.request.SingleMessageSendingRequest;
 import net.nurigo.sdk.message.response.SingleMessageSentResponse;
 import net.nurigo.sdk.message.service.DefaultMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
 import org.springframework.http.ResponseEntity;
@@ -62,9 +61,6 @@ public class RestMessageController {
 
         SingleMessageSentResponse response = this.messageService.sendOne(new SingleMessageSendingRequest(message));
 
-        if(response == null) {
-            System.out.println("response가 생성되지 않음");
-        }
         if("2000".equals(response.getStatusCode())) {
             return ResponseEntity.ok(Map.of("success", true, "checkNum", checkNum));
         } else {
