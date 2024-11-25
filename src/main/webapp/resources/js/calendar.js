@@ -136,6 +136,36 @@
         eventRemove: function (obj) {
             console.log('Event Removed:', obj);
         },
+        dateClick: function (info) {
+            let startDate = info.dateStr;
+            console.log(info);
+
+            let now = new Date();
+            let koreaTimeOffset = 9 * 60 * 60 * 1000; // UTC+9 시간차 (밀리초 단위)
+            let koreaTime = new Date(now.getTime() + koreaTimeOffset);
+
+            let currentTime = koreaTime.toISOString().split("T")[1].substring(0, 5);
+
+            let startDateParts = startDate.split("T");
+
+            $("#calendarModalLabel").text("일정 추가하기");
+
+            $("#calendarModal #name").val("");
+            $("#calendarModal #location").val("");
+            $("#calendarModal #division").val("1");
+            $("#calendarModal #content").val("");
+
+            $("#calendarModal #startDate").val(`${startDateParts[0]}T${currentTime}`);
+            $("#calendarModal #endDate").val(""); // 종료 시간 초기화
+
+            $("#calendarModal").data("eventId", null);  // eventId 초기화
+
+            $("#delete").hide();
+            $("#save").text("추가");
+
+            $("#calendarModal").modal("show");
+            calendar.unselect();
+        },
         select: function (info) {
 
             let startDate = info.startStr;
@@ -149,7 +179,8 @@
             let currentTime = koreaTime.toISOString().split("T")[1].substring(0, 5);
 
             let startDateParts = startDate.split("T");
-            let endDateParts = endDate.split("T");
+            let correctedEndDate = getDate(new Date(endDate), -1);
+            let endDateParts = correctedEndDate.split("T");
 
             $("#calendarModalLabel").text("일정 추가하기");
 
@@ -169,6 +200,7 @@
             $("#calendarModal").modal("show");
             calendar.unselect();
         }
+
     });
 
     function getDate(date, days) {
