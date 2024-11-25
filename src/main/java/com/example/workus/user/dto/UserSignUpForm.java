@@ -32,6 +32,9 @@ public class UserSignUpForm {
     @Pattern(regexp = "^\\d{2,3}-\\d{3,4}-\\d{4}$", message = "유효한 전화번호 형식이 아닙니다.")
     private String phone;
 
-    @NotBlank(message = "주소는 필수 입력값입니다.")
+    @NotBlank
     private String address;
+
+    @NotBlank(message = "주소는 필수 입력값입니다.")
+    private String detailAddress;
 }
