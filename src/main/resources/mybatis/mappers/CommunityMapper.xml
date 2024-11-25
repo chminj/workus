@@ -55,7 +55,7 @@
     <!--   
      void addNewFeed(@Param("feed") Feed feed);
     -->
-    <insert id="addNewFeed">
+    <insert id="insertFeed">
     insert into WORKUS_COMMUNITY
         (COMMUNITY_TITLE
         ,COMMUNITY_CONTENT
@@ -77,7 +77,7 @@
     <!--
         void addHashTag(@Param("hashTag") HashTag hashTag);
     -->
-    <insert id="addHashTag">
+    <insert id="insertHashTag">
         insert into WORKUS_HASHTAG
         (HASHTAG_NAME
         ,COMMUNITY_NO)
@@ -86,4 +86,17 @@
         ,#{hashTag.feed.no})
     </insert>
 
+    <!--
+         void insertReply(@Param("reply")Reply reply);
+    -->
+    <insert id="insertReply">
+        insert into WORKUS_REPLY
+            (REPLY_CONTENT,USER_NO,COMMUNITY_NO)
+        values
+            (#{reply.content},#{reply.user.no},#{reply.feed.no})
+
+        <selectKey resultType="Long" keyProperty="reply.no" keyColumn="REPLY_NO" order="AFTER">
+            select last_insert_id()
+        </selectKey>
+    </insert>
 </mapper>

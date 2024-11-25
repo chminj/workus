@@ -1,4 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
+ <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@ include file="../common/tags.jsp" %>
 <!doctype html>
@@ -31,7 +31,7 @@
         <!-- 게시글 작성 폼 -->
         <div class="right-section">
           <div class="header">새 게시물 작성</div>
-          <form id="postForm" method="post" action="add" enctype="multipart/form-data">
+          <form id="postForm" method="post" action="insertFeed" enctype="multipart/form-data">
           <div> <p id="text"></p></div>
 
             <!-- 제목 입력 -->

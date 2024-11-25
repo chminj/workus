@@ -1,10 +1,14 @@
 package com.example.workus.community.controller;
 
+import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
+import com.example.workus.community.vo.Reply;
+import com.example.workus.security.LoginUser;
 import com.example.workus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +41,21 @@ public class CommunityController {
        return "community/form";
     }
 
-    @PostMapping("/add")
-    public String addFeed(FeedForm form){
-        Long userNo = 20133L;
+    @PostMapping("/insertFeed")
+    public String addFeed(FeedForm form ,@AuthenticationPrincipal LoginUser loginUser){
+        Long userNo = loginUser.getNo();
 
-        communityService.addNewFeed(form, userNo);
+        communityService.insertFeed(form, userNo);
         return "redirect:/community/list";
    }
+
+   @PostMapping("/insertComment")
+    public String insert(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser){
+       Long userNo = loginUser.getNo();
+       commentForm.setUserNo(userNo);
+
+       communityService.insertReply(commentForm, userNo);
+       return "redirect:/community/list";
+   }
+
 }

@@ -13,8 +13,9 @@ import java.util.List;
 @Setter
 @ToString
 @Alias("Feed")
+@Builder
 public class Feed {
-    private long no;
+    private Long no;
     private String title;
     private String content;
     private String mediaUrl;

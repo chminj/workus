@@ -1,10 +1,12 @@
 package com.example.workus.community.service;
 
+import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.dto.TagForm;
 import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
+import com.example.workus.community.vo.Reply;
 import com.example.workus.user.vo.User;
 import com.example.workus.util.FileUtils;
 import com.example.workus.util.Pagination;
@@ -19,10 +21,10 @@ import java.util.Map;
 
 @Service
 public class CommunityService {
-
+    
     @Autowired
     CommunityMapper communityMapper;
-
+    
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(int page){
         int totalRows = communityMapper.getTotalRows();
@@ -38,10 +40,11 @@ public class CommunityService {
             feed.setHashTags(hashTags);
         }
         return feeds;
+        
     }
 
     // 게시글 작성 (제목,내용,해쉬태그,파일)
-    public void addNewFeed(FeedForm form, Long userNo){
+    public void insertFeed(FeedForm form, Long userNo){
         MultipartFile multipartFile = form.getUpfile();
         // 멀티파트 파일에 진짜 이름을 가져옴
         String originalFilename = multipartFile.getOriginalFilename();
@@ -59,8 +62,10 @@ public class CommunityService {
         feed.setMediaUrl(originalFilename);
         // feed -> {no:0, title:'xxxx'}
 
+        System.out.println(feed.getNo());
         // 인서트 sql 내용에 데이터 넣음
-        communityMapper.addNewFeed(feed);
+        communityMapper.insertFeed(feed);
+        System.out.println(feed.getNo());
         // feed -> {no:34}
 
         try {
@@ -81,11 +86,27 @@ public class CommunityService {
                 hashTag.setFeed(feed);
                 hashTag.setName(value);
 
-                communityMapper.addHashTag(hashTag);
+                communityMapper.insertHashTag(hashTag);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
+
+    public void insertReply(CommentForm form , Long userNo) {
+        Reply reply = new Reply();
+        reply.setContent(form.getComment());
+
+        Feed feed = new Feed();
+        feed.setNo(form.getFeedNo());
+        reply.setFeed(feed);
+
+        User user = new User();
+        user.setNo(userNo);
+        reply.setUser(user);
+
+        communityMapper.insertReply(reply);
+    }
+
 
 }
