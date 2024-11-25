@@ -214,7 +214,7 @@
                     </a>
                 </li>
 
-                <li class="gnb">
+                <li class="gnb ${menu eq 'chat' ? 'on' : '' }">
                     <a href="/chatroom/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">

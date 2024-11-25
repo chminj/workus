@@ -14,6 +14,7 @@
 		<div id="divContents">
 			<%@ include file="../common/header.jsp" %>
 			<section class="verticalLayoutFixedSection">
+				<c:set var="menu" value="chat"/>
 				<%@ include file="../common/nav.jsp" %>
 				<main class="noLnb">
 					<div class="container-fluid vh-100">
@@ -159,6 +160,7 @@
 </div>
 	<script>
 		const LOGIN_USERNO = ${LOGIN_USERNO};
+		const LOGIN_USERID = "${LOGIN_USERID}";
 		// 모달 객체 생성
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
@@ -178,7 +180,7 @@
 
 		// 페이지 변화 시 연결 시간 업데이트
 		$(document).on('visibilitychange', async function() {
-			const chatroomNo = $('.chat-text').data('chatroomNo');
+			let chatroomNo = $('.chat-text').data('chatroomNo');
 			try {
 				await fetch('/ajax/chatroom/' + chatroomNo, {
 					method: 'PUT'
@@ -216,13 +218,13 @@
 		});
 
 		// 채팅 전송 후 화면에 내 채팅 보이기
-		function appearSubmittedMyChat(data) {
+		function appearSubmittedMyChat(chat) {
 			return `
-					\${data.isFirst === 'Y' ? `
+					\${chat.isFirst === 'Y' ? `
 						<!-- 날짜 구분선 -->
 						<div class="d-flex align-items-center my-4">
 							<div class="border-bottom flex-grow-1"></div>
-							<span class="mx-3 text-muted">\${data.time.date}</span>
+							<span class="mx-3 text-muted">\${chat.time.date}</span>
 							<div class="border-bottom flex-grow-1"></div>
 						</div>
 					` : ``}
@@ -232,42 +234,41 @@
 						</div>
 						<div class="d-flex justify-content-end">
 							<div class="bg-primary text-white rounded p-2 mb-1">
-								\${data.content}
+								\${chat.content}
 							</div>
 						</div>
 						<div class="text-end">
-							<small class="text-muted">\${data.time.time}</small>
+							<small class="text-muted">\${chat.time.time}</small>
 						</div>
 					</div>
 			`;
 		}
 
-		// 채팅 전송
-		$('#chat').on('click', '#submitChat', async function() {
-			try {
-				// closest: 가장 가까운 form을 찾는다.
-				// [0]: jquery객체를 벗어던지고 일반 DOM요소로 반환한다.
-				const form = $(this).closest('form')[0];
-				const formData = new FormData(form);
-				const chatroomNo = $('.chat-text').data('chatroomNo');
-				const response = await fetch(`/ajax/chat/\${chatroomNo}`, {
-					method: 'POST',
-					body: formData
-				});
-				const result = await response.json();
-				const data = await result.data;
-				if (response.ok) {
-					replaceFormatTime(data);
-					const div = appearSubmittedMyChat(data);
-					$('.chat-div').append(div);
-					$('input[name=content]').val('');
-				} else {
-					console.log('채팅이 정상적으로 전송되지 않았습니다.');
-				}
-			} catch (error) {
-				console.log('에러메시지', error);
-			}
-		});
+		// 수신한 채팅 내 화면에 보이기
+		function appearSubmittedOtherChat(chat) {
+			return `
+					\${chat.isFirst === 'Y' ? `
+						<!-- 날짜 구분선 -->
+						<div class="d-flex align-items-center my-4">
+							<div class="border-bottom flex-grow-1"></div>
+							<span class="mx-3 text-muted">\${chat.time.date}</span>
+							<div class="border-bottom flex-grow-1"></div>
+						</div>
+					` : ``}
+					<div class="mb-3 w-75">
+						<div class="d-flex align-items-center mb-1">
+							<img src="" alt="프로필" class="rounded-circle me-2"/>
+							<strong>\${chat.user.name}</strong>
+						</div>
+						<div class="d-flex">
+							<div class="bg-light rounded p-2 mb-1">
+								\${chat.content}
+							</div>
+						</div>
+						<small class="text-muted">\${chat.time.time}</small>
+					</div>
+			`;
+		}
 
 		// 날짜와 시간 포맷
 		function formatTime(unformattedTime) {
@@ -307,6 +308,99 @@
 			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
 			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
 			await $('#chat').html(div);
+
+			// 웹소켓 연결
+			$(function() {
+				let ws = null;
+
+				function connect() {
+					ws = new SockJS("/socket/chat");
+
+					// 연결 직후
+					ws.onopen = function() {
+						console.log('채팅방 번호: ', $('.chat-text').data('chatroomNo'));
+						let message = {
+							cmd: "chat-open",
+							chatroomNo: $('.chat-text').data('chatroomNo'),
+							userNo: LOGIN_USERNO,
+							userId: LOGIN_USERID
+						}
+						send(message);
+					}
+
+					// 메시지가 도착한 경우
+					ws.onmessage = function(message) {
+						let data = JSON.parse(message.data);
+						if (data.cmd === "chat-open-success") {
+							console.log('채팅방 오픈 성공');
+						} else if (data.cmd === "chat-message") {
+							replaceFormatTime(data.chat);
+							if (data.userNo === LOGIN_USERNO) {
+								const div = appearSubmittedMyChat(data.chat);
+								$('.chat-div').append(div);
+								console.log('메시지 도착');
+							} else {
+								const div = appearSubmittedOtherChat(data.chat);
+								$('.chat-div').append(div);
+							}
+						} else if (data.cmd === "chat-close-success") {
+							console.log('정상적으로 채팅방에서 나갔습니다.');
+						}
+					}
+				}
+				connect();
+
+				function disconnect() {
+					if (ws != null) {
+						ws.close();
+					}
+				}
+
+				// 채팅 소켓으로 전송
+				function chat() {
+					let inputMessage = $('input[name=content]').val();
+					let chatroomNo = $('.chat-text').data('chatroomNo');
+					if (inputMessage) {
+						let message = {
+							cmd: 'chat-message',
+							chatroomNo: chatroomNo,
+							userNo: LOGIN_USERNO,
+							userId: LOGIN_USERID,
+							text: inputMessage
+						}
+						send(message);
+						$('input[name=content]').val('');
+					}
+				}
+
+				// 다른 페이지로 이동하거나 창을 껐을 때
+				$(window).on('unload', function() {
+					let message = {
+						cmd: 'chat-close',
+						chatroomNo: chatroomNo,
+						userNo: LOGIN_USERNO,
+						userId: LOGIN_USERID
+					}
+					send(message);
+					disconnect();
+				})
+
+				function send(message) {
+					ws.send(JSON.stringify(message));
+				}
+
+				$('#chat').on('click', '#submitChat', function() {
+					chat();
+				});
+
+				// 엔터키 입력 이벤트
+				$('#chat').on('keypress', 'input[name=content]', function(e) {
+					if (e.keyCode === 13) {
+						e.preventDefault();
+						chat();
+					}
+				});
+			})
 		});
 
 		// 채팅방 제목과 참여중인 유저들을 ajax로 불러온다.
@@ -345,28 +439,30 @@
 		// 채팅방 제목과 참여자 목록 불러오기
 		function loadTitleAndUsers(data) {
 			return `
-					<!-- 채팅방 헤더 -->
-					<div class="border-bottom p-3 bg-light d-flex justify-content-between align-items-center">
-						<h5 class="mb-0">\${data.chatroomTitle}</h5>
-						<div class="dropdown">
-							<button class="btn btn-light" data-bs-toggle="dropdown">
-								<i class="fas fa-users"></i>
-							</button>
-							<!-- 참여자 목록 드롭다운 -->
-							<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
-								<li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
-								<li>
-									\${data.users.map((user) => `
-										<div class="d-flex align-items-center my-2">
-										<img src="" alt="프로필" class="rounded-circle me-2">
-										<span role="button" class="participant-name" data-user-no="\${user.no}">\${user.name}</span>
-										</div>
-									`).join('')}
-								</li>
-								<!-- 추가 참여자들... -->
-							</ul>
+			  <!-- 채팅방 헤더 -->
+			  <div class="border-bottom p-3 bg-light d-flex justify-content-between align-items-center">
+				 <h5 class="mb-0">\${data.chatroomTitle}</h5>
+				 <div class="dropdown">
+					<button class="btn btn-light" data-bs-toggle="dropdown">
+					   <i class="fas fa-users"></i>
+					</button>
+					<!-- 참여자 목록 드롭다운 -->
+					<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
+					   <li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
+					   <li>
+						  \${data.users.map((user) => `
+						<div class="d-flex align-items-center my-2">
+							<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+							<div class="d-flex align-items-center gap-2">
+								<span role="button" class="participant-name" data-user-no="\${user.no}">\${user.name}</span>
+								<%-- <span class="badge rounded-pill bg-success" style="font-size: 0.7em;">온라인</span> --%>
+							</div>
 						</div>
-					</div>
+						`).join('')}
+					   </li>
+					</ul>
+				 </div>
+			  </div>
 			`;
 		}
 
@@ -414,37 +510,6 @@
 							</div>
 							`}
 						`).join('')}
-
-						<!-- 상대방 메시지
-						<div class="mb-3 w-75">
-							<div class="d-flex align-items-center mb-1">
-								<img src="" alt="프로필" class="rounded-circle me-2">
-								<strong>홍길동</strong>
-							</div>
-							<div class="d-flex">
-								<div class="bg-light rounded p-2 mb-1">
-									안녕하세요!
-								</div>
-							</div>
-							<small class="text-muted">오전 10:30</small>
-						</div>
-						-->
-
-						<!-- 내 메시지
-						<div class="mb-3 w-75 ms-auto">
-							<div class="text-end mb-1">
-								<strong>나</strong>
-							</div>
-							<div class="d-flex justify-content-end">
-								<div class="bg-primary text-white rounded p-2 mb-1">
-									네, 안녕하세요!
-								</div>
-							</div>
-							<div class="text-end">
-								<small class="text-muted">오전 10:31</small>
-							</div>
-						</div>
-						-->
 					</div>
 				`;
 		}
