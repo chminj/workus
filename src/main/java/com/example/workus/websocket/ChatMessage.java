@@ -1,9 +1,12 @@
 package com.example.workus.websocket;
 
 import com.example.workus.chat.vo.Chat;
+import com.example.workus.user.vo.User;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,8 +21,8 @@ public class ChatMessage {
     // chat-close-success : 채팅 연결 종료 성공
     private String cmd;
     private Long chatroomNo;
-    private Long userNo;
-    private String userId;
+    private User user;
     private String text;
     private Chat chat;
+    private Set<String> onlineUserIds; // 채팅방에 현재 참여중인 유저 번호들
 }
