@@ -49,7 +49,6 @@ public class RestMessageController {
 
     @GetMapping("/send-sms")
     public ResponseEntity<Map<String, Object>> sendSms(@RequestParam("phoneNumber") String phoneNumber) {
-        System.out.print(phoneNumber);
 
         Message message = new Message();
         Random r = new Random();

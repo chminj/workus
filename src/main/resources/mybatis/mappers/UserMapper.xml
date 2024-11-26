@@ -120,4 +120,14 @@
             U.USER_ID = #{id}
     </select>
 
+    <update id="updateSignUpUser">
+        UPDATE WORKUS_USERS
+        SET
+            USER_ID = #{user.id},
+            USER_PASSWORD = #{user.password},
+            USER_PHONE = #{user.phone},
+            USER_ADDRESS = #{user.address}
+        WHERE
+            USER_NO = #{user.no}
+    </update>
 </mapper>
