@@ -133,7 +133,7 @@
                         <span class="gnbText">메일</span>
                     </a>
                 </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'address-book' ? 'on' : '' }">
                     <a href="../address-book/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
