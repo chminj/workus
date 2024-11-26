@@ -15,13 +15,13 @@ $(function(){
         },
         aspectRatio: 2,
         displayEventTime: false,
-        // googleCalendarApiKey: 'AIzaSyDcnW6WejpTOCffshGDDb4neIrXVUA1EAE',
-        // eventSources:[
-        //     {
-        //         googleCalendarId : 'ko.south_korea.official#holiday@group.v.calendar.google.com',
-        //         className : 'official-holiday'
-        //     }
-        // ],
+        googleCalendarApiKey: 'AIzaSyDIvWEKCFDKbJPdBUzOMSBSbf_cCtdRRTk',
+        eventSources:[
+            {
+                googleCalendarId : 'ko.south_korea.official#holiday@group.v.calendar.google.com',
+                className : 'official-holiday'
+            }
+        ],
         eventClick: function(info){
             //클릭시 구글캘린더 url로 가는 것 막음
             info.jsEvent.stopPropagation();

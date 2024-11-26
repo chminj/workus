@@ -1,12 +1,14 @@
 package com.example.workus.attendance.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
+@ToString
+@Builder
 public class AttendanceDto {
-
     private Long no;
     private int roleNo;
     private double unusedAnnualLeave;
