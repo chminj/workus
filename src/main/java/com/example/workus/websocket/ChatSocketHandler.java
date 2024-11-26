@@ -36,11 +36,10 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
         ChatMessage chatMessage = objectMapper.readValue(message.getPayload(), ChatMessage.class);
         String cmd = chatMessage.getCmd();
-
         if ("chat-open".equals(cmd)) {
             openchatroom(session, chatMessage);
         } else if ("chat-message".equals(cmd)) {
-            chatting(session, chatMessage);
+            chatting(chatMessage);
         } else if ("chat-close".equals(cmd)) {
             closechatroom(session, chatMessage);
         }
@@ -48,7 +47,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 
     private void openchatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
         // 채팅방에 들어온 유저 id
-        String userId = chatMessage.getUserId();
+        String userId = chatMessage.getUser().getId();
         // 채팅방 no
         Long chatroomNo = chatMessage.getChatroomNo();
         // <식별자, webSocketSession> 형태로 chatrooms에 담을 그릇
@@ -64,30 +63,65 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         ChatMessage responseChatMessage = new ChatMessage();
         responseChatMessage.setCmd("chat-open-success");
         responseChatMessage.setChatroomNo(chatroomNo);
-        responseChatMessage.setUserId(userId);
+        User user = new User();
+        user.setId(userId);
+        responseChatMessage.setUser(user);
 
-        User user = userMapper.getUserById(userId);
+        user = userMapper.getUserById(userId);
+        responseChatMessage.setUser(user);
         responseChatMessage.setText(user.getName() + "님이 채팅방에 접속하셨습니다.");
 
-        session.sendMessage(new TextMessage(objectMapper.writeValueAsBytes(responseChatMessage)));
+        // 현재 채팅방에 로그인 중인 아이디 저장
+        Set<String> onlineUserIds = new HashSet<>();
+        for (String onlineUserId : chatroom.keySet()) {
+            onlineUserIds.add(onlineUserId);
+        }
+        responseChatMessage.setOnlineUserIds(onlineUserIds);
+
+        // 변환 한 번만 하기 위해서 담기
+        byte[] chatMessageBytes = objectMapper.writeValueAsBytes(responseChatMessage);
+
+        for (WebSocketSession userSession : chatroom.values()) {
+            if (userSession != null && userSession.isOpen()) {
+                userSession.sendMessage(new TextMessage(chatMessageBytes));
+            }
+        }
     }
 
     private void closechatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
-        // 삭제
         Long chatroomNo = chatMessage.getChatroomNo();
-        chatrooms.remove(chatroomNo);
-
-        User user = userMapper.getUserById(chatMessage.getUserId());
         ChatMessage responseChatMessage = new ChatMessage();
+        User user = userMapper.getUserById(chatMessage.getUser().getId());
         responseChatMessage.setCmd("chat-close-success");
         responseChatMessage.setText(user.getName() + "님이 채팅방에서 나갔습니다.");
+        responseChatMessage.setUser(user);
 
         session.sendMessage(new TextMessage(objectMapper.writeValueAsBytes(responseChatMessage)));
+
+        // <식별자, webSocketSession> 형태로 chatrooms에 담을 그릇
+        Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
+
+        // 현재 채팅방에 로그인 중인 아이디 저장 + 나간 유저 삭제
+        Set<String> onlineUserIds = new HashSet<>();
+        for (String onlineUserId : chatroom.keySet()) {
+            onlineUserIds.add(onlineUserId);
+        }
+        onlineUserIds.remove(user.getId());
+        responseChatMessage.setOnlineUserIds(onlineUserIds);
+
+        // 변환 한 번만 하기 위해서 담기
+        byte[] chatMessageBytes = objectMapper.writeValueAsBytes(responseChatMessage);
+
+        for (WebSocketSession userSession : chatroom.values()) {
+            if (userSession != null && userSession.isOpen()) {
+                userSession.sendMessage(new TextMessage(chatMessageBytes));
+            }
+        }
     }
 
-    private void chatting(WebSocketSession session, ChatMessage chatMessage) throws IOException {
+    private void chatting(ChatMessage chatMessage) throws IOException {
         Long chatroomNo = chatMessage.getChatroomNo();
-        Long userNo = chatMessage.getUserNo();
+        Long userNo = chatMessage.getUser().getNo();
         Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
 
         Chat chat = new Chat();
@@ -121,7 +155,9 @@ public class ChatSocketHandler extends TextWebSocketHandler {
                 Long chatroomNo = iterator.next();
                 Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
                 if(chatroom.containsKey(loginId)) {
+                    // 채팅방에서 유저 삭제
                     chatroom.remove(loginId);
+                    // 채팅방에 아무도 없으면 그 채팅방 삭제
                     if(chatrooms.get(chatroomNo).isEmpty()) {
                         chatrooms.remove(chatroomNo);
                     }

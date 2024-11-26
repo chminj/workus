@@ -55,6 +55,17 @@
 		</div>
 	</div>
 
+	<!-- 토스트 컨테이너 위치 -->
+	<div class="toast-container position-fixed top-0 end-0 p-3">
+		<div id="userJoinToast" class="toast" role="alert">
+			<div class="toast-header">
+				<strong class="me-auto">알림</strong>
+				<button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+			</div>
+			<div class="toast-body"></div>
+		</div>
+	</div>
+
 	<!-- 프로필 모달 -->
 	<div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
 		<div class="modal-dialog">
@@ -165,22 +176,125 @@
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
 
+		let chatroomNo = null;
+
+		// 채팅방 입장
+		$(".chatroom").on('click', async function () {
+			// data-chatroom-no 속성 가져오기
+			chatroomNo = $(this).data("chatroomNo");
+			// 읽지 않은 메시지 수 화면에서 삭제
+			$(`.not-read-count\${chatroomNo}`).text("");
+			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
+			const chatDiv = await ajaxChatsData(chatroomNo);
+			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
+			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
+			await $('#chat').html(div);
+
+			// 웹소켓 연결
+			$(function() {
+				let ws = null;
+
+				function connect() {
+					ws = new SockJS("/socket/chat");
+
+					// 연결 직후
+					ws.onopen = function() {
+						let message = {
+							cmd: "chat-open",
+							chatroomNo: $('.chat-text').data('chatroomNo'),
+							user: {
+								no: LOGIN_USERNO,
+								id: LOGIN_USERID
+							}
+						}
+						send(message);
+					}
+
+					// 메시지가 도착한 경우
+					ws.onmessage = function(message) {
+						let data = JSON.parse(message.data);
+						if (data.cmd === "chat-open-success") {
+							userJoinToast(data);
+							checkOnline(data);
+						} else if (data.cmd === "chat-message") {
+							replaceFormatTime(data.chat);
+							if (data.user.no === LOGIN_USERNO) {
+								const div = appearSubmittedMyChat(data.chat);
+								$('.chat-div').append(div);
+							} else {
+								const div = appearSubmittedOtherChat(data.chat);
+								$('.chat-div').append(div);
+							}
+						} else if (data.cmd === "chat-close-success") {
+							userJoinToast(data);
+							checkOnline(data);
+						}
+					}
+				}
+				connect();
+
+				// 채팅 소켓으로 전송
+				function chat() {
+					let inputMessage = $('input[name=content]').val();
+					if (inputMessage) {
+						let message = {
+							cmd: 'chat-message',
+							chatroomNo: chatroomNo,
+							user: {
+								no: LOGIN_USERNO,
+								id: LOGIN_USERID
+							},
+							text: inputMessage
+						}
+						send(message);
+						$('input[name=content]').val('');
+					}
+				}
+
+				// 다른 페이지로 이동하거나 창이 꺼지기 직전
+				$(window).on('beforeunload', function() {
+					let message = {
+						cmd: 'chat-close',
+						chatroomNo: chatroomNo,
+						user: {
+							no: LOGIN_USERNO,
+							id: LOGIN_USERID
+						}
+					}
+					send(message);
+				});
+
+				function send(message) {
+					ws.send(JSON.stringify(message));
+				}
+
+				$('#chat').on('click', '#submitChat', function() {
+					chat();
+				});
+
+				// 엔터키 입력 이벤트
+				$('#chat').on('keypress', 'input[name=content]', function(e) {
+					if (e.keyCode === 13) {
+						e.preventDefault();
+						chat();
+					}
+				});
+			})
+		});
+
 		// 부서 체크박스 체크와 해제 이벤트
 		$('.dept-check').change(function() {
 			if ($('.dept-check').is(':checked')) {
 				let deptNo = $(this).data('dept');
-				console.log('deptNo: ', deptNo);
 				$(`[data-dept=\${deptNo}]`).prop("checked", true);
 			} else {
 				let deptNo = $(this).data('dept');
-				console.log('deptNo: ', deptNo);
 				$(`[data-dept=\${deptNo}]`).prop("checked", false);
 			}
 		})
 
 		// 페이지 변화 시 연결 시간 업데이트
 		$(document).on('visibilitychange', async function() {
-			let chatroomNo = $('.chat-text').data('chatroomNo');
 			try {
 				await fetch('/ajax/chatroom/' + chatroomNo, {
 					method: 'PUT'
@@ -216,6 +330,29 @@
 				console.log('에러 메시지', error);
 			}
 		});
+
+		// 유저 입장 퇴장 토스트
+		function userJoinToast(data) {
+			// 자신이 아닌 사용자가 접속했을 때만 표시
+			if (data.user && data.user.no !== LOGIN_USERNO) {
+				const toast = new bootstrap.Toast($('#userJoinToast')[0]);
+				$('#userJoinToast .toast-body').text(data.text);
+				toast.show();
+			}
+		}
+
+		// 온라인 표시
+		function checkOnline(data) {
+			let onlineUserIds = data.onlineUserIds;
+			try {
+				$('.span-online').text('');
+				for (let onlineUserId of onlineUserIds) {
+					$(`#span-online\${onlineUserId}`).text('온라인');
+				}
+			} catch (error) {
+				console.log('온라인 표시 에러가 발생했습니다.', error)
+			}
+		}
 
 		// 채팅 전송 후 화면에 내 채팅 보이기
 		function appearSubmittedMyChat(chat) {
@@ -297,112 +434,6 @@
 			data.time = formatTime(data.time);
 		}
 
-		// 채팅방 입장
-		$(".chatroom").on('click', async function () {
-			// data-chatroom-no 속성 가져오기
-			const chatroomNo = $(this).data("chatroomNo");
-			// 읽지 않은 메시지 수 화면에서 삭제
-			$(`.not-read-count\${chatroomNo}`).text("");
-			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
-			const chatDiv = await ajaxChatsData(chatroomNo);
-			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
-			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
-			await $('#chat').html(div);
-
-			// 웹소켓 연결
-			$(function() {
-				let ws = null;
-
-				function connect() {
-					ws = new SockJS("/socket/chat");
-
-					// 연결 직후
-					ws.onopen = function() {
-						console.log('채팅방 번호: ', $('.chat-text').data('chatroomNo'));
-						let message = {
-							cmd: "chat-open",
-							chatroomNo: $('.chat-text').data('chatroomNo'),
-							userNo: LOGIN_USERNO,
-							userId: LOGIN_USERID
-						}
-						send(message);
-					}
-
-					// 메시지가 도착한 경우
-					ws.onmessage = function(message) {
-						let data = JSON.parse(message.data);
-						if (data.cmd === "chat-open-success") {
-							console.log('채팅방 오픈 성공');
-						} else if (data.cmd === "chat-message") {
-							replaceFormatTime(data.chat);
-							if (data.userNo === LOGIN_USERNO) {
-								const div = appearSubmittedMyChat(data.chat);
-								$('.chat-div').append(div);
-								console.log('메시지 도착');
-							} else {
-								const div = appearSubmittedOtherChat(data.chat);
-								$('.chat-div').append(div);
-							}
-						} else if (data.cmd === "chat-close-success") {
-							console.log('정상적으로 채팅방에서 나갔습니다.');
-						}
-					}
-				}
-				connect();
-
-				function disconnect() {
-					if (ws != null) {
-						ws.close();
-					}
-				}
-
-				// 채팅 소켓으로 전송
-				function chat() {
-					let inputMessage = $('input[name=content]').val();
-					let chatroomNo = $('.chat-text').data('chatroomNo');
-					if (inputMessage) {
-						let message = {
-							cmd: 'chat-message',
-							chatroomNo: chatroomNo,
-							userNo: LOGIN_USERNO,
-							userId: LOGIN_USERID,
-							text: inputMessage
-						}
-						send(message);
-						$('input[name=content]').val('');
-					}
-				}
-
-				// 다른 페이지로 이동하거나 창을 껐을 때
-				$(window).on('unload', function() {
-					let message = {
-						cmd: 'chat-close',
-						chatroomNo: chatroomNo,
-						userNo: LOGIN_USERNO,
-						userId: LOGIN_USERID
-					}
-					send(message);
-					disconnect();
-				})
-
-				function send(message) {
-					ws.send(JSON.stringify(message));
-				}
-
-				$('#chat').on('click', '#submitChat', function() {
-					chat();
-				});
-
-				// 엔터키 입력 이벤트
-				$('#chat').on('keypress', 'input[name=content]', function(e) {
-					if (e.keyCode === 13) {
-						e.preventDefault();
-						chat();
-					}
-				});
-			})
-		});
-
 		// 채팅방 제목과 참여중인 유저들을 ajax로 불러온다.
 		async function ajaxTitleAndUsersData(chatroomNo) {
 			try {
@@ -454,8 +485,8 @@
 						<div class="d-flex align-items-center my-2">
 							<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 							<div class="d-flex align-items-center gap-2">
-								<span role="button" class="participant-name" data-user-no="\${user.no}">\${user.name}</span>
-								<%-- <span class="badge rounded-pill bg-success" style="font-size: 0.7em;">온라인</span> --%>
+								<span role="button" class="participant-name" data-user-id="\${user.id}">\${user.name}</span>
+								 <span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
 							</div>
 						</div>
 						`).join('')}
