@@ -36,11 +36,13 @@ public class CommunityService {
         int end = pagination.getEnd();
         List<Feed> feeds = communityMapper.getFeeds(begin,end);
         for (Feed feed : feeds) {
-            List<HashTag> hashTags = communityMapper.getHashTags(feed.getNo());
+            List<HashTag> hashTags = communityMapper.getHashTagsByFeedNo(feed.getNo());
             feed.setHashTags(hashTags);
+            Reply reply = communityMapper.getReplyByFeedNo(feed.getNo());
+            feed.setReply(reply);
         }
+
         return feeds;
-        
     }
 
     // 게시글 작성 (제목,내용,해쉬태그,파일)
@@ -60,6 +62,7 @@ public class CommunityService {
         feed.setContent(form.getContent());
         feed.setUser(User.builder().no(userNo).build());
         feed.setMediaUrl(originalFilename);
+        feed.setReply(new Reply());
         // feed -> {no:0, title:'xxxx'}
 
         System.out.println(feed.getNo());
@@ -103,10 +106,9 @@ public class CommunityService {
 
         User user = new User();
         user.setNo(userNo);
+
         reply.setUser(user);
 
         communityMapper.insertReply(reply);
     }
-
-
 }

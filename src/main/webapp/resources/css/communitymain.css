@@ -801,6 +801,15 @@ div.txt_comment button:hover{
     height: 24px;
     border-radius: 50%;
 }
+/* reply-name에 스타일 적용 */
+.txt_comment .reply-name {
+    margin-left: 20px;
+}
+
+/* reply-content에 스타일 적용 */
+.txt_comment .reply-content {
+    margin-left: 15px;
+}
 
 /*form css*/
 .container {

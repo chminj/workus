@@ -6,6 +6,7 @@ import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.vo.User;
 import com.example.workus.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -33,6 +34,7 @@ public class CommunityController {
     @ResponseBody
     public List<Feed> getFeeds(@RequestParam(name ="page", required = false, defaultValue = "1") int page){
         List<Feed> feeds = communityService.getFeeds(page);
+        System.out.println("게시글 정보"+feeds);
         return feeds;
     }
 
@@ -53,8 +55,8 @@ public class CommunityController {
     public String insert(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser){
        Long userNo = loginUser.getNo();
        commentForm.setUserNo(userNo);
-
        communityService.insertReply(commentForm, userNo);
+
        return "redirect:/community/list";
    }
 
