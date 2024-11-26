@@ -17,8 +17,42 @@
             ATD_CATEGORY_NO as no
             , ATD_CATEGORY_NAME as name
             , ATD_CATEGORY_COUNT as count
-            , ATD_CATEGORY_TIME as time
         from
             WORKUS_ATTENDANCE_CATEGORY;
     </select>
+    <insert id="insertApproval" >
+        insert into
+            WORKUS_ATTENDANCE
+            (ATD_TEXT
+            , ATD_FROM_DATE
+            , ATD_TO_DATE
+            , ATD_CATEGORY_NO
+            , USER_NO
+            , ATD_CATEGORY_TIME)
+        values
+            (#{form.reason}
+            , #{form.fromDate}
+            , #{form.toDate}
+            , #{form.categoryNo}
+            , #{form.userNo}
+            , #{form.time})
+        <selectKey keyProperty="form.no" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+    </insert>
+    <insert id="insertApprovalUsers" >
+        insert into
+        WORKUS_ATTENDANCE_USER
+        (ATD_APPROVAL_STATUS
+        , ATD_SEQUENCE
+        , USER_NO
+        , ATD_NO)
+        values
+        <foreach collection="users" item="user" separator=",">
+            (#{user.status}
+            , #{user.sequence}
+            , #{user.userNo}
+            , #{form.no})
+        </foreach>
+    </insert>
 </mapper>

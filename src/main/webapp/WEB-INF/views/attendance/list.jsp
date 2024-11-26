@@ -29,7 +29,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
         </ul>
         <p class="listTitle">근태 내역</p>
         <ul class="list2 myAtdList">
-          <li><a href="">내 신청 내역</a></li>
+          <li><a href="myApvList">내 신청 내역</a></li>
           <li><a href="">내 결재 내역</a></li>
           <li><a href="">내 참조 내역</a></li>
         </ul>
@@ -69,26 +69,29 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
         <div class="wrapper">
           <div class="modalHeader flex justify-content-between align-items-center">
             <h5 class="modalTitle">연차 신청하기</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <button type="button" class="close closeBtn" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">×</span>
             </button>
           </div>
-          <form method="dialog">
+          <form method="post" action="getApproval" id="atdApproval">
+            <input type="hidden" name="apv" id="apvUserList" required/>
+            <input type="hidden" name="ref" id="refUserList" required/>
+            <input type="hidden" name="categoryNo" id="categoryNo" required/>
             <div class="modalBody sec2">
               <div class="modalLeft">
                 <div class="reqFormSec">
                   <label for="atdCtgr" class="reqFormTit">종류</label>
-                  <select id="atdCtgr" class="form-select w-25">
+                  <select id="atdCtgr" class="form-select w-25" name="categoryOpt1" required>
                   </select>
                   <span class="annualLeaveOnly mgt10">
                   </span>
                   <span class="partOpt d-none">
                     <label for="morningOff">
-                      <input type="radio" name="timeCategory" value="morningOff" id="morningOff">
+                      <input type="radio" name="time" value="오전" id="morningOff">
                       <span class="mgr10 mgl5">오전</span>
                     </label>
                     <label for="afternoonOff">
-                      <input type="radio" name="timeCategory" value="afternoonOff" id="afternoonOff">
+                      <input type="radio" name="time" value="오후" id="afternoonOff">
                       <span class="mgr10 mgl5">오후</span>
                     </label>
                   </span>
@@ -109,11 +112,12 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 </div>
                 <div class="reqFormSec">
                   <label for="reasonSec" class="reqFormTit">사유</label>
-                  <textarea name="reason" id="reasonSec"></textarea>
+                  <textarea name="reason" id="reasonSec" required></textarea>
                 </div>
               </div>
               <div class="modalRight">
-                <p class="reqFormTit mgb10">결재 및 참조선</p>
+                <span class="reqFormTit mgb10">결재 및 참조선</span>
+                <span class="smallText">* 결재선은 팀장, 참조선은 인사팀 부장이 기본값입니다.</span>
                 <div class="d-flex">
                   <div class="listSec wholeList">
                     <ul class="atdList" id="atdFormUser">
@@ -157,9 +161,14 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 </div>
               </div>
             </div>
+            <div class="collapse" id="collapseExample">
+              <div class="card card-body">
+                해당 정보로 연차를 신청하시겠습니까?
+              </div>
+            </div>
             <div class="modalFooter d-flex justify-content-center">
-              <button value="cancel" class="btn btn-sm btn-secondary">취소하기</button>
-              <button value="confirm" class="btn btn-sm btn-primary" id="confirmModalBtn">신청하기</button>
+              <button type="button" class="btn btn-sm btn-secondary closeBtn">취소하기</button>
+              <button type="submit" class="btn btn-sm btn-primary" id="confirmModalBtn">신청하기</button>
             </div>
           </form>
         </div>

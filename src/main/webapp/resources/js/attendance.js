@@ -9,8 +9,8 @@ $(function(){
 
             let content = `
                 <li class="d-flex">
-                    <input type="checkbox" id="checkingUser${resultUser[i].no}" class="mgr5">
-                    <label for="checkingUser${resultUser[i].no}" data-sort="${i}">
+                    <input type="checkbox" id="${resultUser[i].no}" class="mgr5">
+                    <label for="${resultUser[i].no}" data-sort="${i}">
                       <span class="name mgr5">${resultUser[i].name}</span>
                     </label>
                     <span class="gray">
@@ -31,7 +31,7 @@ $(function(){
             if (resultCtgr[i].no < 25) {
                 let content = `
                     <label for="day${resultCtgr[i].no}">
-                      <input type="radio" name="dayCategory" value=${resultCtgr[i].no} id="day${resultCtgr[i].no}">
+                      <input type="radio" name="categoryOpt2" value=${resultCtgr[i].no} id="day${resultCtgr[i].no}">
                       <span class="mgr10 mgl5">${resultCtgr[i].name}</span>
                     </label>
                 `;
@@ -42,13 +42,14 @@ $(function(){
             // 연차, 병가 (select)
             if (resultCtgr[i].count === 1) {
                 let content = `
-                    <option name="${resultCtgr[i].no}">${resultCtgr[i].name}</option>
+                    <option value="${resultCtgr[i].no}">${resultCtgr[i].name}</option>
                 `;
 
                 $("#atdCtgr").append(content);
             }
         }
     }
+    atdForm();
 
     // dialog modal
     let atdDialog = document.getElementById('atdRequestForm');
@@ -57,18 +58,19 @@ $(function(){
     // dialog open
     openButton.addEventListener('click', () => {
         atdDialog.showModal();
-        atdForm();
-
         $('html, body').css('overflow','hidden');
     })
 
     // dialog close
-    let closeButton = document.querySelector('#atdRequestForm button.close')
-    closeButton.addEventListener('click', () => {
+    $("#atdRequestForm button.closeBtn").on('click', function() {
         atdDialog.close();
-
         $('html, body').css('overflow','auto');
     })
+
+    // today default setting in modal
+    let todayDate = new Date().toISOString().substring(0,10);
+    $('#atdFromDate').val(todayDate);
+    $('#atdToDate').val(todayDate);
 
     // 공휴일 open api
     const serviceKey = 'A7%2FHaEQe1yP2IrM2iyJqZyrLs9SFLwZ788isUppVC7woA1J7J0n316aNTU7RL7B1GJUhjQDHpXhwBq7ud7u14A%3D%3D'
@@ -109,11 +111,6 @@ $(function(){
         }
         return locdateArray; // 최종적으로 주중 날짜만 포함된 locdateArray 반환
     }
-
-    // today default setting in modal
-    let todayDate = new Date().toISOString().substring(0,10);
-    $('#atdFromDate').val(todayDate);
-    $('#atdToDate').val(todayDate);
 
     // dayTotal count in modal
     $('#atdFromDate').on("change", function(){
@@ -159,7 +156,6 @@ $(function(){
 
             if (dayOfWeek >= 1 && dayOfWeek <= 5 && !holidaySet.has(locdateString)) { // 월~금 (1~5), 공휴일 제외
                 totalTime++;
-                console.log("html="+totalTime);
             }
 
             // 다음 날짜로 이동
@@ -170,6 +166,8 @@ $(function(){
 
     // 결재 및 참조선
     let target = '';
+    let apvUserList = [];
+    let refUserList = [];
 
     $("#apvLineAdd, #refLineAdd").on("click", function(e) {
         target = e.currentTarget.id;
@@ -195,6 +193,30 @@ $(function(){
         sortReset(target, checkedLiTag);
     }
 
+    $(".btnW button").on("click", function() {
+        // 결재선의 label 수집
+        $("#apv input[type='checkbox']").each(function() {
+            var userId = $(this).attr("id");
+            // 중복 체크 후 추가
+            if (!apvUserList.includes(userId)) {
+                apvUserList.push(userId);
+            }
+        });
+
+        // 참조선의 label 수집
+        $("#ref input[type='checkbox']").each(function() {
+            var userId = $(this).attr("id");
+            // 중복 체크 후 추가
+            if (!refUserList.includes(userId)) {
+                refUserList.push(userId);
+            }
+        });
+
+        // 배열을 콤마로 구분된 문자열로 변환하여 설정
+        $("#apvUserList").val(apvUserList.join(","));
+        $("#refUserList").val(refUserList.join(","));
+    })
+
     // 재정렬 로직
     function sortReset(targetId, checkedLiTag) {
         let labels = $("#"+targetId).find("label");
@@ -207,13 +229,12 @@ $(function(){
 
         $("#" + targetId).empty(); // reset
         labels.each(function() {
-            $("#" + targetId).append($(this).parent(
-
-
-
-            )); // li 태그 추가
+            $("#" + targetId).append($(this).parent()); // li 태그 추가
         });
     }
+
+    let selectedValue = $("select[name='categoryOpt1']").val();
+    let categoryNo = $("#categoryNo");
 
     // 연차 옵션 toggle
     $("#atdCtgr").on("click", function() {
@@ -221,6 +242,7 @@ $(function(){
 
         if(opt === '25') {
             $(".annualLeaveOnly").hide();
+            categoryNo.val(selectedValue);
         } else {
             $(".annualLeaveOnly").show();
         }
@@ -229,16 +251,33 @@ $(function(){
     $(document).on("click", ".annualLeaveOnly input[type='radio']", function(e) {
         let val = e.target.value;
 
+        let selectedRadioValue = $("input[name='categoryOpt2']:checked").val();
+        categoryNo.val(selectedRadioValue);
+
         if(val === '10') {
             $(".partOpt").addClass("d-none");
         } else {
             $(".partOpt").removeClass("d-none");
         }
-    })
+    });
 
+    // confirm
+    let confirmBtn = document.getElementById('confirmModalBtn');
+    let atdConfirmDialog = document.getElementById('apvUserList');
 
-    // confirm (test)
-    $("#confirmModalBtn").on("click",function(){
-        confirm("해당 정보로 연차를 신청하겠습니까?");
+    $("#atdApproval").on("submit", function(e) {
+        e.preventDefault();
+        if ($("#apvUserList").val().trim() === "" || $("#refUserList").val().trim() === "") {
+            alert("결재선/참조선 목록이 비어 있습니다. 사용자를 선택해 주세요.");
+        } else {
+            $("#collapseExample").stop().fadeIn(500);
+        }
+    });
+
+    $("#confirmModalBtn").on("click", function() {
+        if ($("#collapseExample").is(':visible')) {
+            $("#atdApproval").off("submit").submit();
+            // submit 이벤트를 제거하고 폼 제출
+        }
     });
 })
