@@ -24,7 +24,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         // ID로 사용자 정보를 조회한다.
         User user = userMapper.getUserById(id);
-        System.out.println("loadUserByUsername 실행됨");
 
         if(user == null) {
             System.out.println("사용자를 검색하지 못했습니다.");

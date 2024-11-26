@@ -1,5 +1,3 @@
-signup-form.jsp
-
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <%--
@@ -24,17 +22,17 @@ signup-form.jsp
     <form:form id="form-signup" action="/signup" method="post" modelAttribute="signupForm" >
 
         <div class="input__block">
-            <form:input placeholder="사번을 입력해주세요" id="user-no" path="no" />
+            <form:input placeholder="회사 사번을 - 없이 입력해주세요" id="user-no" path="no" />
             <button type="button" class="google__btn user-check">사번확인</button>
         </div>
 
         <div class="input__block">
-            <form:input placeholder="ID를 입력해주세요" id="user-id" path="id" />
+            <form:input placeholder="아이디는 영문자로 시작하고, 영문자나 숫자만 포함가능하며, 최대 18자입니다." id="user-id" path="id" />
             <button type="button" class="google__btn id-check">중복확인</button>
         </div>
 
         <div class="input__block">
-            <form:password placeholder="비밀번호를 입력해주세요" id="user-pw" path="password" />
+            <form:password placeholder="비밀번호는 영문자, 숫자가 포함되어야 하며, 8 ~ 20자리만 입력가능합니다." id="user-pw" path="password" />
         </div>
 
         <div class="input__block">
@@ -43,7 +41,7 @@ signup-form.jsp
         </div>
 
         <div class="input__block">
-            <form:input placeholder="연락처를 입력해주세요" id="user-phone" path="phone" />
+            <form:input placeholder="본인 명의의 휴대폰 번호를 숫자만 입력해주세요." id="user-phone" path="phone" />
             <button type="button" class="google__btn send-code">인증번호 전송</button>
         </div>
 
@@ -54,7 +52,7 @@ signup-form.jsp
         </div>
 
         <div class="input__block">
-            <input type="text" placeholder="우편번호를 입력해주세요" name="postal_code" readonly="readonly" />
+            <input type="text" placeholder="우편번호 찾기를 클릭해서 주소를 입력해주세요." name="postal_code" readonly="readonly" />
             <button type="button" class="google__btn" id="search-postcode">우편번호 찾기</button>
         </div>
 
@@ -63,7 +61,7 @@ signup-form.jsp
         </div>
 
         <div class="input__block">
-            <form:input placeholder="상세주소" id="user-datail-address" path="detailAddress" />
+            <form:input placeholder="상세주소는 필수 입력값입니다." id="user-datail-address" path="detailAddress" />
         </div>
 
         <button class="signup__btn" type="submit">회원가입</button>
@@ -96,11 +94,11 @@ signup-form.jsp
             return false;
         }
         if (!checkAddress) {
-            alert("상세 주소를 입력해주세요.");
+            alert("우편번호를 통해 주소를 입력해주세요.");
             return false;
         }
 
-        return true;
+        return true; // 다 통과했을 때만 회원가입을 Controller를 통해 진행
     });
 
     // 사번 확인
@@ -116,7 +114,9 @@ signup-form.jsp
         $.ajax({ // Ajax 요청 보내기
             url: `/ajax/user/check-no/` + userNo, // 사번을 URL에 추가
             method: 'GET', // GET 요청
-
+            error: function(xhr, status, error) {
+                alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+            },
             success: function(data) { // 응답 성공 시 실행
                 if (data.data) {
                     alert("사번이 확인되었습니다.");
@@ -147,6 +147,9 @@ signup-form.jsp
         $.ajax({ // Ajax 요청 보내기
             url: `/ajax/user/check-id/` + userId, // 아이디를 URL에 추가
             method: 'GET', // GET 요청
+            error: function(xhr, status, error) {
+                alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+            },
             success: function(data) {
                 if (data.data) {
                     alert("이미 존재하는 아이디입니다.");
@@ -195,7 +198,7 @@ signup-form.jsp
     // 연락처 입력 및 휴대폰 인증 번호 전송
     $('.send-code').click(function(){
         const phoneNumber = $('input[name="phone"]').val();
-        const phoneNumberPattern = /^01[0-9][0-9]{8}$/;
+        const phoneNumberPattern = /^01[0-1][0-9]{3,4}[0-9]{4}$/;
 
         // 휴대폰 번호가 패턴에 맞는지 검사한다.
         if(!phoneNumberPattern.test(phoneNumber)) {
@@ -207,6 +210,9 @@ signup-form.jsp
             url: `/ajax/send-sms`,
             method: 'GET',
             data: { phoneNumber: phoneNumber },// GET 방식으로 전화번호 전달
+            error: function(xhr, status, error) {
+                alert("서버 오류가 발생했습니다. 다시 시도해 주세요.");
+            },
             success: function(data) {
                 if (data.success) {
                     alert("인증번호가 전송되었습니다.");
@@ -257,18 +263,14 @@ signup-form.jsp
                     $('input[name=postal_code]').val(data.zonecode);
                     $('input[name=address]').val(address);
 
+                    checkAddress = true;
+
                     // 상세주소 입력필드에 포커스 위치시키기
                     $('input[name=detailAddress]').focus();
                 }
             }).open();
         });
     });
-
-    // 상세주소 검증
-    const detailAddress = $('input[name=detailAddress]').val();
-    if(detailAddress !== "") {
-        checkAddress = true;
-    }
 </script>
 <!-- 다음 우편번호 검색 스크립트 추가 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

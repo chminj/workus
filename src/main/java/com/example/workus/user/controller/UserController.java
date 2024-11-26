@@ -1,7 +1,9 @@
 package com.example.workus.user.controller;
 
 import com.example.workus.user.dto.UserSignUpForm;
+import com.example.workus.user.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -12,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class UserController {
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("/login")
     public String login() {
@@ -37,8 +42,11 @@ public class UserController {
             return "user/signup-form";
         }
 
+        userService.addSignUpUser(form); // Form에 담긴 데이터를 서비스에 전달한다.
+
         return "redirect:/login"; // 회원 가입 완료되면 로그인 페이지로 이동한다.
     }
+
 
     @GetMapping("/findpw")
     public String findpw() {

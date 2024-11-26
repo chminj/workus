@@ -3,6 +3,7 @@ package com.example.workus.user.controller;
 import com.example.workus.chat.dto.RestResponseDto;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
+import com.example.workus.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,14 +32,12 @@ public class RestUserController {
     @GetMapping("/user/check-no/{userNo}")
     ResponseEntity<RestResponseDto<Boolean>> checkUserNo(@PathVariable("userNo") Long userNo) {
         boolean isUserExist = userService.isUserExistByUserNo(userNo);
-        System.out.println(isUserExist);
         return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
     }
 
     @GetMapping("/user/check-id/{userId}")
     ResponseEntity<RestResponseDto<Boolean>> checkUserId(@PathVariable("userId") String userId) {
         boolean isUserExist = userService.isUserExistByUserId(userId);
-        System.out.println(isUserExist);
         return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
     }
 }
