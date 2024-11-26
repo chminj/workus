@@ -40,7 +40,7 @@
     <!--
          List<HashTag> getHashTags(@Param("feedNo") int feedNo);
     -->
-    <select id="getHashTags" resultType="HashTag">
+    <select id="getHashTagsByFeedNo" resultType="HashTag">
         SELECT
         H.HASHTAG_NO    as no,
         H.HASHTAG_NAME  as name
@@ -72,8 +72,8 @@
         <selectKey resultType="Long" keyProperty="feed.no" keyColumn="community_no" order="AFTER">
             select last_insert_id()
         </selectKey>
-
     </insert>
+
     <!--
         void addHashTag(@Param("hashTag") HashTag hashTag);
     -->
@@ -99,4 +99,30 @@
             select last_insert_id()
         </selectKey>
     </insert>
+
+    <!--
+          List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
+    -->
+    <select id="getReplyByFeedNo" resultType="Reply">
+        select
+            R.REPLY_NO AS no,
+            R.REPLY_CONTENT AS content,
+            R.REPLY_CREATED_DATE AS createdDate,
+            B.COMMUNITY_NO AS "feed.no",
+            U.USER_NO AS "user.no",
+            U.USER_NAME AS "user.name"
+        from
+            WORKUS_REPLY R
+        INNER JOIN
+            WORKUS_COMMUNITY B
+        ON
+            B.COMMUNITY_NO = R.COMMUNITY_NO
+        INNER JOIN
+            WORKUS_USERS U
+        ON
+            R.USER_NO = U.USER_NO
+        WHERE B.COMMUNITY_NO = #{feedNo}
+        ORDER BY R.REPLY_NO DESC
+        LIMIT 1
+    </select>
 </mapper>
