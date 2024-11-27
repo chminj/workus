@@ -25,9 +25,8 @@ public class CustomUserDetailsService implements UserDetailsService {
         // ID로 사용자 정보를 조회한다.
         User user = userMapper.getUserById(id);
 
-        if(user == null) {
-            System.out.println("사용자를 검색하지 못했습니다.");
-           throw new UsernameNotFoundException("["+id+"]사용자가 없습니다.");
+        if(user == null) { // 조회된 사용자 정보가 없으면 UsernameNotFoundException 예외 발생
+            throw new UsernameNotFoundException("["+id+"]사용자가 없습니다.");
        }
 
         CustomUserDetails customUserDetails = new CustomUserDetails(user);

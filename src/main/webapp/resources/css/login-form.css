@@ -239,6 +239,17 @@ form {
     }
 }
 
+.alert {
+    width: 90%; /* 입력 필드와 동일한 너비 */
+    max-width: 680px; /* 최대 너비 설정 */
+    margin: 0 auto 20px; /* 상하 여백 설정 */
+    padding: 10px; /* 패딩 추가 */
+    border-radius: 8px; /* 모서리 둥글게 */
+    background-color: rgba(233, 30, 99, 0.1); /* 배경색 설정 */
+    color: #e91e63; /* 텍스트 색상 설정 */
+    font-size: 14px; /* 텍스트 크기 설정 */
+    text-align: center; /* 가운데 정렬 */
+}
 /*
     commit 오류로 인한 주석 추가
  */
