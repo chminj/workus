@@ -22,7 +22,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
     <%@ include file="../common/header.jsp" %>
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
-      <c:set var="lnb" value="myApvList"/>
+      <c:set var="lnb" value="myRefList"/>
       <div class="lnb">
         <ul class="list1 myAtdInfo">
           <li class="${lnb eq 'myAtdInfo' ? 'on' : '' }"><a href="list">내 근태 현황</a></li>
@@ -36,31 +36,37 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
       </div>
       <main>
         <h3 class="title1">
-          내 결재 내역
+          내 참조 내역
         </h3>
         <div id="apvListW" class="content">
           <div class="optW d-flex justify-content-between">
             <div class="buttonW">
-              <button type="button" id="apvButton">승인</button>
             </div>
             <div class="searchW mgb30">
-              <form id="searchOption" method="get" action="myApvList" class="d-flex">
-                <input type="hidden" name="page" />
-                <div class="input-group">
-                  <label for="searchOpt1">
-                    <select name="opt" id="searchOpt1" class="form-select">
-                      <option value="name" ${param.opt eq 'name' ? 'selected' : '' }>작성자</option>
-                      <option value="reason" ${param.opt eq 'reason' ? 'selected' : '' }>사유</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="input-group">
-                <label for="searchText">
-                <input type="text" id="searchText" name="text" class="form-control">
-                </label>
-                <button id="searchButton" class="btn btn-outline-secondary" type="button">검색</button>
-                </div>
-              </form>
+                <form id="searchOption" method="get" action="myRefList" class="d-flex">
+                    <input type="hidden" name="page" />
+<%--                    <div class="input-group">--%>
+<%--                        <label for="startDate" class="d-none">시작 날짜</label>--%>
+<%--                        <input type="date" id="startDate" name="startDate" class="form-control">--%>
+<%--                        <span class="simpleText">~</span>--%>
+<%--                        <label for="endDate" class="d-none">종료 날짜</label>--%>
+<%--                        <input type="date" id="endDate" name="endDate" class="form-control">--%>
+<%--                    </div>--%>
+                    <div class="input-group">
+                        <label for="searchOpt1">
+                        <select name="opt" id="searchOpt1" class="form-select">
+                            <option value="name" ${param.opt eq 'name' ? 'selected' : '' }>작성자</option>
+                            <option value="reason" ${param.opt eq 'reason' ? 'selected' : '' }>사유</option>
+                        </select>
+                        </label>
+                    </div>
+                    <div class="input-group">
+                        <label for="searchText">
+                        <input type="text" id="searchText" name="keyword" class="form-control">
+                        </label>
+                        <button id="searchButton" class="btn btn-outline-secondary" type="button">검색</button>
+                    </div>
+                </form>
             </div>
           </div>
           <div class="tableW">
@@ -74,21 +80,14 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
   <c:otherwise>
             <table class="table">
               <colgroup>
-                <col style="width:5%" >
-                <col style="width:5%" >
-                <col style="width:10%" >
-                <col style="width:10%" >
                 <col style="width:15%" >
+                <col style="width:15%" >
+                <col style="width:20%" >
                 <col style="width:auto" >
                 <col style="width:15%" >
               </colgroup>
               <thead>
                 <tr>
-                  <th>
-                    <label for="checkAll">
-                      <input type="checkbox" id="checkAll">
-                    </label>
-                  </th>
                   <th>No.</th>
                   <th>요청자</th>
                   <th>유형</th>
@@ -97,13 +96,9 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                   <th>상태</th>
                 </tr>
               </thead>
-              <c:forEach var="form" items="${forms }" varStatus="loop">
+              <tbody>
+                <c:forEach var="form" items="${forms }" varStatus="loop">
                   <tr>
-                    <td>
-                      <label for="${form.atdNo}">
-                        <input type="checkbox" id="${form.atdNo}" class="eachCheck">
-                      </label>
-                    </td>
                     <td>${loop.count }</td>
                     <td>${form.reqUserName}</td>
                     <td>${form.categoryName }</td>
@@ -125,7 +120,8 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
             </table>
   </c:otherwise>
 </c:choose>
- <!-- paging -->
+          </div>
+          <!-- paging -->
 <c:if test="${not empty forms }">
           <div class="row mb-3">
               <div class="col-12">
@@ -150,38 +146,30 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
           </div>
 </c:if>
           <!-- //paging -->
-          </div>
         </div>
       </main>
     </section>
   </div>
 </div>
 <script>
-  $(function() {
-    let pageInput = document.querySelector("input[name=page]");
+    $(function() {
+        let pageInput = document.querySelector("input[name=page]");
 
-    // 페이징 번호 클릭 시
-    function changePage(page, e) {
-      e.preventDefault();
-      pageInput.value = page;
+        // 페이징 번호 클릭 시
+        function changePage(page, e) {
+            e.preventDefault();
+            pageInput.value = page;
 
-      refSearch.submit();
-    }
+            refSearch.submit();
+        }
 
-    $("#searchButton").on("click", function() {
-      pageInput.value = 1;
+        $("#searchButton").on("click", function() {
+            pageInput.value = 1;
 
-      $("#searchOption").submit();
-    })
+            $("#searchOption").submit();
+        })
 
-    $("#checkAll").on("change", function() {
-      if ($(this).is(":checked")) {
-        $(".tableW .eachCheck").prop("checked", true);
-      } else {
-        $(".tableW .eachCheck").prop("checked", false);
-      }
     });
-  });
 </script>
 </body>
 </html>

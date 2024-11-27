@@ -1,5 +1,4 @@
 $(function(){
-
     // fullcalendar (근태 페이지 기준)
     let atdCalendarEl = document.getElementById('fullCalendarInAtd');
     let atdCalendar = new FullCalendar.Calendar(atdCalendarEl, {

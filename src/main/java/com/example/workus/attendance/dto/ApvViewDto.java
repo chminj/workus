@@ -12,18 +12,18 @@ import java.util.Date;
 @Setter
 @ToString
 @Builder
-@Alias("apvForm")
-public class ApprovalForm {
-    private Long no;
+@Alias("apvViewDto")
+public class ApvViewDto {
+    private Long atdNo;
+    private String status;
     private String reason;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date fromDate;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date toDate;
     private Date createdDate;
-    private Long categoryNo;
-    private Long userNo;
     private String time;
-    private String apv;
-    private String ref;
+    private String categoryName;
+    private Long apvNo;
+    private String reqUserName;
 }

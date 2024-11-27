@@ -111,7 +111,6 @@ div.atdList>ul {padding:10px;}
 .sTit {border-radius:3px 3px 0 0; background-color:#0f132a; color:#fff; font-size:14px; padding:5px 8px;}
 .gray {color:#7c7c7c;}
 
-#apvListW .search-container {justify-content:flex-end}
 #apvListW .input-group {width:auto; justify-content:flex-end; margin-left:15px; align-items:center;}
 #apvListW .input-group .simpleText {margin:0 10px;}
 #apvListW .input-group input[type="text"], #apvListW .input-group input[type="date"] {border-radius:0.375rem;}
@@ -120,4 +119,20 @@ div.atdList>ul {padding:10px;}
 .smallText {font-size:14px; color:#a9a9a9; display:inline-block; padding-bottom:8px;}
 
 #collapseExample {display:none;}
-#collapseExample .card.card-body {margin:0px 25px 17px;box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.2);background-color: #1f1f1f;color: #fff;);)0;);}
+#collapseExample .card.card-body {margin:0px 25px 17px;box-shadow: 0px 0px 9px 1px rgba(0,0,0,0.2); background-color: #1f1f1f;color: #fff;}
+
+/* 내역(my) */
+.noData {text-align:center;height: calc(100vh - 220px);display: flex;flex-direction: column; align-content: flex-start; align-items: center;justify-content: center;}
+.noDataImg {opacity:0.5; filter:grayscale(80%); width:5%; margin:50px 0 20px;}
+.noDataText {font-size:16px;}
+table tr th {font-weight:normal; font-size:16px;}
+
+.buttonW button {background-color:#fff; border-radius:5px; padding:5px 15px; border:2px solid #e91e63; color:#e91e63; font-size:16px; transition:all 0.23s ease-in-out; font-weight:bold;}
+.buttonW button:hover {border:2px solid #1f1f1f;color:#fff; background-color:#1f1f1f;}
+
+.tableW table {text-align:center; font-size:15px; border-collapse: collapse; width:100%; table-layout:fixed;}
+.form-switch {font-size:17px;}
+
+.page-item.active .page-link {background-color:#1f1f1f; color:#fff; border:1px solid #1f1f1f;}
+
+table .badge {font-weight: normal; font-size:15px;}

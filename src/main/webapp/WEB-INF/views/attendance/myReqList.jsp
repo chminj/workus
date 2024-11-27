@@ -8,11 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
   <link rel="stylesheet" href="/resources/css/attendance.css">
-  <%-- day.js --%>
-  <script src="
-https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
-"></script>
-  <script src="/resources/js/attendance.js"></script>
+<%--  <script src="/resources/js/attendance.js"></script>--%>
   <title>workus ㅣ 근태</title>
 </head>
 <body>
@@ -22,7 +18,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
     <%@ include file="../common/header.jsp" %>
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
-      <c:set var="lnb" value="myApvList"/>
+      <c:set var="lnb" value="myReqList"/>
       <div class="lnb">
         <ul class="list1 myAtdInfo">
           <li class="${lnb eq 'myAtdInfo' ? 'on' : '' }"><a href="list">내 근태 현황</a></li>
@@ -36,29 +32,19 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
       </div>
       <main>
         <h3 class="title1">
-          내 결재 내역
+          내 신청 내역
         </h3>
         <div id="apvListW" class="content">
           <div class="optW d-flex justify-content-between">
             <div class="buttonW">
-              <button type="button" id="apvButton">승인</button>
             </div>
-            <div class="searchW mgb30">
-              <form id="searchOption" method="get" action="myApvList" class="d-flex">
+            <div class="searchW d-flex mgb30 align-items-center">
+              <form id="refSearch" action="myReqList" method="get">
                 <input type="hidden" name="page" />
-                <div class="input-group">
-                  <label for="searchOpt1">
-                    <select name="opt" id="searchOpt1" class="form-select">
-                      <option value="name" ${param.opt eq 'name' ? 'selected' : '' }>작성자</option>
-                      <option value="reason" ${param.opt eq 'reason' ? 'selected' : '' }>사유</option>
-                    </select>
-                  </label>
-                </div>
-                <div class="input-group">
-                <label for="searchText">
-                <input type="text" id="searchText" name="text" class="form-control">
-                </label>
-                <button id="searchButton" class="btn btn-outline-secondary" type="button">검색</button>
+                <input type="hidden" id="statusParameter" name="status" />
+                <div class="form-check form-switch mgl20">
+                  <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="statusW" ${param.status eq 'I' ? 'checked' : '' }>
+                  <label class="form-check-label" for="flexSwitchCheckDefault">결재 대기 건만 조회</label>
                 </div>
               </form>
             </div>
@@ -74,41 +60,28 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
   <c:otherwise>
             <table class="table">
               <colgroup>
-                <col style="width:5%" >
-                <col style="width:5%" >
-                <col style="width:10%" >
-                <col style="width:10%" >
-                <col style="width:15%" >
-                <col style="width:auto" >
-                <col style="width:15%" >
+                <col style="width:5%" />
+                <col style="width:15%" />
+                <col style="width:auto" />
+                <col style="width:20%" />
+                <col style="width:20%" />
               </colgroup>
               <thead>
                 <tr>
-                  <th>
-                    <label for="checkAll">
-                      <input type="checkbox" id="checkAll">
-                    </label>
-                  </th>
                   <th>No.</th>
-                  <th>요청자</th>
-                  <th>유형</th>
-                  <th>요청일</th>
+                  <th>신청 유형</th>
                   <th>사유</th>
+                  <th>신청일</th>
                   <th>상태</th>
                 </tr>
               </thead>
-              <c:forEach var="form" items="${forms }" varStatus="loop">
+              <tbody>
+                <c:forEach var="form" items="${forms }" varStatus="loop">
                   <tr>
-                    <td>
-                      <label for="${form.atdNo}">
-                        <input type="checkbox" id="${form.atdNo}" class="eachCheck">
-                      </label>
-                    </td>
                     <td>${loop.count }</td>
-                    <td>${form.reqUserName}</td>
                     <td>${form.categoryName }</td>
-                    <td><fmt:formatDate value="${form.createdDate }"/></td>
                     <td class="text-start">${form.reason}</td>
+                    <td><fmt:formatDate value="${form.createdDate }"/></td>
                     <td>
                     <c:choose>
                         <c:when test="${form.status == 'I'}">
@@ -125,7 +98,8 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
             </table>
   </c:otherwise>
 </c:choose>
- <!-- paging -->
+          </div>
+          <!-- paging -->
 <c:if test="${not empty forms }">
           <div class="row mb-3">
               <div class="col-12">
@@ -150,38 +124,41 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
           </div>
 </c:if>
           <!-- //paging -->
-          </div>
         </div>
       </main>
     </section>
   </div>
 </div>
 <script>
-  $(function() {
+$(function() {
+    let refSearch = document.querySelector("#refSearch");
     let pageInput = document.querySelector("input[name=page]");
 
     // 페이징 번호 클릭 시
     function changePage(page, e) {
-      e.preventDefault();
-      pageInput.value = page;
+        e.preventDefault();
+        pageInput.value = page;
 
-      refSearch.submit();
+        refSearch.submit();
     }
 
-    $("#searchButton").on("click", function() {
-      pageInput.value = 1;
+    //     myReqList
+    // 내 신청 내역 - 체크박스 조건
+    $("#flexSwitchCheckDefault").on('change', function () {
+        // 체크박스 상태에 따른 status 값 설정
+        const statusValue = this.checked ? 'I' : '';
+        console.log(statusValue);
 
-      $("#searchOption").submit();
-    })
+        updateStatusParameter(statusValue);
+        $("#refSearch").trigger("submit");
 
-    $("#checkAll").on("change", function() {
-      if ($(this).is(":checked")) {
-        $(".tableW .eachCheck").prop("checked", true);
-      } else {
-        $(".tableW .eachCheck").prop("checked", false);
-      }
     });
-  });
+
+    // status 값을 parameter로 전달하는 함수
+    function updateStatusParameter(status) {
+        document.getElementById('statusParameter').value = status;
+    }
+})
 </script>
 </body>
 </html>
