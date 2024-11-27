@@ -234,8 +234,6 @@
         }
     });
 
-
-
     $("#save").on("click", function () {
         var eventData = {
             name: $("#name").val(),

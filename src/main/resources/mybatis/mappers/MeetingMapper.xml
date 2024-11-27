@@ -2,6 +2,20 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.meeting.mapper.MeetingMapper">
 
+    <!-- Meeting selectMeetingByNo(Long meetingNo); -->
+    <select id="selectMeetingByNo" parameterType="Long" resultType="com.example.workus.meeting.vo.Meeting">
+        SELECT
+            MEETING_NO AS no,
+            MEETING_START_DATE AS startDate,
+            MEETING_END_DATE AS endDate,
+            MEETING_ROOM AS room,
+            MEETING_CONTENT AS content
+        FROM
+            WORKUS_MEETING
+        WHERE
+            MEETING_NO = #{meetingNo}
+    </select>
+
     <!-- List<Meeting> selectEventsByDateRange(
             @Param("start") LocalDateTime startDateTime,
             @Param("end") LocalDateTime endDateTime,
@@ -35,5 +49,12 @@
             select last_insert_id()
         </selectKey>
     </insert>
+
+    <!-- void deleteMeeting(@Param("eventId") Long eventId); -->
+    <delete id="deleteMeeting">
+        DELETE FROM WORKUS_MEETING
+        WHERE MEETING_NO = #{eventId}
+    </delete>
+
 
 </mapper>
