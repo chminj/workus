@@ -19,8 +19,7 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/login")
-    public String login() {
-        System.out.println("Login page accessed");
+    public String loginform() {
         return "user/login-form";
     }
 
