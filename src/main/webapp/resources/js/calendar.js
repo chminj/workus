@@ -95,7 +95,6 @@
 
             });
         },
-
         eventClick: function(info) {
             info.jsEvent.stopPropagation();
             info.jsEvent.preventDefault();
@@ -133,7 +132,6 @@
                     console.error("일정 상세 정보 가져오기 실패:", error);
                 }
             });
-
         },
         eventDrop: function(eventDropInfo ) {
             let event = eventDropInfo.event;
@@ -157,20 +155,6 @@
                     console.error("이벤트 업데이트 실패:", error);
                 }
             });
-        },
-
-
-        // 이벤트가 추가될 때
-        eventAdd: function (obj) {
-            console.log('Event Added:', obj);
-        },
-        // 이벤트가 수정될 때
-        eventChange: function (obj) {
-            console.log('Event Changed:', obj);
-        },
-        // 이벤트가 삭제될 때
-        eventRemove: function (obj) {
-            console.log('Event Removed:', obj);
         },
         dateClick: function (info) {
             let startDate = info.dateStr;
@@ -235,19 +219,22 @@
             
             $("#calendarModal").modal("show");
             calendar.unselect();
+        },
+        // 이벤트가 추가될 때
+        eventAdd: function (obj) {
+            console.log('Event Added:', obj);
+        },
+        // 이벤트가 수정될 때
+        eventChange: function (obj) {
+            console.log('Event Changed:', obj);
+        },
+        // 이벤트가 삭제될 때
+        eventRemove: function (obj) {
+            console.log('Event Removed:', obj);
         }
-
     });
 
-    function getDate(date, days) {
-        days = days || 0;
-        date.setTime(date.getTime() + (60*60*24*1000*days));
-        let year = date.getFullYear();
-        let month = date.getMonth() + 1;
-        let day = date.getDate();
 
-       return year +  '-' + (month < 10 ? '0' + month : month) + '-' +(day < 10 ? '0' + day : day);
-    }
 
     $("#save").on("click", function () {
         var eventData = {
@@ -416,8 +403,13 @@
 
         // 기존 이벤트 소스 제거
         calendar.getEventSources().forEach(function(source) {
-            source.remove();
+            console.log('Event Source:', source.className); // className 확인용 로그
+            // className이 존재하고 'ko_event'를 포함하지 않는 소스를 제거
+            if (!source.className || !source.className.includes('ko_event')) {
+                source.remove(); // 조건을 만족하면 소스를 제거
+            }
         });
+
 
         if (values.length > 0) {
             let queryString = values.map(function (value) {
@@ -440,17 +432,28 @@
                             end: calendar.endDate,
                             color: divisionColors[calendar.division] || '#6c757d',
                             extendedProps: {
+                                location: calendar.location,
+                                content: calendar.content,
                                 // deptNo: calendar.deptNo
                             }
                         };
                     });
 
                     calendar.addEventSource(events);
-                    calendar.refetchEvents();
                 },
                 error: function (xhr, status, error) {
                     console.error("일정 데이터 로드 실패:", error);
                 }
             });
         }
+    }
+
+    function getDate(date, days) {
+        days = days || 0;
+        date.setTime(date.getTime() + (60*60*24*1000*days));
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+
+        return year +  '-' + (month < 10 ? '0' + month : month) + '-' +(day < 10 ? '0' + day : day);
     }

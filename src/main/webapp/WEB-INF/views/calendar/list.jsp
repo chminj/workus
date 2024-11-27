@@ -12,6 +12,7 @@
 
 </head>
 <body>
+<c:set var="menu" value="calendar"/>
 <div id="divWrapper">
     <div id="divContents">
         <%@ include file="../common/header.jsp" %>
