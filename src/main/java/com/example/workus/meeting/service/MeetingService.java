@@ -1,5 +1,6 @@
 package com.example.workus.meeting.service;
 
+import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.meeting.dto.MeetingForm;
 import com.example.workus.meeting.mapper.MeetingMapper;
 import com.example.workus.meeting.vo.Meeting;
@@ -39,5 +40,19 @@ public class MeetingService {
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
         return meetingMapper.selectEventsByDateRange(startDateTime, endDateTime, loginUser);
+    }
+
+    public Meeting getMeetingByNo(Long meetingNo) {
+        return meetingMapper.selectMeetingByNo(meetingNo);
+    }
+
+    public boolean deleteMeeting(Long eventId) {
+        Meeting meeting = meetingMapper.selectMeetingByNo(eventId);
+        if (meeting != null) {
+            meetingMapper.deleteMeeting(eventId);
+            return true;
+        } else {
+            return false;
+        }
     }
 }

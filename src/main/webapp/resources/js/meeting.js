@@ -85,6 +85,43 @@
 
         },
 
+        eventClick: function(info) {
+            info.jsEvent.stopPropagation();
+            info.jsEvent.preventDefault();
+
+            var eventId = info.event.id;
+            console.log(eventId);  // 여기서 확인
+
+            if (!eventId) {
+                console.error("이벤트 ID가 없습니다.");
+                return;
+            }
+
+            $.ajax({
+                type: 'post',
+                url: '/meeting/detail',
+                data: { id: eventId },
+                success: function (response) {
+                    $("#meetingModal #startDate").val(response.startDate);
+                    $("#meetingModal #endDate").val(response.endDate);
+                    $("#meetingModal #room").val(response.room);
+                    $("#meetingModal #content").val(response.content);
+
+                    $("#meetingModalLabel").text("예약 정보");
+
+                    $("#save").text("저장");
+                    $("#delete").show();
+
+                    $("#meetingModal").data("eventId", eventId);
+                    $("#meetingModal").modal("show");
+
+                },
+                error: function(xhr, status, error) {
+                    console.error("예약 정보 가져오기 실패:", error);
+                }
+            });
+        },
+
         dateClick: function (info){
             let startDate = info.dateStr;
             console.log(info);
@@ -115,13 +152,7 @@
 
             $("#meetingModal").modal("show");
             calendar.unselect();
-        },
-
-        // 리소스 설정
-        resources: [
-            {"id": "a", "title": "회의실 A"},
-            {"id": "b", "title": "회의실 B", "eventColor": "green"},
-        ],
+        }
 
         // 이벤트 설정
         // events: [
@@ -183,6 +214,48 @@
         });
 
     });
+
+    $("#delete").on("click", function (){
+        var eventId = $("#meetingModal").data("eventId");
+        if (!eventId) {
+            alert("삭제할 수 없습니다.");
+            return;
+        }
+
+        // 삭제 확인 모달 열기
+        $("#confirmDeleteModal").modal("show");
+
+        $("#confirmDeleteModal .btn-danger").off("click").on("click", function () {
+            $.ajax({
+                type: "POST",
+                url: "/meeting/delete",
+                data: { id: eventId },
+                success: function () {
+                    var event = calendar.getEventById(eventId);
+                    if (event) {
+                        event.remove();
+                    }
+
+                    alert("일정이 삭제되었습니다.");
+                    $("#meetingModal").data("eventId", null);
+
+                    $("#meetingModal").modal("hide");
+                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 삭제 실패:", error);
+                    alert("일정 삭제에 실패했습니다. 다시 시도해주세요.");
+                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                }
+            });
+        });
+
+        // 취소 버튼 클릭 시 경고창 닫기
+        $("#confirmDeleteModal .btn-secondary").off("click").on("click", function() {
+            $("#confirmDeleteModal").modal("hide");
+        });
+
+    })
 
     // 캘린더 렌더링
     calendar.render();
