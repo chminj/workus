@@ -169,4 +169,5 @@
             USER_ADDRESS = #{user.address}
         WHERE
             USER_NO = #{user.no}
+    </update>
 </mapper>

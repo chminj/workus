@@ -1,6 +1,6 @@
 package com.example.workus.util;
 
-import com.example.workus.exception.WorkusException;
+import com.example.workus.common.exception.WorkusException;
 
 public class UserUtils {
 
