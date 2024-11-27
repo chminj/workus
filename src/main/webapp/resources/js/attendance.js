@@ -1,5 +1,4 @@
 $(function(){
-
     // ajax 호출
     async function atdForm() {
         let responseUser = await fetch("/attendance/atdFormInUser");
@@ -137,6 +136,10 @@ $(function(){
         calculateWeekdays(fromDate, toDate, locdateArray);
 
         $('.dayTotal').html(totalTime);
+
+        if(totalTime > 1) {
+            $("#dayTotal").val(totalTime);
+        }
     });
 
     // 날짜 범위 내 주중 날짜 계산
@@ -280,4 +283,6 @@ $(function(){
             // submit 이벤트를 제거하고 폼 제출
         }
     });
+
+
 })

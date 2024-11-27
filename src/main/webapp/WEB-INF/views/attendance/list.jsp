@@ -25,13 +25,13 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
       <c:set var="lnb" value="myAtdInfo"/>
       <div class="lnb">
         <ul class="list1 myAtdInfo">
-          <li class="${lnb eq 'myAtdInfo' ? 'on' : '' }"><a href="">내 근태 현황</a></li>
+          <li class="${lnb eq 'myAtdInfo' ? 'on' : '' }"><a href="list">내 근태 현황</a></li>
         </ul>
         <p class="listTitle">근태 내역</p>
         <ul class="list2 myAtdList">
-          <li><a href="myApvList">내 신청 내역</a></li>
-          <li><a href="">내 결재 내역</a></li>
-          <li><a href="">내 참조 내역</a></li>
+          <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="myReqList">내 신청 내역</a></li>
+          <li class="${lnb eq 'myApvList' ? 'on' : '' }"><a href="myApvList">내 결재 내역</a></li>
+          <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="myRefList">내 참조 내역</a></li>
         </ul>
       </div>
       <main>
@@ -77,6 +77,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
             <input type="hidden" name="apv" id="apvUserList" required/>
             <input type="hidden" name="ref" id="refUserList" required/>
             <input type="hidden" name="categoryNo" id="categoryNo" required/>
+            <input type="hidden" name="dayTotal" id="dayTotal" />
             <div class="modalBody sec2">
               <div class="modalLeft">
                 <div class="reqFormSec">

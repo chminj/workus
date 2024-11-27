@@ -1,10 +1,8 @@
 package com.example.workus.attendance.controller;
 
-import com.example.workus.attendance.dto.ApprovalForm;
-import com.example.workus.attendance.dto.ApprovalUserDto;
-import com.example.workus.attendance.dto.AttendanceCategoryDto;
-import com.example.workus.attendance.dto.AttendanceDto;
+import com.example.workus.attendance.dto.*;
 import com.example.workus.attendance.service.AttendanceService;
+import com.example.workus.common.dto.ListDto;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
@@ -12,12 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -95,8 +92,75 @@ public class AttendanceController {
         return "redirect:/attendance/list";
     }
 
+    @GetMapping("/myReqList")
+    public String myApvList(@AuthenticationPrincipal LoginUser loginUser
+                            , Model model
+                            , @RequestParam(required = false, defaultValue = "1") int page
+                            , @RequestParam(required = false, defaultValue = "10") int rows
+                            , @RequestParam(required = false) String status
+                            ) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        if (StringUtils.hasText(status)) {
+            condition.put("status", status);
+        }
+
+        ListDto<ReqViewDto> forms = attendanceService.getRequestForms(loginUser.getNo(), condition);
+
+        model.addAttribute("condition", condition);
+        model.addAttribute("forms", forms.getData());
+        model.addAttribute("paging", forms.getPaging());
+
+        return "attendance/myReqList";
+    }
+
     @GetMapping("/myApvList")
-    public String myApvList(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String myReqList(@AuthenticationPrincipal LoginUser loginUser
+            , Model model
+            , @RequestParam(required = false, defaultValue = "1") int page
+            , @RequestParam(required = false, defaultValue = "10") int rows
+            , @RequestParam(required = false) String opt
+            , @RequestParam(required = false) String keyword
+    ) {
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        if (StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<ApvViewDto> forms = attendanceService.getApprovalForms(loginUser.getNo(), condition);
+        model.addAttribute("condition", condition);
+        model.addAttribute("forms", forms.getData());
+        model.addAttribute("paging", forms.getPaging());
+
         return "attendance/myApvList";
+    }
+
+    @GetMapping("/myRefList")
+    public String myRefList(@AuthenticationPrincipal LoginUser loginUser
+            , Model model
+            , @RequestParam(required = false, defaultValue = "1") int page
+            , @RequestParam(required = false, defaultValue = "10") int rows
+            , @RequestParam(required = false) String opt
+            , @RequestParam(required = false) String keyword
+    ) {
+
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+        condition.put("rows", rows);
+        if (StringUtils.hasText(opt)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+
+        ListDto<RefViewDto> forms = attendanceService.getReferenceForms(loginUser.getNo(), condition);
+        model.addAttribute("condition", condition);
+        model.addAttribute("forms", forms.getData());
+        model.addAttribute("paging", forms.getPaging());
+
+        return "attendance/myRefList";
     }
 }

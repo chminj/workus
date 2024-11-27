@@ -55,4 +55,111 @@
             , #{form.no})
         </foreach>
     </insert>
+    <select id="getAllRequestFormsByUserNo" resultType="reqViewDto">
+        SELECT DISTINCT
+            A.ATD_NO AS no
+            , U.ATD_STATUS AS status
+            , A.ATD_TEXT AS reason
+            , A.ATD_TO_DATE AS toDate
+            , A.ATD_FROM_DATE AS fromDate
+            , A.ATD_CREATED_DATE AS createdDate
+            , A.ATD_CATEGORY_TIME AS time
+            , C.ATD_CATEGORY_NAME AS categoryName
+        FROM
+        WORKUS_ATTENDANCE A
+        JOIN
+        WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
+        JOIN
+        WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+        WHERE
+        A.USER_NO = #{userNo}
+        <if test="condition.status != null">
+            AND U.ATD_NO IN (
+            SELECT U2.ATD_NO
+            FROM WORKUS_ATTENDANCE_USER U2
+            JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO
+            WHERE U2.ATD_STATUS = 'I'
+            );
+        </if>
+    </select>
+    <select id="getTotalRows" resultType="int">
+        select
+            count(*) as CNT
+        from
+            WORKUS_ATTENDANCE
+        where
+            USER_NO = #{userNo}
+        <if test="condition.status != null">
+            AND ATD_NO IN (SELECT U2.ATD_NO
+            FROM WORKUS_ATTENDANCE_USER U2
+            JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO
+            WHERE U2.ATD_STATUS = 'I')
+        </if>
+    </select>
+    <select id="getAllReferenceFormsByUserNo" resultType="refViewDto">
+        SELECT A.ATD_NO AS atdNo
+               , U.ATD_APPROVAL_NO as refNo
+               , U.ATD_STATUS AS status
+               , A.ATD_TEXT AS reason
+               , A.ATD_TO_DATE AS toDate
+               , A.ATD_FROM_DATE AS fromDate
+               , A.ATD_CREATED_DATE AS createdDate
+               , A.ATD_CATEGORY_TIME AS time
+               , C.ATD_CATEGORY_NAME AS categoryName
+               , AU.USER_NAME AS reqUserName
+        FROM
+            WORKUS_ATTENDANCE A
+            JOIN
+            WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
+            JOIN
+            WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+            JOIN
+            WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
+        WHERE
+            U.USER_NO = #{userNo}
+        AND U.ATD_APPROVAL_STATUS = 50
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'name'">
+                    and AU.USER_NAME like CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'reason'">
+                    and A.ATD_TEXT like CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+    <select id="getAllApprovalFormsByUserNo" resultType="apvViewDto">
+        SELECT A.ATD_NO AS atdNo
+        , U.ATD_APPROVAL_NO as apvNo
+        , U.ATD_STATUS AS status
+        , A.ATD_TEXT AS reason
+        , A.ATD_TO_DATE AS toDate
+        , A.ATD_FROM_DATE AS fromDate
+        , A.ATD_CREATED_DATE AS createdDate
+        , A.ATD_CATEGORY_TIME AS time
+        , C.ATD_CATEGORY_NAME AS categoryName
+        , AU.USER_NAME AS reqUserName
+        FROM
+        WORKUS_ATTENDANCE A
+        JOIN
+        WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
+        JOIN
+        WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+        JOIN
+        WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
+        WHERE
+        U.USER_NO = #{userNo}
+        AND U.ATD_APPROVAL_STATUS = 49
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'name'">
+                    and AU.USER_NAME like CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'reason'">
+                    and A.ATD_TEXT like CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
 </mapper>

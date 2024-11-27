@@ -12,8 +12,8 @@ import java.util.Date;
 @Setter
 @ToString
 @Builder
-@Alias("apvForm")
-public class ApprovalForm {
+@Alias("reqViewDto")
+public class ReqViewDto {
     private Long no;
     private String reason;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
@@ -21,9 +21,7 @@ public class ApprovalForm {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date toDate;
     private Date createdDate;
-    private Long categoryNo;
-    private Long userNo;
     private String time;
-    private String apv;
-    private String ref;
+    private String status;
+    private String categoryName;
 }
