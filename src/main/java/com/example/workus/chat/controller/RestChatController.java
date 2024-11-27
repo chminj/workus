@@ -1,7 +1,7 @@
 package com.example.workus.chat.controller;
 
 import com.example.workus.chat.dto.ChatForm;
-import com.example.workus.chat.dto.RestResponseDto;
+import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;
 import com.example.workus.chat.vo.Chatroom;

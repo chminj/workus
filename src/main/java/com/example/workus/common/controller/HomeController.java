@@ -1,4 +1,4 @@
-package com.example.workus.controller;
+package com.example.workus.common.controller;
 
 import com.example.workus.security.LoginUser;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

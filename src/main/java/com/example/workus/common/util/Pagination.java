@@ -1,4 +1,4 @@
-package com.example.workus.util;
+package com.example.workus.common.util;
 
 import lombok.Getter;
 import lombok.ToString;

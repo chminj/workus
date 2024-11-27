@@ -1,4 +1,4 @@
-package com.example.workus.util;
+package com.example.workus.common.util;
 
 import java.time.Instant;
 import java.time.LocalDateTime;

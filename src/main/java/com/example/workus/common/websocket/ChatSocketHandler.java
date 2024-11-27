@@ -1,4 +1,4 @@
-package com.example.workus.websocket;
+package com.example.workus.common.websocket;
 
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;

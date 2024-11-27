@@ -2,14 +2,13 @@ package com.example.workus.community.service;
 
 import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
-import com.example.workus.community.dto.TagForm;
 import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.user.vo.User;
-import com.example.workus.util.FileUtils;
-import com.example.workus.util.Pagination;
+import com.example.workus.common.util.FileUtils;
+import com.example.workus.common.util.Pagination;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

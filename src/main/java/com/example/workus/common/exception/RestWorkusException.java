@@ -1,4 +1,4 @@
-package com.example.workus.exception;
+package com.example.workus.common.exception;
 
 public class RestWorkusException extends RuntimeException {
 
