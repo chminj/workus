@@ -1,6 +1,5 @@
 package com.example.workus.user.controller;
 
-import com.example.workus.chat.dto.RestResponseDto;
 import jakarta.annotation.PostConstruct;
 import net.nurigo.sdk.NurigoApp;
 import net.nurigo.sdk.message.model.Message;

@@ -1,11 +1,11 @@
-package com.example.workus.util;
+package com.example.workus.common.util;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.example.workus.exception.WorkusException;
+import com.example.workus.common.exception.WorkusException;
 
 public class FileUtils {
 

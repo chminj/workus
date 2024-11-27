@@ -1,7 +1,7 @@
 package com.example.workus.chat.controller;
 
 import com.example.workus.chat.dto.ChatroomInfoDto;
-import com.example.workus.chat.dto.RestResponseDto;
+import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatroomServcie;
 import com.example.workus.security.LoginUser;
 import lombok.extern.slf4j.Slf4j;

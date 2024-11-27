@@ -1,6 +1,6 @@
 package com.example.workus.user.controller;
 
-import com.example.workus.chat.dto.RestResponseDto;
+import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
 import com.example.workus.util.UserUtils;

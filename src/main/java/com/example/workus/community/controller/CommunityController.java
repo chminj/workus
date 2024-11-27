@@ -4,19 +4,15 @@ import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
-import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.vo.User;
-import com.example.workus.util.FileUtils;
+import com.example.workus.common.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
 
 @Controller
 @RequestMapping("/community")

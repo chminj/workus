@@ -1,4 +1,4 @@
-package com.example.workus.chat.dto;
+package com.example.workus.common.dto;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;

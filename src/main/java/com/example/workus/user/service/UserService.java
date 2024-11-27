@@ -1,6 +1,6 @@
 package com.example.workus.user.service;
 
-import com.example.workus.exception.WorkusException;
+import com.example.workus.common.exception.WorkusException;
 import com.example.workus.user.dto.UserSignUpForm;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;

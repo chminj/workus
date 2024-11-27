@@ -1,4 +1,4 @@
-package com.example.workus.advice;
+package com.example.workus.common.advice;
 
 public class ExceptionHandlerRestControllerAdvice {
 }
