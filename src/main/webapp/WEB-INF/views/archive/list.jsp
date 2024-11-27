@@ -15,6 +15,7 @@
     <title>Archive</title>
 </head>
 <body>
+<c:set var="menu" value="archive"/>
 <div id="divWrapper">
     <div id="divContents">
         <%@ include file="../common/header.jsp" %>

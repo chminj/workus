@@ -1,9 +1,13 @@
 package com.example.workus.user.service;
 
+import com.example.workus.exception.WorkusException;
+import com.example.workus.user.dto.UserSignUpForm;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
+import com.example.workus.util.UserUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,14 +37,26 @@ public class UserService {
         return userMapper.getAllUsers();
     }
 
-    public void registerUser(String id, String password) {
-        String encodedPassword = passwordEncoder.encode(password);
+    /**
+     * 회원가입을 통해 그룹웨어의 신규 회원을 등록한다.
+     * @Param 회원가입 폼에 담긴 정보들
+     */
+    public void addSignUpUser(UserSignUpForm form) {
+        User user = new User(); // 폼에 담긴 정보를 User 객체에 담자.
+        user.setId(form.getId());
+        user.setPassword(passwordEncoder.encode(form.getPassword()));
+        // 비밀번호는 passwordEncoder에 의해 암호화된 비밀번호를 DB 저장
+        user.setPhone(UserUtils.getFormatPhoneNumber(form.getPhone()));
+        // 휴대폰 번호는 UserUtils를 통해 포맷팅해서 DB에 저장한다.
+        user.setAddress(form.getAddress() + " " + form.getDetailAddress());
+        // 주소는 API를 통해 입력된 주소 + 상세 주소
+        user.setNo(form.getNo()); // 사번으로 조회해야 하니 사번을 전달한다.
 
-        User user = new User();
-        user.setId(id);
-        user.setPassword(encodedPassword);
-
-        userMapper.insertUser(user);
+        try {
+            userMapper.updateSignUpUser(user);
+        } catch (DataAccessException e) {
+            throw new WorkusException("회원가입 처리 중 오류가 발생함" + e);
+        }
     }
 
     public User getUserByUserNo(long userNo) {

@@ -1,10 +1,3 @@
-<%--
-  Created by IntelliJ IDEA.
-  User: jhta
-  Date: 2024-11-07
-  Time: 오후 4:56
-  To change this template use File | Settings | File Templates.
---%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="../common/tags.jsp" %>
 <html>
@@ -12,92 +5,121 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="../common/common.jsp" %>
-    <title>Meeting</title>
-    <style>
-        /* body 스타일 */
-        #content {
-            margin: 0;               /* 기본 여백 제거 */
-            padding: 0;              /* 기본 패딩 제거 */
-            font-family: Arial, Helvetica Neue, Helvetica, sans-serif; /* 폰트 지정 */
-            font-size: 14px;         /* 기본 폰트 크기 설정 */
-        }
 
-        /* #calendar2 스타일 */
-        #calendar2 {
-            max-width: 1100px;       /* 캘린더 최대 너비 설정 */
-            margin: 40px auto;       /* 캘린더를 중앙에 위치시키고 위아래 여백 40px 추가 */
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/meeting.css' />">
+
+    <title>Meeting</title>
+
 </head>
 <body>
+<c:set var="menu" value="meeting"/>
 <div id="divWrapper">
     <div id="divContents">
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
             <div class="lnb">
-                <ul class="">
-                    <li class="">
-                        <a href="">text1</a>
-                    </li>
-                </ul>
+                <!-- 일정 추가 버튼 -->
+                <div class="lnb-btn text-center mb-4">
+                    <button type="button" class="btn btn-dark" id="addScheduleBtn">회의실 예약하기</button>
+                </div>
+
+                <div class="lnb-menu">
+                    <div>
+                        <h4 class="font-weight-bold mb-3" id="myReservation">내 예약 현황</h4>
+                    </div>
+                    <div>
+                        <div>
+                            <h4 class="font-weight-bold mb-3" id="meetingRoom">회의실</h4>
+                            <div>
+                                <span class="font-weight-bold mb-3" id="meetingRoomA">회의실 A</span><br />
+                                <span class="font-weight-bold mb-3" id="meetingRoomB">회의실 B</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <main>
-                <h3 class="title1">회의실</h3>
                 <div class="content">
-                    <div id='calendar2'></div>
+                    <div id='calendar'></div>
                 </div>
             </main>
         </section>
     </div>
 </div>
-<script>
-    (function(){
-        $(function(){
-            // calendar element 취득
-            var calendarEl = $('#calendar2')[0];
+<!-- Modal -->
+<div class="modal" id="meetingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="calendarModalLabel" aria-hidden="true">
+    <div class="modal-dialog row mb-3 modal-dialog-centered modal-lg">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="meetingModalLabel">회의실 예약하기</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="dialog">
+                <div class="modal-body">
 
-            // full-calendar 생성하기
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
-                timeZone: 'UTC',              // 타임존 설정
-                initialView: 'resourceTimelineDay', // 초기 로드 될때 보이는 캘린더 화면 (일별 타임라인)
-                aspectRatio: 1.5,             // 너비를 채우는 비율
-                // 헤더에 표시할 툴바
-                headerToolbar: {
-                    left: 'prev,next',        // 이전, 다음 버튼
-                    center: 'title',          // 제목 위치
-                    right: 'resourceTimelineDay,resourceTimelineWeek,resourceTimelineMonth' // 보기 옵션
-                },
-                editable: true,               // 수정 가능 여부
-                resourceAreaHeaderContent: 'Rooms',  // 리소스 헤더 이름
-                initialDate: new Date().toISOString().slice(0, 10),    // 초기 날짜 설정
-                height: '320px',              // 높이 설정
-                locale: 'ko',                 // 한국어 설정
+                    <!-- 시작 시간 입력 -->
+                    <div class="reqFormSec">
+                        <label for="startDate" class="reqFormTit">시작시간</label>
+                        <input type="datetime-local" id="startDate" class="form-control" required />
+                    </div>
 
-                // 리소스 설정
-                resources: [
-                    {"id": "a", "title": "Auditorium A"},
-                    {"id": "b", "title": "Auditorium B", "eventColor": "green"},
-                    {"id": "c", "title": "Auditorium C", "eventColor": "orange"},
-                    {"id": "d", "title": "Auditorium D", "children": [
-                            {"id": "d1", "title": "Room D1"},
-                            {"id": "d2", "title": "Room D2"}
-                        ]}
-                ],
+                    <!-- 종료 시간 입력 -->
+                    <div class="reqFormSec">
+                        <label for="endDate" class="reqFormTit">종료시간</label>
+                        <input type="datetime-local" id="endDate" class="form-control" required />
+                    </div>
 
-                // 이벤트 설정
-                events: [
-                    {"resourceId": "a", "title": "event 1", "start": "2021-07-14", "end": "2021-07-16"},
-                    {"resourceId": "b", "title": "event 3", "start": "2021-07-15T12:00:00+00:00", "end": "2021-07-16T06:00:00+00:00"},
-                    {"resourceId": "d1", "title": "event 4", "start": "2021-07-15T07:30:00+00:00", "end": "2021-07-15T09:30:00+00:00"}
-                ]
-            });
+                    <!-- 캘린더 선택 -->
+                    <div class="reqFormSec">
+                        <label for="room" class="reqFormTit">회의실</label>
+                        <select id="room" class="form-select" required>
+                            <option value="a">회의실 A</option>
+                            <option value="b">회의실 B</option>
+                        </select>
+                    </div>
 
-            // 캘린더 렌더링
-            calendar.render();
-        });
-    })();
-</script>
+                    <!-- 내용 입력 -->
+                    <div class="reqFormSec">
+                        <label for="content" class="reqFormTit">내용</label>
+                        <input type="text" id="content" class="form-control" required />
+                    </div>
+                </div>
+
+                <div class="modal-footer container w-100 justify-content-between">
+                    <div>
+                        <button type="button" class="btn btn-danger" id="delete" style="display:none;">삭제</button>
+                    </div>
+                    <div>
+                        <button type="button" class="btn btn-primary" id="save">예약</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- 삭제 확인 모달 -->
+<div class="modal" id="confirmDeleteModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog row mb-3 modal-dialog-centered modal-sm">
+        <div class="modal-content col-12">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">예약 취소 확인</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                정말로 예약을 취소하시겠습니까?
+            </div>
+            <div class="modal-footer container w-100">
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">확인</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/resources/js/meeting.js"></script>
+
 </body>
 </html>

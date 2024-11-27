@@ -133,7 +133,7 @@
                         <span class="gnbText">메일</span>
                     </a>
                 </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'address-book' ? 'on' : '' }">
                     <a href="../address-book/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
@@ -143,7 +143,7 @@
                         <span class="gnbText">주소록</span>
                     </a>
                 </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'calendar' ? 'on' : '' }">
                     <a href="../calendar/list" class="">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
@@ -153,7 +153,7 @@
                         <span class="gnbText">일정</span>
                     </a>
                 </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'meeting' ? 'on' : '' }">
                     <a href="../meeting/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
@@ -203,7 +203,7 @@
                         <span class="gnbText">커뮤니티</span>
                     </a>
                 </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'archive' ? 'on' : '' }">
                     <a href="../archive/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">

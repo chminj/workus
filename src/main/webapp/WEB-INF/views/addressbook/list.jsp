@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@ include file="../common/tags.jsp" %>
+<c:set var="menu" value="address-book"/>
 <!doctype html>
 <html lang="ko">
 <head>

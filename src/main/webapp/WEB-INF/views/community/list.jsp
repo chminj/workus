@@ -83,14 +83,13 @@
    */
 
   //팝업 열기
-  //  function openPopup() {
-  //    document.getElementById("popupOverlay").style.display = "flex";
-  //  }
-  //
+   function openPopup() {
+      document.getElementById("popupOverlay").style.display = "flex";
+   }
   // //팝업 닫기
-  //  function closePopup() {
-  //    document.getElementById("popupOverlay").style.display = "none";
-  //  }
+    function closePopup() {
+     document.getElementById("popupOverlay").style.display = "none";
+    }
   /*
     // 좋아요 토글
     function toggleLike() {
@@ -244,7 +243,8 @@
                       <p>\${feed.content}}</p>
                     </div>
                     <div id="tags-popup\${feed.no}" style="margin-left: 30px;"></div>
-                    <div class="comments-section" id="commentsSection"></div>
+                    <div class="comments-section" id="commentsSection">
+                    </div>
                     <!-- 팝업 내 하트 버튼 -->
                     <div class="popup-footer">
                       <span class="likes" id="likesCount">좋아요 0개</span>
@@ -286,16 +286,14 @@
         <!--comment-->
         <div class="comments">
           <div id="listComment" class="list_comment">
-            <p class="txt_comment">
-                      <span>
-                          <a href="#n" class="txt_id"></a>
-                          <span>댓글입니다 댓글입니다 !</span>
-                      </span>
-              <button id="delete" type="button">댓글삭제</button>
-            </p>
+            <div class="txt_comment">
+            <p class="reply-name">\${feed.reply != null ? feed.reply.user.name : ''}</p>
+            <p class="reply-content">\${feed.reply != null ? feed.reply.content : ''}</p>
+            </div>
+
             <form method="post" action="insertComment">
             <div class="add-comment">
-              <input type="hidden" name="feedNo" value="\${feed.no}">
+              <input type="hidden" name="feedNo" value="\${feed.no  }">
               <input type="text" name="comment" placeholder="댓글 달기...">
               <button  type="submit">게시</button>
             </div>

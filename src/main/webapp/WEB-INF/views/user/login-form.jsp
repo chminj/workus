@@ -1,4 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ include file="../common/tags.jsp" %>
+<%@ include file="../common/common.jsp" %>
 <html>
 <head>
     <title>WorkUs Login Page</title>
@@ -8,6 +10,24 @@
 <div class="container">
     <!-- Heading -->
     <h1>WORKUS</h1>
+
+    <c:choose>
+        <c:when test="${param.error eq 'fail' }">
+            <div class="alert alert-danger">
+                아이디 혹은 비밀번호가 일치하지 않습니다.
+            </div>
+        </c:when>
+        <c:when test="${param.error eq 'required' }">
+            <div class="alert alert-danger">
+                로그인 후 이용가능한 서비스를 요청하였습니다.
+            </div>
+        </c:when>
+        <c:when test="${param.error eq 'access-denied' }">
+            <div class="alert alert-danger">
+                접근권한이 필요한 서비스를 요청하였습니다.
+            </div>
+        </c:when>
+    </c:choose>
 
     <!-- Links -->
     <ul class="links">

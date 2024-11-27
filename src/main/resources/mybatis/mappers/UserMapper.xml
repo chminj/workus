@@ -119,7 +119,7 @@
         where
             U.USER_ID = #{id}
     </select>
-
+  
     <select id="getAllUsersByName" resultType="com.example.workus.user.vo.User">
         select
             U.USER_NO as no
@@ -160,4 +160,13 @@
             U.USER_NAME like CONCAT('%',#{name},'%')
     </select>
 
+    <update id="updateSignUpUser">
+        UPDATE WORKUS_USERS
+        SET
+            USER_ID = #{user.id},
+            USER_PASSWORD = #{user.password},
+            USER_PHONE = #{user.phone},
+            USER_ADDRESS = #{user.address}
+        WHERE
+            USER_NO = #{user.no}
 </mapper>
