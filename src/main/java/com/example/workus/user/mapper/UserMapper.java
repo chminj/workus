@@ -12,5 +12,7 @@ public interface UserMapper {
     List<User> getAllUsers();
     User getUserByUserNo(@Param("userNo") long userNo);
     User getUserById(@Param("id") String id);
+    void insertUser(User user);
+    List<User> getAllUsersByName(@Param("name") String userName);
     void updateSignUpUser(@Param("user") User user); // 사이트 회원가입 진행
 }

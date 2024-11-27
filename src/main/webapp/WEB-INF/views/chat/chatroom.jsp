@@ -128,8 +128,21 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">참여자 선택</label>
-            <input type="text" class="form-control mb-3" id="userSearch" placeholder="이름 검색">
+			<label class="form-label">참여자 선택</label>
+			  <input type="text" class="form-control mb-3" id="userSearch" placeholder="초대할 사원의 이름을 입력하세요." />
+			  <div class="position-relative">
+				  <div class="dropdown-menu w-100 show border shadow-sm d-none" id="searchResults" style="max-height: 200px; overflow-y: auto;">
+					  <!-- 검색 결과가 없을 때 -->
+					  <div class="dropdown-item text-muted no-results py-2">
+						  검색 결과가 없습니다.
+					  </div>
+
+					  <!-- 검색 결과 목록 컨테이너 -->
+					  <div class="search-results-container">
+						  <!-- 검색 결과 유저들 -->
+					  </div>
+				  </div>
+			  </div>
 
             <!-- 부서별 사용자 목록 -->
             <div class="border rounded p-3" style="height: 300px; overflow-y: auto;">
@@ -137,7 +150,7 @@
 				<c:forEach var="dept" items="${depts}" varStatus="deptStatus">
                 <div class="department-group mb-3">
                   <div class="form-check">
-                    <input class="form-check-input dept-check" type="checkbox" id="dept${dept.deptNo}" data-dept="${dept.deptNo}">
+                    <input class="form-check-input dept-check" type="checkbox" id="dept${dept.deptNo}" data-dept-no="${dept.deptNo}">
                     <button class="btn btn-link p-0 text-decoration-none" type="button"
                         data-bs-toggle="collapse"
                         data-bs-target="#deptCollapse${dept.deptNo}"
@@ -145,15 +158,15 @@
                         ${dept.deptName}
 					</button>
                   </div>
-                  <div class="collapse ms-4 mt-2" id="deptCollapse${dept.deptNo}">
+                  <div class="collapse ms-4 mt-2 dept-collapse" id="deptCollapse${dept.deptNo}">
                   	<%-- 부서에 속한 유저 --%>
 					<c:forEach var="map" items="${participantInfos[deptStatus.index]}">
-					<c:forEach var="participantInfo" items="${map.value}">
-					<div class="form-check mb-2">
-						<input class="form-check-input user-check" type="checkbox" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept="${dept.deptNo}">
-						  <span class="text-muted">[${participantInfo.positionName}]</span> ${participantInfo.userName}
-					</div>
-					</c:forEach>
+						<c:forEach var="participantInfo" items="${map.value}">
+						<div class="form-check mb-2">
+							<input class="form-check-input user-check" type="checkbox" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept-no="${dept.deptNo}">
+							  <span class="text-muted">[${participantInfo.positionName}]</span> ${participantInfo.userName}
+						</div>
+						</c:forEach>
 					</c:forEach>
                   </div>
                 </div>
@@ -183,7 +196,7 @@
 			// data-chatroom-no 속성 가져오기
 			chatroomNo = $(this).data("chatroomNo");
 			// 읽지 않은 메시지 수 화면에서 삭제
-			$(`.not-read-count\${chatroomNo}`).text("");
+			$(`.not-read-count \${chatroomNo}`).text("");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
 			const chatDiv = await ajaxChatsData(chatroomNo);
 			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
@@ -191,14 +204,14 @@
 			await $('#chat').html(div);
 
 			// 웹소켓 연결
-			$(function() {
+			$(function () {
 				let ws = null;
 
 				function connect() {
 					ws = new SockJS("/socket/chat");
 
 					// 연결 직후
-					ws.onopen = function() {
+					ws.onopen = function () {
 						let message = {
 							cmd: "chat-open",
 							chatroomNo: $('.chat-text').data('chatroomNo'),
@@ -211,7 +224,7 @@
 					}
 
 					// 메시지가 도착한 경우
-					ws.onmessage = function(message) {
+					ws.onmessage = function (message) {
 						let data = JSON.parse(message.data);
 						if (data.cmd === "chat-open-success") {
 							userJoinToast(data);
@@ -231,6 +244,7 @@
 						}
 					}
 				}
+
 				connect();
 
 				// 채팅 소켓으로 전송
@@ -252,7 +266,7 @@
 				}
 
 				// 다른 페이지로 이동하거나 창이 꺼지기 직전
-				$(window).on('beforeunload', function() {
+				$(window).on('beforeunload', function () {
 					let message = {
 						cmd: 'chat-close',
 						chatroomNo: chatroomNo,
@@ -268,12 +282,12 @@
 					ws.send(JSON.stringify(message));
 				}
 
-				$('#chat').on('click', '#submitChat', function() {
+				$('#chat').on('click', '#submitChat', function () {
 					chat();
 				});
 
 				// 엔터키 입력 이벤트
-				$('#chat').on('keypress', 'input[name=content]', function(e) {
+				$('#chat').on('keypress', 'input[name=content]', function (e) {
 					if (e.keyCode === 13) {
 						e.preventDefault();
 						chat();
@@ -282,19 +296,73 @@
 			})
 		});
 
+		// 방 초대할 유저 검색
+		$('#userSearch').keyup(async function () {
+			// 맨 처음은 초기화
+			$('.search-results-container').html('');
+			$('#searchResults').addClass('d-none');
+			$('.no-results').addClass('d-none');
+			let searchLen = $('#userSearch').val().length;
+
+			// 검색어가 2글자 부터
+			if (searchLen > 1) {
+				$('#searchResults').removeClass('d-none');
+				let userName = $('#userSearch').val();
+				const response = await fetch('/ajax/chatroom/user/search/' + userName);
+				const result = await response.json();
+				const data = await result.data;
+				// 검색된 유저가 존재하면
+				if (data.length !== 0) {
+					$('.no-results').addClass('d-none');
+					appendUserInSearchBarDiv(data);
+				} else {
+					$('.no-results').removeClass('d-none');
+				}
+			}
+		})
+
+		function appendUserInSearchBarDiv(users) {
+			let div = `
+				\${users.map(user => `
+					<div class="dropdown-item py-2 d-flex align-items-center gap-2" id="searchedUser" data-user-no="\${user.no}" data-dept-no="\${user.deptNo}" role="button">
+					<i class="bi bi-person-circle fs-5"></i>
+						<div class="d-flex flex-column">
+							<span class="fw-medium">\${user.name}</span>
+							<small class="text-muted">\${user.deptName} · \${user.positionName}</small>
+						</div>
+					</div>
+				`).join('')}`;
+			$('.search-results-container').html(div);
+		}
+
+		// 검색된 유저 클릭 시 체크 표시
+		$('#searchResults').on('click', '#searchedUser', function () {
+			// 다시 클릭 시 기존에 펼쳐진 것 감추기
+			$('.dept-collapse').removeClass('show');
+			let userNo = $(this).data('userNo');
+			$(`#createChatroomParticipant\${userNo}`).prop("checked", true);
+			let deptNo = $(this).data('deptNo');
+			$(`#deptCollapse\${deptNo}`).addClass('show');
+			// 검색창 초기화
+			$('#userSearch').val('');
+			$('.search-results-container').html('');
+			$('#searchResults').addClass('d-none');
+			$('.no-results').addClass('d-none');
+		})
+
 		// 부서 체크박스 체크와 해제 이벤트
-		$('.dept-check').change(function() {
+		$('.dept-check').change(function () {
 			if ($('.dept-check').is(':checked')) {
-				let deptNo = $(this).data('dept');
-				$(`[data-dept=\${deptNo}]`).prop("checked", true);
+				let deptNo = $(this).data('deptNo');
+				$(`[data-dept-no=\${deptNo}]`).prop("checked", true);
 			} else {
-				let deptNo = $(this).data('dept');
-				$(`[data-dept=\${deptNo}]`).prop("checked", false);
+				let deptNo = $(this).data('deptNo');
+				$(`[data-dept-no=\${deptNo}]`).prop("checked", false);
 			}
 		})
 
 		// 페이지 변화 시 연결 시간 업데이트
-		$(document).on('visibilitychange', async function() {
+		$(document).on('visibilitychange', async function () {
 			try {
 				await fetch('/ajax/chatroom/' + chatroomNo, {
 					method: 'PUT'
@@ -305,7 +373,7 @@
 		})
 
 		// 프로필 모달 등장
-		$('#chat').on('click', '.participant-name', async function() {
+		$('#chat').on('click', '.participant-name', async function () {
 			try {
 				// 프로필 모달 열기
 				profileModal.show();
@@ -333,12 +401,9 @@
 
 		// 유저 입장 퇴장 토스트
 		function userJoinToast(data) {
-			// 자신이 아닌 사용자가 접속했을 때만 표시
-			if (data.user && data.user.no !== LOGIN_USERNO) {
-				const toast = new bootstrap.Toast($('#userJoinToast')[0]);
-				$('#userJoinToast .toast-body').text(data.text);
-				toast.show();
-			}
+			const toast = new bootstrap.Toast($('#userJoinToast')[0]);
+			$('#userJoinToast .toast-body').text(data.text);
+			toast.show();
 		}
 
 		// 온라인 표시
@@ -357,53 +422,53 @@
 		// 채팅 전송 후 화면에 내 채팅 보이기
 		function appearSubmittedMyChat(chat) {
 			return `
-					\${chat.isFirst === 'Y' ? `
-						<!-- 날짜 구분선 -->
-						<div class="d-flex align-items-center my-4">
-							<div class="border-bottom flex-grow-1"></div>
-							<span class="mx-3 text-muted">\${chat.time.date}</span>
-							<div class="border-bottom flex-grow-1"></div>
-						</div>
-					` : ``}
-					<div class="mb-3 w-75 ms-auto">
-						<div class="text-end mb-1">
-							<strong>나</strong>
-						</div>
-						<div class="d-flex justify-content-end">
-							<div class="bg-primary text-white rounded p-2 mb-1">
-								\${chat.content}
-							</div>
-						</div>
-						<div class="text-end">
-							<small class="text-muted">\${chat.time.time}</small>
+				\${chat.isFirst === 'Y' ? `
+			<!-- 날짜 구분선 -->
+			<div className="d-flex align-items-center my-4">
+				<div className="border-bottom flex-grow-1"></div>
+				<span className="mx-3 text-muted">\${chat.time.date}</span>
+				<div className="border-bottom flex-grow-1"></div>
+			</div>
+				` : ``}
+				<div class="mb-3 w-75 ms-auto">
+					<div class="text-end mb-1">
+						<strong>나</strong>
+					</div>
+					<div class="d-flex justify-content-end">
+						<div class="bg-primary text-white rounded p-2 mb-1">
+							\${chat.content}
 						</div>
 					</div>
+					<div class="text-end">
+						<small class="text-muted">\${chat.time.time}</small>
+					</div>
+				</div>
 			`;
 		}
 
 		// 수신한 채팅 내 화면에 보이기
 		function appearSubmittedOtherChat(chat) {
 			return `
-					\${chat.isFirst === 'Y' ? `
-						<!-- 날짜 구분선 -->
-						<div class="d-flex align-items-center my-4">
-							<div class="border-bottom flex-grow-1"></div>
-							<span class="mx-3 text-muted">\${chat.time.date}</span>
-							<div class="border-bottom flex-grow-1"></div>
-						</div>
-					` : ``}
-					<div class="mb-3 w-75">
-						<div class="d-flex align-items-center mb-1">
-							<img src="" alt="프로필" class="rounded-circle me-2"/>
-							<strong>\${chat.user.name}</strong>
-						</div>
-						<div class="d-flex">
-							<div class="bg-light rounded p-2 mb-1">
-								\${chat.content}
-							</div>
-						</div>
-						<small class="text-muted">\${chat.time.time}</small>
+				\${chat.isFirst === 'Y' ? `
+			<%-- 날짜 구분선 --%>
+			<div className="d-flex align-items-center my-4">
+				<div className="border-bottom flex-grow-1"></div>
+				<span className="mx-3 text-muted">\${chat.time.date}</span>
+				<div className="border-bottom flex-grow-1"></div>
+			</div>
+				` : ``}
+				<div class="mb-3 w-75">
+					<div class="d-flex align-items-center mb-1">
+						<img src="" alt="프로필" class="rounded-circle me-2"/>
+						<strong>\${chat.user.name}</strong>
 					</div>
+					<div class="d-flex">
+						<div class="bg-light rounded p-2 mb-1">
+							\${chat.content}
+						</div>
+					</div>
+					<small class="text-muted">\${chat.time.time}</small>
+				</div>
 			`;
 		}
 
@@ -485,11 +550,11 @@
 						<div class="d-flex align-items-center my-2">
 							<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 							<div class="d-flex align-items-center gap-2">
-								<span role="button" class="participant-name" data-user-id="\${user.id}">\${user.name}</span>
-								 <span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
+								<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
+								<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
 							</div>
 						</div>
-						`).join('')}
+							`).join('')}
 					   </li>
 					</ul>
 				 </div>
