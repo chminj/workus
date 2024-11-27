@@ -13,4 +13,5 @@ public interface UserMapper {
     User getUserByUserNo(@Param("userNo") long userNo);
     User getUserById(@Param("id") String id);
     void insertUser(User user);
+    List<User> getAllUsersByName(@Param("name") String userName);
 }

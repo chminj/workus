@@ -64,4 +64,8 @@ public class UserService {
     public boolean isUserExistByUserId(String userId) {
         return userMapper.getUserById(userId) != null; // 조회해왔는데 null이 아니면 해당 유저가 존재하는 것이므로
     }
+
+    public List<User> getAllUsersByName(String userName) {
+        return userMapper.getAllUsersByName(userName);
+    }
 }

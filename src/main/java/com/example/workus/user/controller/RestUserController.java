@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/ajax")
@@ -40,5 +42,10 @@ public class RestUserController {
         boolean isUserExist = userService.isUserExistByUserId(userId);
         System.out.println(isUserExist);
         return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
+    }
+
+    @GetMapping("/chatroom/user/search/{userName}")
+    ResponseEntity<RestResponseDto<List<User>>> getAllUsersByUserName(@PathVariable("userName") String userName) {
+        return ResponseEntity.ok(RestResponseDto.success(userService.getAllUsersByName(userName)));
     }
 }
