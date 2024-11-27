@@ -74,8 +74,8 @@
                     <div class="reqFormSec">
                         <label for="room" class="reqFormTit">회의실</label>
                         <select id="room" class="form-select" required>
-                            <option value="1">회의실 A</option>
-                            <option value="0">회의실 B</option>
+                            <option value="a">회의실 A</option>
+                            <option value="b">회의실 B</option>
                         </select>
                     </div>
 
