@@ -2,6 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.meeting.mapper.MeetingMapper">
 
+    <!-- List<Meeting> selectEventsByDateRange(
+            @Param("start") LocalDateTime startDateTime,
+            @Param("end") LocalDateTime endDateTime,
+            @Param("room") String room,
+            @Param("loginUser") LoginUser loginUser); -->
+    <select id="selectEventsByDateRange" resultType="Meeting">
+        SELECT
+            MEETING_NO AS no,
+            MEETING_START_DATE AS startDate,
+            MEETING_END_DATE AS endDate,
+            MEETING_ROOM AS room,
+            MEETING_CONTENT AS content,
+            USER_NO AS userNo
+        FROM
+            WORKUS_MEETING
+        WHERE
+            MEETING_START_DATE &gt;= #{start}
+            AND MEETING_END_DATE &lt;= #{end}
+            AND USER_NO = #{loginUser.no}
+
+    </select>
+
     <!-- void insertMeeting(@Param("meeting") Meeting meeting); -->
     <insert id="insertMeeting">
         insert into WORKUS_MEETING
@@ -9,7 +31,7 @@
         values
         (#{meeting.startDate}, #{meeting.endDate}, #{meeting.content}, #{meeting.room}, #{meeting.userNo})
 
-        <selectKey resultType="Long" keyProperty="meeting.no" keyColumn="RESERVATION_NO" order="AFTER">
+        <selectKey resultType="Long" keyProperty="meeting.no" keyColumn="MEETING_NO" order="AFTER">
             select last_insert_id()
         </selectKey>
     </insert>
