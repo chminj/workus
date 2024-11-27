@@ -3,16 +3,16 @@
         // "일정 추가하기" 버튼 클릭 시 모달 열기
         $("#addScheduleBtn").on("click", function () {
 
-            $("#meetModalLabel").text("회의실 예약하기");
+            $("#meetingModalLabel").text("회의실 예약하기");
 
-            $("#meetModal #startDate").val("");
-            $("#meetModal #endDate").val("");
-            $("#meetModal #room").val("1");
-            $("#meetModal #content").val("");
+            $("#meetingModal #startDate").val("");
+            $("#meetingModal #endDate").val("");
+            $("#meetingModal #room").val("1");
+            $("#meetingModal #content").val("");
 
             $("#calendarModal").data("eventId", null);
 
-            $("#meetModal").modal("show");
+            $("#meetingModal").modal("show");
         });
     });
 
@@ -47,23 +47,32 @@
             let startDate = info.dateStr;
             console.log(info);
 
-            let startDateParts = startDate.split("T");
+            let localDate = new Date(startDate);
+            let localDateString = localDate.toISOString().slice(0, 16);
 
-            $("#meetModalLabel").text("회의실 예약하기");
+            let endDate = new Date(localDate);
+            endDate.setMinutes(localDate.getMinutes() + 30); // 30분 더함
+            let endDateString = endDate.toISOString().slice(0, 16);
 
-            $("#meetModal #startDate").val(startDate);
-            $("#meetModal #endDate").val("");
-            $("#meetModal #room").val("1");
-            $("#meetModal #content").val("");
+            $("#meetingModalLabel").text("회의실 예약하기");
 
-            $("#meetModal").data("eventId", null);  // eventId 초기화
+            $("#meetingModal #startDate").val(localDateString);
+            $("#meetingModal #endDate").val(endDateString);
+            
+            if (info.resource && info.resource.id === 'a') {
+                $("#meetingModal #room").val("1"); // 회의실 A
+            } else if (info.resource && info.resource.id === 'b') {
+                $("#meetingModal #room").val("0"); // 회의실 B
+            }
+            $("#meetingModal #content").val("");
+
+            $("#meetingModal").data("eventId", null);  // eventId 초기화
 
             $("#delete").hide();
-            $("#save").text("추가");
+            $("#save").text("예약");
 
-            $("#meetModal").modal("show");
+            $("#meetingModal").modal("show");
             calendar.unselect();
-
         },
 
         // 리소스 설정
@@ -77,6 +86,56 @@
             {"resourceId": "a", "title": "event 1", "start": "2024-11-25", "end": "2024-11-26"},
             {"resourceId": "b", "title": "event 2", "start": "2024-11-25T12:00:00+00:00", "end": "2024-11-25T14:00:00+00:00"},
         ]
+
+    });
+
+    $("#save").on("click", function () {
+        var eventData = {
+            startDate: new Date($("#startDate").val()).toISOString(),
+            endDate: new Date($("#endDate").val()).toISOString(),
+            room: $("#room").val() || "1",
+            content: $("#content").val()
+        };
+
+        if (!eventData.startDate || !eventData.endDate) {
+            alert("입력하지 않은 값이 있습니다.");
+            return;
+        }
+
+        if (new Date(eventData.startDate) > new Date(eventData.endDate)) {
+            alert("끝나는 시간이 시작 시간보다 클 수 없습니다.");
+            return;
+        }
+
+        var eventId = $("#meetingModal").data("eventId");
+
+        console.log(eventId)
+
+        $.ajax({
+            type: "post",
+            url: "/meeting/add",
+            data: eventData,
+            success: function (result) {
+                calendar.addEvent({
+                    id: result.no,
+                    start: result.startDate,
+                    end: result.endDate,
+                    extendedProps: {
+                        room: result.room,
+                        content: result.content,
+                        userNo: result.no,
+                    }
+                });
+
+                $("#meetingModal").modal("hide");
+                $("#name, #location, #startDate, #endDate, #division, #content").val("");
+
+                console.log("일정이 추가되었습니다.");
+            },
+            error: function (xhr, status, error) {
+                console.error("일정 추가 실패:", error);
+            }
+        });
 
     });
 
