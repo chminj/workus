@@ -4,7 +4,7 @@ import com.example.workus.meeting.dto.MeetingForm;
 import com.example.workus.meeting.mapper.MeetingMapper;
 import com.example.workus.meeting.vo.Meeting;
 import com.example.workus.security.LoginUser;
-import com.example.workus.util.DateTimeUtil;
+import com.example.workus.common.util.DateTimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
