@@ -19,17 +19,32 @@
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
       <div class="lnb" style="position: fixed;">
-        <ul class="">
-          <li class="">
-            <a href="/address-book/list">사원 조회</a>
-          </li>
-          <li class="">
-            <a href="">신규 사원 등록</a>
-          </li>
-        </ul>
+        <div class="lnb-btn text-center mb-4">
+          <button type="button" class="btn btn-dark" id="addScheduleBtn">내 정보 보기</button>
+        </div>
+
+        <!-- LNB 메뉴 -->
+        <div class="lnb-menu">
+            <!-- 직원정보 관리 시스템 -->
+            <p class="listTitle">직원정보 관리 시스템</p>
+            <label class="menu-label">
+                <input class="checkbox-input" type="checkbox" checked="checked" id="division1">
+                <a href="/address-book/list">직원 정보 조회</a>
+            </label>
+            <label class="menu-label">
+                <input class="checkbox-input" type="checkbox" id="division0">
+                <a>신규 직원 등록</a>
+            </label>
+            <label class="menu-label">
+                <input class="checkbox-input" type="checkbox" id="division2">
+                <a>기존 직원 관리</a>
+            </label>
+        </div>
+
       </div>
       <main>
-        <h3 class="title1">사원 조회</h3>
+        <h3 class="title1">직원정보 조회</h3>
+        <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
         <div class="content">
           <section class="member-search-container">
             <!-- 검색 바 -->

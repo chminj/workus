@@ -17,14 +17,6 @@
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
             <div class="lnb">
-                <ul class="">
-                    <li class="">
-                        <a href="/user/myinfo">내 정보 수정</a>
-                    </li>
-                    <li class="">
-                        <a href="/address-book/list">사원 목록</a>
-                    </li>
-                </ul>
             </div>
             <main>
                 <h3 class="title1">내 정보 수정</h3>
