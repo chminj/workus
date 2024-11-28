@@ -142,12 +142,10 @@ $(function() {
         refSearch.submit();
     }
 
-    //     myReqList
     // 내 신청 내역 - 체크박스 조건
     $("#flexSwitchCheckDefault").on('change', function () {
         // 체크박스 상태에 따른 status 값 설정
         const statusValue = this.checked ? 'I' : '';
-        console.log(statusValue);
 
         updateStatusParameter(statusValue);
         $("#refSearch").trigger("submit");

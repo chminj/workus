@@ -2,6 +2,7 @@ package com.example.workus.attendance.controller;
 
 import com.example.workus.attendance.dto.*;
 import com.example.workus.attendance.service.AttendanceService;
+import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
@@ -13,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +46,14 @@ public class AttendanceController {
 
     @GetMapping("/atdFormInCtgr")
     @ResponseBody
-    public List<AttendanceCategoryDto> categoriesInAtdForm() {
-        return (List<AttendanceCategoryDto>) attendanceService.getCategories();
+    public List<AttendanceCategory> categoriesInAtdForm() {
+        return (List<AttendanceCategory>) attendanceService.getCategories();
     }
 
     @PostMapping("/getApproval")
-    public String getApproval(ApprovalForm form, @AuthenticationPrincipal LoginUser loginUser) {
+    public String getApproval(ApprovalForm form
+            , @AuthenticationPrincipal LoginUser loginUser
+            , @RequestParam(required = false) int dayTotal) {
         ApprovalForm apvForm = new ApprovalForm();
         apvForm.setNo(form.getNo());
         apvForm.setReason(form.getReason());
@@ -61,13 +65,25 @@ public class AttendanceController {
         List<ApprovalUserDto> users = new ArrayList<>();
         String[] apvs = form.getApv().split(",");
         String[] refs = form.getRef().split(",");
-
+        // 승인자 리스트 추가
         int index = 0;
         for (String value : apvs) {
             Long intValue = Long.valueOf(value);
 
             ApprovalUserDto userDto = ApprovalUserDto.builder()
-                    .status('1')
+                    .status("A")
+                    .userNo(intValue)
+                    .sequence(index++)
+                    .formNo(form.getNo())
+                    .build();
+            users.add(userDto);
+        }
+        // 참조자 리스트 추가
+        index = 0;
+        for (String value : refs) {
+            Long intValue = Long.valueOf(value);
+            ApprovalUserDto userDto = ApprovalUserDto.builder()
+                    .status("R")
                     .userNo(intValue)
                     .sequence(index++)
                     .formNo(form.getNo())
@@ -75,17 +91,10 @@ public class AttendanceController {
             users.add(userDto);
         }
 
-        index = 0;
-        for (String value : refs) {
-            Long intValue = Long.valueOf(value);
-            ApprovalUserDto userDto = ApprovalUserDto.builder()
-                    .status('2')
-                    .userNo(intValue)
-                    .sequence(index++)
-                    .formNo(form.getNo())
-                    .build();
-            users.add(userDto);
-        }
+        // ApprovalRequestDto 생성 및 dayTotal 설정 (아직 수정중)
+        ApprovalRequestDto approvalRequestDto = new ApprovalRequestDto();
+        approvalRequestDto.setAtdNo(form.getNo());
+        approvalRequestDto.setDayTotal(BigDecimal.valueOf(dayTotal));
 
         attendanceService.insertApprovalForm(apvForm, users);
 
@@ -94,11 +103,11 @@ public class AttendanceController {
 
     @GetMapping("/myReqList")
     public String myApvList(@AuthenticationPrincipal LoginUser loginUser
-                            , Model model
-                            , @RequestParam(required = false, defaultValue = "1") int page
-                            , @RequestParam(required = false, defaultValue = "10") int rows
-                            , @RequestParam(required = false) String status
-                            ) {
+            , Model model
+            , @RequestParam(required = false, defaultValue = "1") int page
+            , @RequestParam(required = false, defaultValue = "10") int rows
+            , @RequestParam(required = false) String status
+    ) {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);

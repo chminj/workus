@@ -2,6 +2,8 @@ package com.example.workus.attendance.dto;
 
 import lombok.*;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -11,9 +13,6 @@ import lombok.*;
 public class AttendanceDto {
     private Long no;
     private int roleNo;
-    private double unusedAnnualLeave;
-    private double annualLeaveCount;
-
-    private String currentAnnualLeave = String.format("%.2f", unusedAnnualLeave);
-    private String totalAnnualLeave = String.format("%.2f", annualLeaveCount);
+    private BigDecimal unusedAnnualLeave;
+    private BigDecimal annualLeaveCount;
 }

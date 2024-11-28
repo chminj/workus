@@ -22,6 +22,7 @@ public class Pagination {
     private boolean isLast; 	    // 마지막 페이지면 true
     private int prevPage;		// 현재 페이지의 이전 페이지번호
     private int nextPage;		// 현재 페이지의 다음 페이지번호
+    private int offset;
 
     /**
      * 현재 페이지번호와 총 데이터갯수를 전달받아서 객체를 초기화하고,
@@ -81,6 +82,7 @@ public class Pagination {
 
             begin = (page - 1)*rowsPerPage + 1;
             end = page*rowsPerPage;
+            offset = begin - 1;
 
             totalBlocks = (int) Math.ceil((double)totalPages/pagesPerBlock);
             currentBlock = (int) Math.ceil((double)page/pagesPerBlock);

@@ -1,10 +1,42 @@
-$(function(){
+$(function () {
+    // BigDecimal 조건 처리
+    function formatBigDecimal(value) {
+        const numberValue = Number(value);
+
+        // 소수점 이하가 있는 경우
+        if (numberValue % 1 !== 0) {
+            // 소수점 두 자리로 변환
+            let formattedValue = numberValue.toFixed(2);
+
+            // 마지막 0 제거
+            if (formattedValue.endsWith('.00')) {
+                return formattedValue.slice(0, -3); // .00 제거
+            } else if (formattedValue.endsWith('0')) {
+                return formattedValue.slice(0, -1); // 마지막 0 제거
+            }
+            return formattedValue; // 두 자리 소수점
+        } else {
+            return numberValue.toString(); // 정수인 경우
+        }
+    }
+
+    let usableAnnualLeaveElement = $(".holiday .usable");
+    let usableAnnualLeave = usableAnnualLeaveElement.text().trim(); // 텍스트를 가져오고 공백 제거
+    let formattedUsableAnnualLeave = formatBigDecimal(usableAnnualLeave);
+    let totalAnnualLeaveElement = $(".holiday .total");
+    let totalAnnualLeave = totalAnnualLeaveElement.text().trim();
+    let formattedTotalAnnualLeave = formatBigDecimal(totalAnnualLeave);
+
+    // 포맷팅된 값을 다시 설정
+    usableAnnualLeaveElement.text(formattedUsableAnnualLeave);
+    totalAnnualLeaveElement.text(formattedTotalAnnualLeave);
+
     // ajax 호출
     async function atdForm() {
         let responseUser = await fetch("/attendance/atdFormInUser");
         let resultUser = await responseUser.json();
 
-        for (let i=0; i < resultUser.length; i++) {
+        for (let i = 0; i < resultUser.length; i++) {
 
             let content = `
                 <li class="d-flex">
@@ -24,7 +56,7 @@ $(function(){
 
         let responseCtgr = await fetch("/attendance/atdFormInCtgr");
         let resultCtgr = await responseCtgr.json();
-        for (let i=0; i < resultCtgr.length; i++) {
+        for (let i = 0; i < resultCtgr.length; i++) {
 
             // 연차, 반차, 반반차 (radio)
             if (resultCtgr[i].no < 25) {
@@ -48,6 +80,7 @@ $(function(){
             }
         }
     }
+
     atdForm();
 
     // dialog modal
@@ -57,17 +90,17 @@ $(function(){
     // dialog open
     openButton.addEventListener('click', () => {
         atdDialog.showModal();
-        $('html, body').css('overflow','hidden');
+        $('html, body').css('overflow', 'hidden');
     })
 
     // dialog close
-    $("#atdRequestForm button.closeBtn").on('click', function() {
+    $("#atdRequestForm button.closeBtn").on('click', function () {
         atdDialog.close();
-        $('html, body').css('overflow','auto');
+        $('html, body').css('overflow', 'auto');
     })
 
     // today default setting in modal
-    let todayDate = new Date().toISOString().substring(0,10);
+    let todayDate = new Date().toISOString().substring(0, 10);
     $('#atdFromDate').val(todayDate);
     $('#atdToDate').val(todayDate);
 
@@ -77,7 +110,7 @@ $(function(){
 
     var xhr = new XMLHttpRequest();
     var url = 'http://apis.data.go.kr/B090041/openapi/service/SpcdeInfoService/getRestDeInfo'; /*URL*/
-    var queryParams = '?' + encodeURIComponent('serviceKey') + '='+ serviceKey; /*Service Key*/
+    var queryParams = '?' + encodeURIComponent('serviceKey') + '=' + serviceKey; /*Service Key*/
     queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* 임의의 수 */
     queryParams += '&' + encodeURIComponent('solYear') + '=' + encodeURIComponent('2024'); /**/
     queryParams += '&' + encodeURIComponent('_type') + '=' + encodeURIComponent('json'); /**/
@@ -112,13 +145,13 @@ $(function(){
     }
 
     // dayTotal count in modal
-    $('#atdFromDate').on("change", function(){
+    $('#atdFromDate').on("change", function () {
         let nowFromDate = $(this).val();
         $('#atdToDate').attr('min', nowFromDate).val(nowFromDate);
     });
 
     let totalTime = 0;
-    $('#atdToDate').on("change", function() {
+    $('#atdToDate').on("change", function () {
         let fromDateStr = $('#atdFromDate').val();
         let toDateStr = $('#atdToDate').val();
 
@@ -137,7 +170,8 @@ $(function(){
 
         $('.dayTotal').html(totalTime);
 
-        if(totalTime > 1) {
+
+        if (totalTime > 1) {
             $("#dayTotal").val(totalTime);
         }
     });
@@ -172,33 +206,33 @@ $(function(){
     let apvUserList = [];
     let refUserList = [];
 
-    $("#apvLineAdd, #refLineAdd").on("click", function(e) {
+    $("#apvLineAdd, #refLineAdd").on("click", function (e) {
         target = e.currentTarget.id;
-        let targetId = target.substring(0,3);
+        let targetId = target.substring(0, 3);
 
         atdUserMove("atdFormUser", targetId);
     });
 
-    $("#apvLineCancel, #refLineCancel").on("click", function(e) {
+    $("#apvLineCancel, #refLineCancel").on("click", function (e) {
         target = e.currentTarget.id;
-        let targetId = target.substring(0,3);
+        let targetId = target.substring(0, 3);
 
         atdUserMove(targetId, "atdFormUser");
         sortReset(targetId, "atdFormUser");
     });
 
     function atdUserMove(source, target) {
-        let checkedLiTag = $("#"+source+" input[type='checkbox']:checked").parent();
+        let checkedLiTag = $("#" + source + " input[type='checkbox']:checked").parent();
 
-        $("#"+target).append(checkedLiTag);
+        $("#" + target).append(checkedLiTag);
         $(checkedLiTag).children("input[type='checkbox']").prop("checked", false);
 
         sortReset(target, checkedLiTag);
     }
 
-    $(".btnW button").on("click", function() {
+    $(".btnW button").on("click", function () {
         // 결재선의 label 수집
-        $("#apv input[type='checkbox']").each(function() {
+        $("#apv input[type='checkbox']").each(function () {
             var userId = $(this).attr("id");
             // 중복 체크 후 추가
             if (!apvUserList.includes(userId)) {
@@ -207,7 +241,7 @@ $(function(){
         });
 
         // 참조선의 label 수집
-        $("#ref input[type='checkbox']").each(function() {
+        $("#ref input[type='checkbox']").each(function () {
             var userId = $(this).attr("id");
             // 중복 체크 후 추가
             if (!refUserList.includes(userId)) {
@@ -222,42 +256,41 @@ $(function(){
 
     // 재정렬 로직
     function sortReset(targetId, checkedLiTag) {
-        let labels = $("#"+targetId).find("label");
+        let labels = $("#" + targetId).find("label");
         // labels 오름차순 정렬
-        labels.sort(function(one, two) {
+        labels.sort(function (one, two) {
             let oneSort = parseInt($(one).data("sort"));
             let twoSort = parseInt($(two).data("sort"));
             return oneSort - twoSort;
         });
 
         $("#" + targetId).empty(); // reset
-        labels.each(function() {
+        labels.each(function () {
             $("#" + targetId).append($(this).parent()); // li 태그 추가
         });
     }
 
-    let selectedValue = $("select[name='categoryOpt1']").val();
     let categoryNo = $("#categoryNo");
 
     // 연차 옵션 toggle
-    $("#atdCtgr").on("click", function() {
-        let opt = $(this).children("option:selected").attr("name");
+    $("#atdCtgr").on("click", function () {
+        let opt = $(this).children("option:selected").val();
 
-        if(opt === '25') {
+        if (opt === '25') {
             $(".annualLeaveOnly").hide();
-            categoryNo.val(selectedValue);
+            categoryNo.val(opt);
         } else {
             $(".annualLeaveOnly").show();
         }
     });
 
-    $(document).on("click", ".annualLeaveOnly input[type='radio']", function(e) {
+    $(document).on("click", ".annualLeaveOnly input[type='radio']", function (e) {
         let val = e.target.value;
 
         let selectedRadioValue = $("input[name='categoryOpt2']:checked").val();
         categoryNo.val(selectedRadioValue);
 
-        if(val === '10') {
+        if (val === '10') {
             $(".partOpt").addClass("d-none");
         } else {
             $(".partOpt").removeClass("d-none");
@@ -268,21 +301,25 @@ $(function(){
     let confirmBtn = document.getElementById('confirmModalBtn');
     let atdConfirmDialog = document.getElementById('apvUserList');
 
-    $("#atdApproval").on("submit", function(e) {
+    $("#atdApproval").on("submit", function (e) {
         e.preventDefault();
         if ($("#apvUserList").val().trim() === "" || $("#refUserList").val().trim() === "") {
             alert("결재선/참조선 목록이 비어 있습니다. 사용자를 선택해 주세요.");
         } else {
             $("#collapseExample").stop().fadeIn(500);
         }
+
+        // 폼 제출
+        let dayTotal = $("#dayTotal").val();
+        if (dayTotal === "") {
+            $("#dayTotal").val(0); // 또는 원하는 기본값으로 설정
+        }
     });
 
-    $("#confirmModalBtn").on("click", function() {
+    $("#confirmModalBtn").on("click", function () {
         if ($("#collapseExample").is(':visible')) {
             $("#atdApproval").off("submit").submit();
             // submit 이벤트를 제거하고 폼 제출
         }
     });
-
-
 })

@@ -13,7 +13,7 @@ import java.util.Map;
 @Builder
 public class ApprovalUserDto {
     private Long no;
-    private int status;
+    private String status;
     private int sequence;
     private Long userNo;
     private Long formNo;
