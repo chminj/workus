@@ -62,7 +62,7 @@ public class UserController {
 
     @GetMapping("/user/myinfo")
     public String myinfo() {
-        return "user/myinfo-form";
+        return "user/myinfo-modify";
     }
 
     @GetMapping("/address-book/list")

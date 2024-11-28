@@ -142,3 +142,87 @@ main {
 .verticalLayoutFixedSection {
     display: flex; /* 수평 정렬 */
 }
+
+/* 버튼의 너비를 100%로 설정 */
+.lnb .btn {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    position: relative;  /* 구분선 위치를 버튼 아래에 정확히 놓기 위해 */
+}
+
+/* 기본 메뉴 항목 스타일 */
+.lnb-menu label {
+    display: block;
+    cursor: pointer;
+    padding: 5px 0;
+    position: relative;
+}
+
+/* 클릭된 메뉴 항목에 밑줄 추가 */
+.lnb-menu label a {
+    position: relative;
+    padding: 5px 0;
+    text-decoration: none;
+    color: inherit; /* 기본 색상 유지 */
+}
+
+.lnb-menu label a:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #e91e63;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+/* 호버 시 밑줄 확장 */
+.lnb-menu label a:hover:after {
+    width: 100%;
+}
+
+/* 선택된 항목에 밑줄 유지 */
+.lnb-menu label.selected a:after {
+    width: 100%;
+    opacity: 1;
+}
+
+/* 체크박스 숨기기 */
+.lnb-menu input[type="checkbox"] {
+    display: none; /* 체크박스 숨기기 */
+}
+
+/* 체크박스 선택된 상태에서 밑줄 */
+.lnb-menu input[type="checkbox"]:checked + a:after {
+    width: 100%;
+    opacity: 1;
+}
+
+/* 리스트 제목 스타일 */
+.listTitle {
+    position: relative;
+    padding-bottom: 5px; /* 밑줄과 텍스트 간격 조절 */
+    cursor: pointer;
+}
+
+.listTitle:after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background-color: #e91e63;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+}
+
+/* 메인 컨텐츠에 대한 부가 설명 스타일 */
+.description {
+    padding-top: 5px;
+    color: #5b90f0;
+    font-size: 15px;
+}
