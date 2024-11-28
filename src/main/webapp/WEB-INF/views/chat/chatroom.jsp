@@ -23,7 +23,7 @@
 							<div class="col-4 border-end p-0 chatroomDiv vh-100 overflow-auto">
 							  <!-- 채팅방 생성 버튼 -->
 								<div class="border-bottom p-3 creatingChatroomBtnDiv">
-								<button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
+								<button class="btn btn-primary w-100 creatingChatroomBtn" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
 								  <i class="bi bi-plus-circle me-2"></i>새 채팅방 만들기
 								</button>
 								</div>
@@ -124,12 +124,14 @@
         <form id="createChatroomForm">
           <div class="mb-4">
             <label for="chatroomTitle" class="form-label">채팅방 제목</label>
-            <input type="text" class="form-control" id="chatroomTitle" name="chatroomTitle" required>
+            <input type="text" class="form-control" id="chatroomTitle" name="chatroomTitle">
+			  <p id="noTitleAlarm"></p>
           </div>
 
           <div class="mb-3">
 			<label class="form-label">참여자 선택</label>
 			  <input type="text" class="form-control mb-3" id="userSearch" placeholder="초대할 사원의 이름을 입력하세요." />
+			  <p id="noUserAlarm"></p>
 			  <div class="position-relative">
 				  <div class="dropdown-menu w-100 show border shadow-sm d-none" id="searchResults" style="max-height: 200px; overflow-y: auto;">
 					  <!-- 검색 결과가 없을 때 -->
@@ -365,6 +367,16 @@
 
         // 방 생성 버튼 클릭 이벤트
 		$('#createChatroomBtn').click(async function () {
+			if ($('#chatroomTitle').val().trim().length === 0) {
+				$('#noTitleAlarm').text('채팅창 제목이 비었습니다.');
+				return false;
+			}
+
+			if ($('.user-check:checked').length < 2) {
+				$('#noUserAlarm').text('체크된 사람이 없습니다.');
+				return false;
+			}
+
 			let formData = $('#createChatroomForm').serialize();
 			try {
 				const response = await fetch('/ajax/chatroom', {
@@ -408,9 +420,10 @@
 			$('.creatingChatroomBtnDiv').after(div);
 		}
 
-		// 취소버튼 누르면 원상복귀
-		$('.closeBtn').click(function () {
+		$('.creatingChatroomBtn').click(function () {
 			// 모달 창 깨끗하게 하기
+			$('#noTitleAlarm').text('');
+			$('#noUserAlarm').text('');
 			$('#chatroomTitle').val('');
 			$('#userSearch').val('');
 			$('.search-results-container').html('');
@@ -422,7 +435,6 @@
 			$(`.user-check`).prop('checked', false);
 			$('#createChatroomParticipant${LOGIN_USERNO}').prop('checked', true);
 		})
-
 		<%-- 채팅방 생성 js 끝 --%>
 
 		// 페이지 변화 시 연결 시간 업데이트
