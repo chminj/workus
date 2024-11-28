@@ -20,16 +20,16 @@
 					<div class="container-fluid vh-100">
 						<div class="row h-100">
 							<!-- 채팅방 목록 -->
-							<div class="col-4 border-end p-0" style="overflow-y: auto;">
+							<div class="col-4 border-end p-0 chatroomDiv vh-100 overflow-auto">
 							  <!-- 채팅방 생성 버튼 -->
-								<div class="border-bottom p-3">
+								<div class="border-bottom p-3 creatingChatroomBtnDiv">
 								<button class="btn btn-primary w-100" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
 								  <i class="bi bi-plus-circle me-2"></i>새 채팅방 만들기
 								</button>
 								</div>
 								<!-- 채팅방 -->
 								<c:forEach var="chatroom" items="${chatrooms}">
-								<div class="border-bottom p-3 chatroom" role="button" data-chatroom-no="${chatroom.chatroomNo}">
+								<div class="border-bottom p-3 chatroom" id="chatroom${chatroom.chatroomNo}" role="button" data-chatroom-no="${chatroom.chatroomNo}">
 									<div class="d-flex justify-content-between align-items-start">
 										<h6 class="mb-1">${chatroom.chatroomTitle}</h6>
 										<small class="text-muted"><fmt:formatDate value="${chatroom.lastChatDate}" pattern="yyyy년 MM월 dd시 HH시 mm분" /></small>
@@ -124,7 +124,7 @@
         <form id="createChatroomForm">
           <div class="mb-4">
             <label for="chatroomTitle" class="form-label">채팅방 제목</label>
-            <input type="text" class="form-control" id="chatroomTitle" required>
+            <input type="text" class="form-control" id="chatroomTitle" name="chatroomTitle" required>
           </div>
 
           <div class="mb-3">
@@ -163,7 +163,7 @@
 					<c:forEach var="map" items="${participantInfos[deptStatus.index]}">
 						<c:forEach var="participantInfo" items="${map.value}">
 						<div class="form-check mb-2">
-							<input class="form-check-input user-check" type="checkbox" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept-no="${dept.deptNo}">
+							<input class="form-check-input user-check" type="checkbox" name="userNo" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept-no="${dept.deptNo}" ${participantInfo.userNo == LOGIN_USERNO ? 'checked disabled' : ''}>
 							  <span class="text-muted">[${participantInfo.positionName}]</span> ${participantInfo.userName}
 						</div>
 						</c:forEach>
@@ -176,8 +176,8 @@
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-        <button type="submit" form="createChatroomForm" class="btn btn-primary">생성</button>
+        <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">취소</button>
+        <button type="button" id="createChatroomBtn" class="btn btn-primary">생성</button>
       </div>
     </div>
   </div>
@@ -192,7 +192,7 @@
 		let chatroomNo = null;
 
 		// 채팅방 입장
-		$(".chatroom").on('click', async function () {
+		$('.chatroomDiv').on('click', '.chatroom', async function () {
 			// data-chatroom-no 속성 가져오기
 			chatroomNo = $(this).data("chatroomNo");
 			// 읽지 않은 메시지 수 화면에서 삭제
@@ -294,7 +294,9 @@
 					}
 				});
 			})
-		});
+		})
+
+		<%-- 채팅방 생성 js 시작 --%>
 
 		// 방 초대할 유저 검색
 		$('#userSearch').keyup(async function () {
@@ -361,6 +363,68 @@
 			}
 		})
 
+        // 방 생성 버튼 클릭 이벤트
+		$('#createChatroomBtn').click(async function () {
+			let formData = $('#createChatroomForm').serialize();
+			try {
+				const response = await fetch('/ajax/chatroom', {
+					method: 'POST',
+                    // 직렬화한 값은 제대로 잡아주지 못해서 따로 설정해줘야 함
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+					body: formData
+				})
+				const result = await response.json();
+				const data = await result.data;
+				// 채팅방 목록에 추가
+				appearAddedChatroom(data);
+
+				// 취소 버튼 누르기
+				$('.closeBtn').click();
+
+				// 생성된 채팅방 클릭
+				$(`#chatroom\${data.chatroomNo}`).click();
+			} catch (error) {
+				console.log('채팅방 생성 중 에러발생', error);
+			}
+		})
+
+		// 새로만든 채팅방 바로 보여주기
+		function appearAddedChatroom(chatroom) {
+			let div = `
+				<div class="border-bottom p-3 chatroom" id="chatroom\${chatroom.chatroomNo}" role="button" data-chatroom-no="\${chatroom.chatroomNo}">
+					<div class="d-flex justify-content-between align-items-start">
+						<h6 class="mb-1">\${chatroom.chatroomTitle}</h6>
+						<small class="text-muted"></small>
+					</div>
+					<p class="mb-1 text-muted"></p>
+					<div class="d-flex justify-content-between align-items-center">
+						<small class="text-muted text-truncate me-2"></small>
+						<span class="badge bg-primary rounded-pill not-read-count${chatroom.chatroomNo}"></span>
+					</div>
+				</div>
+			`;
+			$('.creatingChatroomBtnDiv').after(div);
+		}
+
+		// 취소버튼 누르면 원상복귀
+		$('.closeBtn').click(function () {
+			// 모달 창 깨끗하게 하기
+			$('#chatroomTitle').val('');
+			$('#userSearch').val('');
+			$('.search-results-container').html('');
+			$('#searchResults').addClass('d-none');
+			$('.no-results').addClass('d-none');
+
+			// 모든 체크 박스 원상 복귀
+			$(`.dept-check`).prop('checked', false);
+			$(`.user-check`).prop('checked', false);
+			$('#createChatroomParticipant${LOGIN_USERNO}').prop('checked', true);
+		})
+
+		<%-- 채팅방 생성 js 끝 --%>
+
 		// 페이지 변화 시 연결 시간 업데이트
 		$(document).on('visibilitychange', async function () {
 			try {
@@ -397,7 +461,7 @@
 			} catch (error) {
 				console.log('에러 메시지', error);
 			}
-		});
+		})
 
 		// 유저 입장 퇴장 토스트
 		function userJoinToast(data) {
@@ -418,6 +482,8 @@
 				console.log('온라인 표시 에러가 발생했습니다.', error)
 			}
 		}
+
+		<%-- 채팅 관련 js 시작 --%>
 
 		// 채팅 전송 후 화면에 내 채팅 보이기
 		function appearSubmittedMyChat(chat) {
@@ -627,6 +693,8 @@
 					</form>
 			`;
 		}
+
+		<%-- 채팅 관련 js 끝 --%>
 	</script>
 </body>
 </html>

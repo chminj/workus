@@ -2,6 +2,7 @@ package com.example.workus.chat.mapper;
 
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
+import com.example.workus.chat.vo.Chatroom;
 import com.example.workus.user.dto.DeptInChatroomDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import org.apache.ibatis.annotations.Mapper;
@@ -53,5 +54,30 @@ public interface ChatroomMapper {
      */
     List<DeptInChatroomDto> getAllDepts();
 
+    /**
+     * 부서에 해당하는 유저들을 가져온다.
+     * @param deptName 부서이름
+     * @return 부서에 속한 유저들
+     */
     List<ParticipantInChatroomDto> getAllUsersByDeptName(@Param("deptName") String deptName);
+
+    /**
+     * 채팅방을 생성한다.
+     * @param chatroom 채팅방 객체
+     */
+    void addChatroom(@Param("chatroom") Chatroom chatroom);
+
+    /**
+     * 채팅방 참여 히스토리에 저장한다.
+     * @param chatroomNo 채팅방 번호
+     * @param participantUserNo 참여자 번호
+     */
+    void addChatroomHistory(@Param("chatroomNo") Long chatroomNo, @Param("participantUserNo") Long participantUserNo);
+
+    /**
+     * 채팅방 번호로 채팅방 객체를 가져온다.
+     * @param chatroomNo 채팅방 번호
+     * @return 채팅방 객체
+     */
+    Chatroom getChatroomByChatroomNo(@Param("chatroomNo") Long chatroomNo);
 }
