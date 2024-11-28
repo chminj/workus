@@ -1,6 +1,8 @@
 package com.example.workus.chat.controller;
 
+import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
+import com.example.workus.chat.dto.CreatingChatroomDto;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatroomServcie;
 import com.example.workus.security.LoginUser;
@@ -36,5 +38,12 @@ public class RestChatroomController {
             @PathVariable("chatroomNo") Long chatroomNo) {
         chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(null));
+    }
+
+    @PostMapping("/chatroom")
+    ResponseEntity<RestResponseDto<ChatroomDto>> addChatroom(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @ModelAttribute CreatingChatroomDto creatingChatroomDto) {
+        return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addChatroom(loginUser.getNo(), creatingChatroomDto)));
     }
 }

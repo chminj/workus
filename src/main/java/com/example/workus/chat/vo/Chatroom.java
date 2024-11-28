@@ -12,5 +12,5 @@ import org.apache.ibatis.type.Alias;
 public class Chatroom {
     private Long no;
     private String title;
-    private int userNo;
+    private Long userNo;
 }
