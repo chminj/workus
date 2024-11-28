@@ -298,6 +298,17 @@
 			})
 		})
 
+		// 채팅방 나가기
+		$('#chat').on('click', '#outChatroom', async function () {
+			if (!confirm('채팅방을 나가시겠습니까?')) {
+				return;
+			}
+			const response = await fetch('/ajax/chatroom/out/' + chatroomNo);
+			if (response.ok) {
+				window.location.replace('/chatroom/list');
+			}
+		})
+
 		<%-- 채팅방 생성 js 시작 --%>
 
 		// 방 초대할 유저 검색
@@ -616,25 +627,31 @@
 			  <!-- 채팅방 헤더 -->
 			  <div class="border-bottom p-3 bg-light d-flex justify-content-between align-items-center">
 				 <h5 class="mb-0">\${data.chatroomTitle}</h5>
-				 <div class="dropdown">
-					<button class="btn btn-light" data-bs-toggle="dropdown">
-					   <i class="fas fa-users"></i>
+				<%-- 나가기 버튼 --%>
+				<div class="d-flex align-items-center gap-2">
+					<button type="button" class="btn btn-outline-danger btn-sm" id="outChatroom">
+						<i class="bi bi-box-arrow-right me-1"></i>나가기
 					</button>
-					<!-- 참여자 목록 드롭다운 -->
-					<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
-					   <li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
-					   <li>
-						  \${data.users.map((user) => `
-						<div class="d-flex align-items-center my-2">
-							<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
-							<div class="d-flex align-items-center gap-2">
-								<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
-								<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
+					 <div class="dropdown">
+						<button type="button" class="btn btn-light" data-bs-toggle="dropdown">
+						   <i class="fas fa-users"></i>
+						</button>
+						<!-- 참여자 목록 드롭다운 -->
+						<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
+						   <li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
+						   <li>
+							  \${data.users.map((user) => `
+							<div class="d-flex align-items-center my-2">
+								<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+								<div class="d-flex align-items-center gap-2">
+									<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
+									<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
+								</div>
 							</div>
-						</div>
-							`).join('')}
-					   </li>
-					</ul>
+								`).join('')}
+						   </li>
+						</ul>
+					</div>
 				 </div>
 			  </div>
 			`;
