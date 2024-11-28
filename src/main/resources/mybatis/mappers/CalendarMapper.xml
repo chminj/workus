@@ -12,6 +12,7 @@
             calendar_end_date AS endDate,
             calendar_division AS division,
             calendar_content AS content,
+            user_no as userNo,
             dept_no AS deptNo
         FROM
             WORKUS_CALENDAR
@@ -19,8 +20,8 @@
             calendar_no = #{calendarNo}
     </select>
 
-    <!-- List<Calendar> selectEventsByDateRange(@Param("start") LocalDateTime startDateTime, @Param("end") LocalDateTime endDateTime); -->
-    <select id="selectEventsByDateRange" resultType="Calendar">
+    <!-- List<Calendar> selectTeamAndPersonalEvents -->
+    <select id="selectTeamAndPersonalEvents" resultType="Calendar">
         SELECT
             calendar_no AS no,
             calendar_name AS name,
@@ -34,23 +35,26 @@
         FROM
             WORKUS_CALENDAR
         WHERE
-            calendar_start_date &gt;= #{start}
-            AND calendar_end_date &lt;= #{end}
-            AND user_no = #{loginUser.no}
+            (USER_NO = #{userNo} -- 개인 일정
+            OR DEPT_NO = #{deptNo}) -- 팀 일정
+            AND CALENDAR_START_DATE >= #{startDate}
+            AND CALENDAR_END_DATE &lt;= #{endDate}
             <if test="division != null and division.size() > 0">
-                AND calendar_division IN
-                <foreach collection="division" item="item" index="index" open="(" close=")" separator=",">
+                AND CALENDAR_DIVISION IN
+                <foreach item="item" collection="division" open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
+        ORDER BY CALENDAR_START_DATE ASC;
     </select>
+
 
     <!-- void insertCalendar(@Param("calendar") Calendar calendar); -->
     <insert id="insertCalendar">
         insert into WORKUS_CALENDAR
         (calendar_name, calendar_content, calendar_start_date, calendar_end_date, calendar_location, calendar_division, user_no, dept_no)
         values
-        (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.no}, 1003)
+        (#{calendar.name}, #{calendar.content}, #{calendar.startDate}, #{calendar.endDate}, #{calendar.location}, #{calendar.division}, #{calendar.userNo}, ${calendar.deptNo})
 
         <selectKey resultType="Long" keyProperty="calendar.no" keyColumn="calendar_no" order="AFTER">
             select last_insert_id()
@@ -75,5 +79,23 @@
             calendar_division = #{calendar.division}
         WHERE calendar_no = #{calendar.no}
     </update>
+
+    <!-- 일정 번호와 사용자 번호를 기준으로 일정 조회 -->
+    <select id="selectCalendarByNoAndUser" parameterType="map" resultType="com.example.workus.calendar.vo.Calendar">
+        SELECT
+            calendar_no AS no,
+            calendar_name AS name,
+            calendar_location AS location,
+            calendar_start_date AS startDate,
+            calendar_end_date AS endDate,
+            calendar_division AS division,
+            calendar_content AS content,
+            dept_no AS deptNo
+        FROM
+            WORKUS_CALENDAR
+        WHERE
+            calendar_no = #{calendarNo}
+          AND user_no = #{userNo}
+    </select>
 
 </mapper>
