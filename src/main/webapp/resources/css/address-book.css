@@ -37,6 +37,11 @@
     cursor: pointer;
 }
 
+.search-result-info {
+    font: 400 20px Montserrat, sans-serif;
+    color: #0f132a;
+}
+
 /* Testimonials 카드 컨테이너 */
 .testimonial-grid {
     display: grid;
@@ -60,15 +65,14 @@
 .avatar-block {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     gap: 10px; /* 이미지와 텍스트 간격 */
 }
 
 /* 이미지 크기 조정 */
 .avatar-image {
-    width: 80px; /* 이미지 크기를 더 키우기 */
-    height: 80px;
-    border-radius: 50%; /* 둥근 모양 유지 */
+    width: 120px; /* 이미지 크기를 더 키우기 */
+    height: 120px;
     margin-right: 20px; /* 이미지와 텍스트 간격 */
 }
 
@@ -96,6 +100,11 @@
     color: #777;
 }
 
+.address-info {
+    font-size: 0.9em; /* 주소 정보 크기 조정 */
+    color: #777;
+}
+
 /* 돋보기 아이콘 스타일 */
 .icon {
     color: #555; /* 아이콘 색상 */
@@ -111,46 +120,6 @@
     font: 600 15px Montserrat, sans-serif; /* 글씨 크기 */
     border: none; /* 기본 테두리 제거 */
     margin-right: 10px; /* 회원명 입력창과 간격 */
-}
-
-/* 페이지네이션 스타일 */
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 중앙 정렬 */
-    margin-top: 20px; /* 카드와의 간격 */
-}
-
-.pagination-button {
-    background-color: #65558f; /* 배경 색상 */
-    color: white; /* 글씨 색상 */
-    border: none; /* 테두리 제거 */
-    border-radius: 5px; /* 모서리 둥글게 */
-    padding: 10px 15px; /* 패딩 설정 */
-    cursor: pointer; /* 커서 포인터로 변경 */
-    margin: 0 5px; /* 간격 설정 */
-    font: 500 14px Roboto, sans-serif; /* 글꼴 설정 */
-}
-
-.pagination-number {
-    background-color: #d9d9d9; /* 기본 배경 색상 */
-    color: #333; /* 글씨 색상 */
-    border: none; /* 테두리 제거 */
-    border-radius: 5px; /* 모서리 둥글게 */
-    padding: 10px 15px; /* 패딩 설정 */
-    cursor: pointer; /* 커서 포인터로 변경 */
-    margin: 0 5px; /* 간격 설정 */
-    font: 500 14px Roboto, sans-serif; /* 글꼴 설정 */
-}
-
-.pagination-number:hover {
-    background-color: #65558f; /* 호버 시 배경 색상 변화 */
-    color: white; /* 호버 시 글씨 색상 변화 */
-}
-
-.pagination-button:hover,
-.pagination-number:hover {
-    opacity: 0.8; /* 호버 시 투명도 변화 */
 }
 
 .lnb {
