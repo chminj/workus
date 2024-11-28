@@ -3,6 +3,7 @@ package com.example.workus.attendance.dto;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @NoArgsConstructor
@@ -11,9 +12,12 @@ import java.util.List;
 @Setter
 @ToString
 @Builder
-@Alias("approvalRequestDto")
+@Alias("apvReqDto")
 public class ApprovalRequestDto {
-    private List<Long> atdNo;
+    private Long atdNo;
     private String status;
-    private int dayTotal;
+    private BigDecimal dayTotal;
+
+    private BigDecimal unusedDate;
+    private BigDecimal usedDate;
 }

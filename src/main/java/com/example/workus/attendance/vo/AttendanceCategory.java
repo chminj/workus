@@ -1,4 +1,4 @@
-package com.example.workus.attendance.dto;
+package com.example.workus.attendance.vo;
 
 import lombok.*;
 import org.apache.ibatis.type.Alias;
@@ -10,7 +10,7 @@ import org.apache.ibatis.type.Alias;
 @Setter
 @ToString
 @Alias("atdCategoryDto")
-public class AttendanceCategoryDto {
+public class AttendanceCategory {
     private Long no;
     private String name;
     private double count;
