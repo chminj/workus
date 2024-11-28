@@ -13,6 +13,6 @@ public class CalendarForm {
      private String division;
      private String content;
 
-     private Long no;
+     private Long userNo;
      private Long deptNo;
 }

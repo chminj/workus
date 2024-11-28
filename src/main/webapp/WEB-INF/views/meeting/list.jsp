@@ -18,25 +18,23 @@
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
+            <c:set var="lnb" value="myResInfo"/>
             <div class="lnb">
-                <!-- 일정 추가 버튼 -->
+                <!-- 회의실 예약 버튼 -->
                 <div class="lnb-btn text-center mb-4">
                     <button type="button" class="btn btn-dark" id="addScheduleBtn">회의실 예약하기</button>
                 </div>
 
+                <!-- LNB 메뉴 -->
                 <div class="lnb-menu">
-                    <div>
-                        <h4 class="font-weight-bold mb-3" id="myReservation">내 예약 현황</h4>
-                    </div>
-                    <div>
-                        <div>
-                            <h4 class="font-weight-bold mb-3" id="meetingRoom">회의실</h4>
-                            <div>
-                                <span class="font-weight-bold mb-3" id="meetingRoomA">회의실 A</span><br />
-                                <span class="font-weight-bold mb-3" id="meetingRoomB">회의실 B</span>
-                            </div>
-                        </div>
-                    </div>
+                    <ul class="list1 myResInfo">
+                        <li class="${lnb eq 'myResInfo' ? 'on' : '' }"><a href="#" id="myReservation">내 예약 현황</a></li>
+                    </ul>
+                    <p class="listTitle ${lnb eq 'roomList' ? 'on' : '' }" id="meetingRoom">회의실</p>
+                    <ul class="list2 roomList">
+                        <li class="${lnb eq 'roomA' ? 'on' : '' }"><a href="#" id="meetingRoomA">회의실 A</a></li>
+                        <li class="${lnb eq 'roomB' ? 'on' : '' }"><a href="#" id="meetingRoomB">회의실 B</a></li>
+                    </ul>
                 </div>
             </div>
             <main>

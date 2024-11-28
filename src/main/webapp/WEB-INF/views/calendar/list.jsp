@@ -18,6 +18,7 @@
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
+            <c:set var="lnb" value="myCalendar" />
             <div class="lnb">
                 <!-- 일정 추가 버튼 -->
                 <div class="lnb-btn text-center mb-4">
@@ -26,37 +27,21 @@
 
                 <!-- LNB 메뉴 -->
                 <div class="lnb-menu">
-                    <div class="mb-5">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input all-checkbox" type="checkbox" id="divisionAll"  onchange="divisionAll()">
-                            <label class="form-check-label" for="divisionAll">
-                                전체 선택
-                            </label>
-                        </div>
-                    </div>
+                    <!-- 캘린더 -->
+                    <label class="checkbox-label">
+                        <input class="checkbox-input" type="checkbox" id="divisionAll" onchange="divisionAll()">
+                        <a>캘린더</a>
+                    </label>
                     <!-- 내 캘린더 섹션 -->
-                    <div class="mb-5">
-                        <h4 class="font-weight-bold mb-3">내 캘린더</h4>
-                        <!-- 체크박스 - 내 캘린더 -->
-                        <div class="form-check mb-2">
-                            <input class="form-check-input personal-checkbox" type="checkbox" checked="checked" id="division1" value="1" onchange="refreshCalendar()">
-                            <label class="form-check-label" for="division1">
-                                [기본] 내 캘린더
-                            </label>
-                        </div>
-                    </div>
-
+                    <label class="checkbox-label">
+                        <input class="checkbox-input" type="checkbox" checked="checked" id="division1" value="1" onchange="refreshCalendar()">
+                        <a>[기본] 내 캘린더</a>
+                    </label>
                     <!-- 팀 캘린더 섹션 -->
-                    <div>
-                        <h4 class="font-weight-bold mb-3">팀 캘린더</h4>
-                        <!-- 체크박스 - 팀 캘린더 -->
-                        <div class="form-check mb-2">
-                            <input class="form-check-input team-checkbox" type="checkbox" id="division0" value="0" onchange="refreshCalendar()">
-                            <label class="form-check-label" for="division0">
-                                팀 캘린더
-                            </label>
-                        </div>
-                    </div>
+                    <label class="checkbox-label">
+                        <input class="checkbox-input" type="checkbox" id="division0" value="0" onchange="refreshCalendar()">
+                        <a>팀 캘린더</a>
+                    </label>
                 </div>
             </div>
             <main>

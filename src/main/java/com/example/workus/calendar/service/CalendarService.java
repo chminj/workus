@@ -5,6 +5,8 @@ import com.example.workus.calendar.mapper.CalendarMapper;
 import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.security.LoginUser;
 import com.example.workus.common.util.DateTimeUtil;
+import com.example.workus.user.mapper.UserMapper;
+import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,13 @@ public class CalendarService {
 
     @Autowired
     private CalendarMapper calendarMapper;
+    @Autowired
+    private UserMapper userMapper;
 
+    // 새 일정 추가
     public Calendar addNewCalendar(CalendarForm form) {
+        User user = userMapper.getUserByUserNo(form.getUserNo());
+
         Calendar calendar = new Calendar();
         calendar.setName(form.getName());
         calendar.setLocation(form.getLocation());
@@ -29,31 +36,44 @@ public class CalendarService {
         calendar.setDivision(form.getDivision());
         calendar.setContent(form.getContent());
 
-        calendar.setNo(form.getNo());
-        calendar.setDeptNo(form.getDeptNo());
+        calendar.setUserNo(user.getNo());
+        calendar.setDeptNo(user.getDeptNo());
 
         calendarMapper.insertCalendar(calendar);
-
         return calendar;
     }
 
-    public List<Calendar> getEventsByDateRange(Date start, Date end, List<Integer> division, LoginUser loginUser) {
+    // 기간 및 구분별 일정 조회
+    public List<Calendar> getTeamAndPersonalEvents(Date start, Date end, List<Integer> division, LoginUser loginUser) {
+        // 로그인 사용자 정보 조회
+        User user = userMapper.getUserByUserNo(loginUser.getNo());
+
+        // 날짜 범위 변환
         LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
-        return calendarMapper.selectEventsByDateRange(startDateTime, endDateTime, division, loginUser);
+        // 개인 및 팀 일정 조회
+        return calendarMapper.selectTeamAndPersonalEvents(user.getNo(), user.getDeptNo(), startDateTime, endDateTime, division);
     }
 
-    public Calendar getCalendarByNo(Long calendarNo) {
-        return calendarMapper.selectCalendarByNo(calendarNo);
+    // 특정 일정 조회
+    public Calendar getCalendarByNo(Long calendarNo, Long userNo) {
+        return calendarMapper.selectCalendarByNo(calendarNo, userNo);
     }
 
-    public void updateCalendar(Calendar calendar) {
-        calendarMapper.updateCalendar(calendar);
+    // 일정 수정
+    public void updateCalendar(Calendar calendar, Long userNo) {
+        Calendar existingCalendar = calendarMapper.selectCalendarByNoAndUser(calendar.getNo(), userNo);
+        if (existingCalendar != null) {
+            calendarMapper.updateCalendar(calendar);
+        } else {
+            throw new RuntimeException("수정할 권한이 없습니다.");
+        }
     }
 
-    public boolean deleteCalendar(Long eventId) {
-        Calendar calendar = calendarMapper.selectCalendarByNo(eventId);
+    // 일정 삭제
+    public boolean deleteCalendar(Long eventId, Long userNo) {
+        Calendar calendar = calendarMapper.selectCalendarByNoAndUser(eventId, userNo);
         if (calendar != null) {
             calendarMapper.deleteCalendar(eventId);
             return true;

@@ -265,6 +265,10 @@
         calendar.changeView('listMonth'); // 'listMonth' 뷰로 변경
         calendar.setOption('height', '800px');
         calendar.setOption('resourceAreaWidth', '30%');
+
+        // 밑줄 효과 관리
+        $('.lnb li, .listTitle').removeClass('on'); // 모든 on 클래스 제거
+        $(this).closest('li').addClass('on'); // 클릭된 항목에 추가
     });
 
     // 회의실 클릭 이벤트
@@ -277,6 +281,10 @@
         ]);
         calendar.setOption('height', 'auto'); // 캘린더 높이를 320px로 설정
         calendar.setOption('resourceAreaWidth', '7.5%');
+
+        // 밑줄 효과 관리
+        $('.lnb li, .listTitle').removeClass('on'); // 모든 on 클래스 제거
+        $(this).addClass('on'); // 클릭된 p 태그에 'on' 클래스 추가
     });
 
     // 회의실 A 클릭 이벤트
@@ -289,6 +297,9 @@
         calendar.setOption('height', '800px');
         calendar.setOption('resourceAreaWidth', '30%');
 
+        // 밑줄 효과 관리
+        $('.lnb li, .listTitle').removeClass('on');
+        $(this).closest('li').addClass('on');
     });
 
     // 회의실 B 클릭 이벤트
@@ -301,4 +312,7 @@
         calendar.setOption('height', '800px');
         calendar.setOption('resourceAreaWidth', '30%');
 
+        // 밑줄 효과 관리
+        $('.lnb li, .listTitle').removeClass('on');
+        $(this).closest('li').addClass('on');
     });

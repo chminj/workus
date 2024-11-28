@@ -62,6 +62,14 @@
             start = info.startStr.split("T")[0];
             end = info.endStr.split("T")[0];
 
+            let divisions = [1, 2];
+
+            console.log("AJAX 요청 데이터:", {
+                start: start,
+                end: end,
+                division: divisions
+            });
+
             $.ajax({
                 type: 'GET',
                 url: '/calendar/events',
@@ -71,6 +79,7 @@
                     division: 1
                 },
                 success: function(calendars) {
+                    console.log("서버 응답:", calendars);
                     let events = calendars.map(function(calendar) {
                         let event = {};
                         event.id = calendar.no;
@@ -118,6 +127,8 @@
                     $("#calendarModal #endDate").val(response.endDate);
                     $("#calendarModal #division").val(response.division);
                     $("#calendarModal #content").val(response.content);
+
+                    console.log("User No:", response.userNo);
 
                     $("#calendarModalLabel").text("일정 상세정보");
 
@@ -299,7 +310,7 @@
                             location: result.location,
                             division: result.division,
                             content: result.content,
-                            userNo: result.no,
+                            userNo: result.userNo,
                             deptNo: result.deptNo
                         }
                     });
@@ -379,7 +390,7 @@
         refreshCalendar();
     }
 
-    function refreshCalendar() {
+    function refreshCalendar(event, el) {
         let el1 = document.querySelector("input[id=division1]");
         let el2 = document.querySelector("input[id=division0]");
         let el3 = document.querySelector("input[id=divisionAll]");
@@ -402,12 +413,10 @@
         // 기존 이벤트 소스 제거
         calendar.getEventSources().forEach(function(source) {
             console.log('Event Source:', source.className); // className 확인용 로그
-            // className이 존재하고 'ko_event'를 포함하지 않는 소스를 제거
             if (!source.className || !source.className.includes('ko_event')) {
                 source.remove(); // 조건을 만족하면 소스를 제거
             }
         });
-
 
         if (values.length > 0) {
             let queryString = values.map(function (value) {
@@ -445,6 +454,18 @@
             });
         }
     }
+
+    // 체크박스를 클릭할 때마다 선택된 항목에 'selected' 클래스 추가/제거
+    document.querySelectorAll('.lnb-menu input[type="checkbox"]').forEach(function (checkbox) {
+        checkbox.addEventListener('change', function () {
+            let label = this.closest('label');
+            if (this.checked) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
+        });
+    });
 
     function getDate(date, days) {
         days = days || 0;
