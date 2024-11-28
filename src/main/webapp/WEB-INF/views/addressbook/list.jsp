@@ -58,7 +58,6 @@
             </form>
 
             <!-- 컨텐츠 불러오기 -->
-            ${paging}
             <c:choose>
               <c:when test="${empty userList}">
                 <span class="search-result-info"><strong>조회된 사원이 없습니다.</strong></span>
