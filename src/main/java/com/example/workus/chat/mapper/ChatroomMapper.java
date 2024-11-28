@@ -80,4 +80,11 @@ public interface ChatroomMapper {
      * @return 채팅방 객체
      */
     Chatroom getChatroomByChatroomNo(@Param("chatroomNo") Long chatroomNo);
+
+    /**
+     * 채팅방 번호를 받아서 out_time을 업데이트 한다.
+     * @param userNo 나갈 유저 번호
+     * @param chatroomNo 채팅방 번호
+     */
+    void outChatroomByChatroomNo(@Param("userNo") Long userNo,@Param("chatroomNo") Long chatroomNo);
 }

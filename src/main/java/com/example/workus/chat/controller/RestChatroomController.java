@@ -46,4 +46,12 @@ public class RestChatroomController {
             @ModelAttribute CreatingChatroomDto creatingChatroomDto) {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addChatroom(loginUser.getNo(), creatingChatroomDto)));
     }
+
+    @GetMapping("/chatroom/out/{chatroomNo}")
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomOut(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @PathVariable("chatroomNo") Long chatroomNo) {
+        chatroomServcie.outChatroomByChatroomNo(loginUser.getNo(), chatroomNo);
+        return ResponseEntity.ok(RestResponseDto.success(null));
+    }
 }

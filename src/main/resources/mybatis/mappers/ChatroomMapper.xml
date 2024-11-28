@@ -23,7 +23,7 @@
         update
             WORKUS_CHATROOM_HISTORY
         set
-            CHATROOM_CON_TIME = #{now}
+            CHATROOM_CON_TIME = CURRENT_TIMESTAMP
         where
             CHATROOM_NO = #{chatroomNo}
           and
@@ -147,4 +147,15 @@
         where
             CHATROOM_NO = #{chatroomNo}
     </select>
+
+    <update id="outChatroomByChatroomNo">
+        update
+            WORKUS_CHATROOM_HISTORY
+        set
+            CHATROOM_OUT_TIME = CURRENT_TIMESTAMP
+        where
+            CHATROOM_NO = #{chatroomNo}
+          and
+            USER_NO = #{userNo}
+    </update>
 </mapper>

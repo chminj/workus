@@ -98,4 +98,8 @@ public class ChatroomServcie {
         chatroomDto.setChatroomTitle(chatroomTitle);
         return chatroomDto;
     }
+
+    public void outChatroomByChatroomNo(Long userNo, Long chatroomNo) {
+        chatroomMapper.outChatroomByChatroomNo(userNo, chatroomNo);
+    }
 }
