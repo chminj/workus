@@ -18,7 +18,7 @@
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
-            <c:set var="lnb" value="myResInfo"/>
+            <c:set var="lnb" value="roomList"/>
             <div class="lnb">
                 <!-- 회의실 예약 버튼 -->
                 <div class="lnb-btn text-center mb-4">

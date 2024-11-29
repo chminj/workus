@@ -11,12 +11,19 @@ import java.util.List;
 @Mapper
 public interface MeetingMapper {
 
-    Meeting selectMeetingByNo(Long meetingNo);
+    Meeting selectMeetingByNo(@Param("meetingNo") Long meetingNo, @Param("userNo") Long userNo);
     List<Meeting> selectEventsByDateRange(
             @Param("start") LocalDateTime startDateTime,
             @Param("end") LocalDateTime endDateTime,
             @Param("loginUser") LoginUser loginUser);
+    List<Meeting> selectAllEventsByDateRange(
+            @Param("start") LocalDateTime startDateTime,
+            @Param("end") LocalDateTime endDateTime);
 
     void insertMeeting(@Param("meeting") Meeting meeting);
     void deleteMeeting(@Param("eventId") Long eventId);
+    void updateMeeting(@Param("meeting") Meeting meeting);
+
+    Meeting selectMeetingByNoAndUser(@Param("meetingNo") long no, @Param("userNo") Long userNo);
+
 }
