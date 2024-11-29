@@ -21,13 +21,15 @@
         b: '#28a745'  // 회의실 B
     };
 
+    let filter = "all";
+
     var calendarEl = $('#calendar')[0];
 
     // full-calendar 생성하기
     var calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
         timeZone: 'UTC',
-        initialView: 'listMonth', // 초기 뷰 설정
+        initialView: 'resourceTimeline', // 초기 뷰 설정
         aspectRatio: 1.5,
 
         headerToolbar: {
@@ -38,7 +40,9 @@
         editable: true,
         resourceAreaHeaderContent: 'Rooms',
         initialDate: new Date().toISOString().slice(0, 10),
-        height: '800px',
+        height: 'auto',
+        resourceAreaWidth: '7.5%',
+        scrollTime: '00:00:00',
         locale: 'ko',
 
         // 시간 라벨 형식 설정
@@ -47,6 +51,11 @@
             minute: '2-digit',
             hour12: false // 24시간 형식으로 표시
         },
+
+        resources: [
+            { id: 'a', title: '회의실 A' },
+            { id: 'b', title: '회의실 B' }
+        ],
 
         events: function(info, successCallback, failureCallback) {
             start = info.startStr.split("T")[0];
@@ -60,6 +69,7 @@
                 data: {
                     start: info.startStr.split("T")[0],
                     end: info.endStr.split("T")[0],
+                    filter: filter,
                 },
                 success: function(meetings) {
                     let events = meetings.map(function(meeting) {
@@ -80,9 +90,7 @@
                     console.error("일정 불러오기 실패:", error);
                     failureCallback(error);
                 }
-
             });
-
         },
 
         eventClick: function(info) {
@@ -184,35 +192,59 @@
 
         console.log(eventId)
 
-        $.ajax({
-            type: "post",
-            url: "/meeting/add",
-            data: eventData,
-            success: function (result) {
-                let event = {
-                    id: result.no,
-                    start: result.startDate,
-                    end: result.endDate,
-                    resourceId: result.room,
-                    extendedProps: {
-                        room: result.room,
-                        content: result.content,
-                        userNo: result.userNo,
-                    }
-                };
+        if (eventId) {
+            $.ajax({
+                // 기존 일정을 수정하는 경우
+                type: "post",
+                url: "/meeting/update",
+                data: { id: eventId, ...eventData },
+                success: function (result) {
+                    var event = calendar.getEventById(eventId);
+                    event.setStart(result.startDate);
+                    event.setEnd(result.endDate);
+                    event.setExtendedProp('division', result.room);
+                    event.setProp('title', result.content);
 
-                calendar.addEvent(event);
+                    $("#save").text("저장");
+                    $("#meetingModal").modal("hide");
 
-                $("#meetingModal").modal("hide");
-                $("#name, #location, #startDate, #endDate, #division, #content").val("");
+                    $("#startDate, #endDate, #room, #content").val("");
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 수정 실패:", error);
+                }
+            });
+        } else {
+            // 새로운 일정을 추가하는 경우
+            $.ajax({
+                type: "post",
+                url: "/meeting/add",
+                data: eventData,
+                success: function (result) {
+                    let event = {
+                        id: result.no,
+                        start: result.startDate,
+                        end: result.endDate,
+                        resourceId: result.room,
+                        extendedProps: {
+                            room: result.room,
+                            content: result.content,
+                            userNo: result.userNo,
+                        }
+                    };
 
-                console.log("일정이 추가되었습니다.");
-            },
-            error: function (xhr, status, error) {
-                console.error("일정 추가 실패:", error);
-            }
-        });
+                    calendar.addEvent(event);
 
+                    $("#meetingModal").modal("hide");
+                    $("#name, #location, #startDate, #endDate, #division, #content").val("");
+
+                    console.log("일정이 추가되었습니다.");
+                },
+                error: function (xhr, status, error) {
+                    console.error("일정 추가 실패:", error);
+                }
+            });
+        }
     });
 
     $("#delete").on("click", function (){
@@ -262,6 +294,8 @@
 
     // 내 예약 현황 클릭 이벤트
     $('#myReservation').on('click', function () {
+        filter = "myReservation";
+
         calendar.changeView('listMonth'); // 'listMonth' 뷰로 변경
         calendar.setOption('height', '800px');
         calendar.setOption('resourceAreaWidth', '30%');
@@ -269,10 +303,14 @@
         // 밑줄 효과 관리
         $('.lnb li, .listTitle').removeClass('on'); // 모든 on 클래스 제거
         $(this).closest('li').addClass('on'); // 클릭된 항목에 추가
+
+        calendar.refetchEvents();
     });
 
     // 회의실 클릭 이벤트
     $('#meetingRoom').on('click', function () {
+        filter = "all";
+
         calendar.changeView('resourceTimeline'); // 'resourceTimeline' 뷰로 변경
         calendar.scrollToTime('00:00:00'); // 선택한 뷰로 스크롤 이동
         calendar.setOption('resources', [
@@ -285,10 +323,14 @@
         // 밑줄 효과 관리
         $('.lnb li, .listTitle').removeClass('on'); // 모든 on 클래스 제거
         $(this).addClass('on'); // 클릭된 p 태그에 'on' 클래스 추가
+
+        calendar.refetchEvents();
     });
 
     // 회의실 A 클릭 이벤트
     $('#meetingRoomA').on('click', function () {
+        filter = "all";
+
         calendar.changeView('resourceTimeGridWeek'); // 'resourceTimeGridDay' 뷰로 변경
         calendar.scrollToTime('00:00:00'); // 선택한 뷰로 스크롤 이동
         calendar.setOption('resources', [
@@ -300,10 +342,14 @@
         // 밑줄 효과 관리
         $('.lnb li, .listTitle').removeClass('on');
         $(this).closest('li').addClass('on');
+
+        calendar.refetchEvents();
     });
 
     // 회의실 B 클릭 이벤트
     $('#meetingRoomB').on('click', function () {
+        filter = "all";
+
         calendar.changeView('resourceTimeGridWeek'); // 'resourceTimeGridDay' 뷰로 변경
         calendar.scrollToTime('00:00:00'); // 선택한 뷰로 스크롤 이동
         calendar.setOption('resources', [
@@ -315,4 +361,6 @@
         // 밑줄 효과 관리
         $('.lnb li, .listTitle').removeClass('on');
         $(this).closest('li').addClass('on');
+
+        calendar.refetchEvents();
     });

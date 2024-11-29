@@ -1,6 +1,8 @@
 package com.example.workus.meeting.controller;
 
+import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.vo.Calendar;
+import com.example.workus.common.util.DateTimeUtil;
 import com.example.workus.meeting.dto.MeetingForm;
 import com.example.workus.meeting.service.MeetingService;
 import com.example.workus.meeting.vo.Meeting;
@@ -38,9 +40,9 @@ public class MeetingController {
     }
 
     @PostMapping("/delete")
-    public ResponseEntity<String> deleteEvent(@RequestParam("id") Long eventId) {
+    public ResponseEntity<String> deleteEvent(@RequestParam("id") Long eventId, @AuthenticationPrincipal LoginUser loginUser) {
         // 이벤트 삭제 로직
-        boolean success = meetingService.deleteMeeting(eventId);
+        boolean success = meetingService.deleteMeeting(eventId, loginUser.getNo());
         if (success) {
             return ResponseEntity.ok("삭제 성공");
         } else {
@@ -48,10 +50,28 @@ public class MeetingController {
         }
     }
 
+    @PostMapping("/update")
+    @ResponseBody
+    public Meeting update(@RequestParam("id") Long eventId, MeetingForm form, @AuthenticationPrincipal LoginUser loginUser) {
+        Meeting meeting = meetingService.getMeetingByNo(eventId, loginUser.getNo());
+        if (meeting != null) {
+            meeting.setStartDate(DateTimeUtil.getLocalDateTime(form.getStartDate()));
+            meeting.setEndDate(DateTimeUtil.getLocalDateTime(form.getEndDate()));
+            meeting.setRoom(form.getRoom());
+            meeting.setContent(form.getContent());
+
+            // 일정 업데이트 처리
+            meetingService.updateMeeting(meeting, loginUser.getNo());
+            return meeting;
+        } else {
+            throw new RuntimeException("일정을 찾을 수 없습니다.");
+        }
+    }
+
     @PostMapping("/detail")
     @ResponseBody
-    public ResponseEntity<Meeting> getMeetingDetail(@RequestParam("id") Long meetingNo) {
-        Meeting meeting = meetingService.getMeetingByNo(meetingNo);
+    public ResponseEntity<Meeting> getMeetingDetail(@RequestParam("id") Long meetingNo, @AuthenticationPrincipal LoginUser loginUser) {
+        Meeting meeting = meetingService.getMeetingByNo(meetingNo, loginUser.getNo());
 
         if (meeting != null) {
             return ResponseEntity.ok(meeting);
@@ -65,11 +85,14 @@ public class MeetingController {
     public List<Meeting> events(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
+            @RequestParam String filter,
             @AuthenticationPrincipal LoginUser loginUser) {
 
-        List<Meeting> events = meetingService.getEventsByDateRange(start, end, loginUser);
-
-        return events;
+        if ("myReservation".equals(filter)) {
+            return meetingService.getEventsByDateRange(start, end, loginUser); // 내 예약만
+        } else {
+            return meetingService.getAllEventsByDateRange(start, end); // 전체 일정
+        }
     }
 
 

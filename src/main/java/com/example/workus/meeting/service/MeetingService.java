@@ -42,12 +42,28 @@ public class MeetingService {
         return meetingMapper.selectEventsByDateRange(startDateTime, endDateTime, loginUser);
     }
 
-    public Meeting getMeetingByNo(Long meetingNo) {
-        return meetingMapper.selectMeetingByNo(meetingNo);
+    public List<Meeting> getAllEventsByDateRange(Date start, Date end) {
+        LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
+        LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
+
+        return meetingMapper.selectAllEventsByDateRange(startDateTime, endDateTime);
     }
 
-    public boolean deleteMeeting(Long eventId) {
-        Meeting meeting = meetingMapper.selectMeetingByNo(eventId);
+    public Meeting getMeetingByNo(Long meetingNo, Long userNo) {
+        return meetingMapper.selectMeetingByNo(meetingNo, userNo);
+    }
+
+    public void updateMeeting(Meeting meeting, Long userNo) {
+        Meeting existingMeeting = meetingMapper.selectMeetingByNoAndUser(meeting.getNo(), userNo);
+        if (existingMeeting != null) {
+            meetingMapper.updateMeeting(meeting);
+        } else {
+            throw new RuntimeException("수정할 권한이 없습니다.");
+        }
+    }
+
+    public boolean deleteMeeting(Long eventId, Long userNo) {
+        Meeting meeting = meetingMapper.selectMeetingByNoAndUser(eventId, userNo);
         if (meeting != null) {
             meetingMapper.deleteMeeting(eventId);
             return true;
@@ -55,4 +71,6 @@ public class MeetingService {
             return false;
         }
     }
+
+
 }
