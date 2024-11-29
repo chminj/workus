@@ -165,7 +165,7 @@
 					<c:forEach var="map" items="${participantInfos[deptStatus.index]}">
 						<c:forEach var="participantInfo" items="${map.value}">
 						<div class="form-check mb-2">
-							<input class="form-check-input user-check" type="checkbox" name="userNo" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept-no="${dept.deptNo}" ${participantInfo.userNo == LOGIN_USERNO ? 'checked disabled' : ''}>
+							<input class="form-check-input user-check" type="checkbox" name="userNo" value="${participantInfo.userNo}" id="createChatroomParticipant${participantInfo.userNo}" data-dept-no="${dept.deptNo}">
 							  <span class="text-muted">[${participantInfo.positionName}]</span> ${participantInfo.userName}
 						</div>
 						</c:forEach>
@@ -179,7 +179,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">취소</button>
-        <button type="button" id="createChatroomBtn" class="btn btn-primary">생성</button>
+        <button type="button" id="createChatroomBtn" class="btn btn-primary hide">생성</button>
+		<button type="button" id="updateUsersInChatroomBtn" class="btn btn-primary hide">초대</button>
       </div>
     </div>
   </div>
@@ -298,6 +299,28 @@
 			})
 		})
 
+		// 추가 초대하기
+		$('#chat').on('click', '#addNewUserBtn', async function () {
+			$('#updateUsersInChatroomBtn').removeClass('hide');
+			$('#createChatroomBtn').addClass('hide');
+			resetChatroomModal();
+			try {
+				const response = await fetch('/ajax/chatroom/invited/' + chatroomNo);
+				const result = await response.json();
+				const data = result.data;
+				if (response.ok) {
+					$('#chatroomTitle').val('data.chatroomTitle').prop('disabled', true);
+					data.users.map(user => {
+						$(`#createChatroomParticipant\${user.no}`).prop('checked', true).prop('disabled', true);
+					});
+				} else {
+					console.log('초대된 유저들을 불러오지 못했습니다.');
+				}
+			} catch (error) {
+				console.log('사용자 추가 초대에 사용자들을 불러오는데 실패했습니다.', error);
+			}
+		})
+		
 		// 채팅방 나가기
 		$('#chat').on('click', '#outChatroom', async function () {
 			if (!confirm('채팅방을 나가시겠습니까?')) {
@@ -367,13 +390,10 @@
 
 		// 부서 체크박스 체크와 해제 이벤트
 		$('.dept-check').change(function () {
-			if ($('.dept-check').is(':checked')) {
-				let deptNo = $(this).data('deptNo');
-				$(`[data-dept-no=\${deptNo}]`).prop("checked", true);
-			} else {
-				let deptNo = $(this).data('deptNo');
-				$(`[data-dept-no=\${deptNo}]`).prop("checked", false);
-			}
+			let deptNo = $(this).data('deptNo');
+			// #deptCollapse\${deptNo}안에 [data-dept-no가 deptNo인 것 중에 disabled가 아닌 것의 checked의 속성이 checked가 되게 한다.
+			$(`#deptCollapse\${deptNo} :not([data-dept-no=\${deptNo}]:disabled)`)
+					.prop('checked', $(this).prop("checked"))
 		})
 
         // 방 생성 버튼 클릭 이벤트
@@ -431,8 +451,17 @@
 			$('.creatingChatroomBtnDiv').after(div);
 		}
 
-		$('.creatingChatroomBtn').click(function () {
-			// 모달 창 깨끗하게 하기
+		// 새 채팅방 만들기 버튼을 눌렀을 때
+		$('.creatingChatroomBtn').on('click', function () {
+			$('#chatroomTitle').prop('disabled', false);
+			$('#createChatroomBtn').removeClass('hide');
+			$('#updateUsersInChatroomBtn').addClass('hide');
+			resetChatroomModal();
+		});
+
+	  	// 방 생성 모달 창 초기화
+		function resetChatroomModal() {
+			// 모달 input 깨끗하게 하기
 			$('#noTitleAlarm').text('');
 			$('#noUserAlarm').text('');
 			$('#chatroomTitle').val('');
@@ -444,8 +473,11 @@
 			// 모든 체크 박스 원상 복귀
 			$(`.dept-check`).prop('checked', false);
 			$(`.user-check`).prop('checked', false);
+			$(`.user-check`).removeAttr('disabled');
 			$('#createChatroomParticipant${LOGIN_USERNO}').prop('checked', true);
-		})
+			$('#createChatroomParticipant${LOGIN_USERNO}').prop('disabled', true);
+		}
+
 		<%-- 채팅방 생성 js 끝 --%>
 
 		// 페이지 변화 시 연결 시간 업데이트
@@ -638,7 +670,14 @@
 						</button>
 						<!-- 참여자 목록 드롭다운 -->
 						<ul class="dropdown-menu dropdown-menu-end p-3" style="width: 250px;">
-						   <li><h6 class="border-bottom pb-2">참여자 목록</h6></li>
+						   <li>
+							 <div class="d-flex justify-content-between align-items-center border-bottom pb-2">
+							   <h6 class="mb-0">참여자 목록</h6>
+							   <button type="button" class="btn btn-sm btn-light" id="addNewUserBtn" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
+								 <i class="bi bi-person-plus"></i>
+							   </button>
+							 </div>
+						   </li>
 						   <li>
 							  \${data.users.map((user) => `
 							<div class="d-flex align-items-center my-2">

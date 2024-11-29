@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequestMapping("/ajax")
@@ -25,7 +27,7 @@ public class RestChatroomController {
     }
 
     @GetMapping("/chatroom/{chatroomNo}")
-    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfo(
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoAndUpdateConTimeByChatroomNo(
             @AuthenticationPrincipal LoginUser loginUser,
             @PathVariable("chatroomNo") Long chatroomNo) {
         chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
@@ -48,10 +50,16 @@ public class RestChatroomController {
     }
 
     @GetMapping("/chatroom/out/{chatroomNo}")
-    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomOut(
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> outChatroom(
             @AuthenticationPrincipal LoginUser loginUser,
             @PathVariable("chatroomNo") Long chatroomNo) {
         chatroomServcie.outChatroomByChatroomNo(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(null));
+    }
+
+    @GetMapping("chatroom/invited/{chatroomNo}")
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoByChatroomNo(
+            @PathVariable("chatroomNo") Long chatroomNo) {
+        return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfoByChatroomNo(chatroomNo)));
     }
 }

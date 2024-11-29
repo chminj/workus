@@ -102,4 +102,8 @@ public class ChatroomServcie {
     public void outChatroomByChatroomNo(Long userNo, Long chatroomNo) {
         chatroomMapper.outChatroomByChatroomNo(userNo, chatroomNo);
     }
+
+    public ChatroomInfoDto getChatroomInfoByChatroomNo(Long chatroomNo) {
+        return chatroomMapper.getChatroomInfoByChatroomNo(chatroomNo);
+    }
 }

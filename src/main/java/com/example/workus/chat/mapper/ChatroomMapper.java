@@ -2,6 +2,7 @@ package com.example.workus.chat.mapper;
 
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
+import com.example.workus.chat.dto.CreatingChatroomDto;
 import com.example.workus.chat.vo.Chatroom;
 import com.example.workus.user.dto.DeptInChatroomDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
