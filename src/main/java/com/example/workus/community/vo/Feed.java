@@ -28,5 +28,6 @@ public class Feed {
     private List<HashTag> hashTags;
 
     private Reply reply;
+    private List<Reply> replys;
 
 }

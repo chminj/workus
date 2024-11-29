@@ -20,10 +20,10 @@ import java.util.Map;
 
 @Service
 public class CommunityService {
-    
+
     @Autowired
     CommunityMapper communityMapper;
-    
+
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(int page){
         int totalRows = communityMapper.getTotalRows();
@@ -95,19 +95,37 @@ public class CommunityService {
         }
     }
 
-    public void insertReply(CommentForm form , Long userNo) {
+    public Reply insertReply(CommentForm form, Long userNo) {
+        // 댓글 객체 생성
         Reply reply = new Reply();
-        reply.setContent(form.getComment());
+        reply.setContent(form.getComment());  // 댓글 내용
 
+        // 피드 객체 생성
         Feed feed = new Feed();
         feed.setNo(form.getFeedNo());
         reply.setFeed(feed);
 
+        // 사용자 객체 생성
         User user = new User();
         user.setNo(userNo);
-
         reply.setUser(user);
 
+        // 댓글 저장
         communityMapper.insertReply(reply);
+
+        // 최신 리플 조회
+        reply = communityMapper.getReplyByFeedNo(form.getFeedNo());
+
+        // 저장된 댓글 반환
+        return reply;
     }
+
+    public Feed getFeed(long feedNo) {
+        Feed feed = communityMapper.getFeedByNo(feedNo);
+        List<Reply> replys = communityMapper.getReplysByFeedNo(feedNo);
+        feed.setReplys(replys);
+        return feed;
+    }
+
+
 }

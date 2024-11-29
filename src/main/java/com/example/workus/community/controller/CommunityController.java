@@ -4,9 +4,8 @@ import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
+import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
-import com.example.workus.user.vo.User;
-import com.example.workus.common.util.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,6 @@ public class CommunityController {
     @ResponseBody
     public List<Feed> getFeeds(@RequestParam(name ="page", required = false, defaultValue = "1") int page){
         List<Feed> feeds = communityService.getFeeds(page);
-        System.out.println("게시글 정보"+feeds);
         return feeds;
     }
 
@@ -47,13 +45,23 @@ public class CommunityController {
         return "redirect:/community/list";
    }
 
-   @PostMapping("/insertComment")
-    public String insert(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser){
+   @PostMapping("/insertReply")
+   @ResponseBody
+    public Reply insertReply(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser ){
        Long userNo = loginUser.getNo();
-       commentForm.setUserNo(userNo);
-       communityService.insertReply(commentForm, userNo);
+       Reply reply = communityService.insertReply(commentForm, userNo);
 
-       return "redirect:/community/list";
+       return reply;
    }
+
+    @GetMapping("/feed/{feedNo}")
+    @ResponseBody
+    public Feed getFeedDetail(@PathVariable Long feedNo) {
+        Feed feed = communityService.getFeed(feedNo);
+        return feed;
+    }
+
+
+
 
 }
