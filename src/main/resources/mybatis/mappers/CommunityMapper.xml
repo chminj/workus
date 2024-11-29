@@ -37,6 +37,30 @@
         from
             WORKUS_COMMUNITY
     </select>
+
+    <!--
+        Feed getFeedByNo(@Param("feedNo") long feedNo);
+    -->
+    <select id="getFeedByNo" resultType="Feed">
+        select
+            B.community_no as no
+        , B.COMMUNITY_TITLE as title
+        , B.COMMUNITY_CONTENT as content
+        , B.COMMUNITY_MEDIA_URL as mediaUrl
+        , B.COMMUNITY_MEDIA_TYPE as mediaType
+        , B.COMMUNITY_CREATED_DATE as createDate
+        , B.COMMUNITY_UPDATED_DATE as updateDate
+        , B.USER_NO as "user.no"
+        , U.USER_NAME as "user.name"
+        from
+            WORKUS_COMMUNITY B
+            inner join
+            WORKUS_USERS U
+        on
+            B.USER_NO = U.USER_NO
+        where B.COMMUNITY_NO = #{feedNo}
+    </select>
+
     <!--
          List<HashTag> getHashTags(@Param("feedNo") int feedNo);
     -->
@@ -100,8 +124,9 @@
         </selectKey>
     </insert>
 
+
     <!--
-          List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
+        Reply getReplyByFeedNo(@Param("feedNo") long feedNo);
     -->
     <select id="getReplyByFeedNo" resultType="Reply">
         select
@@ -125,4 +150,31 @@
         ORDER BY R.REPLY_NO DESC
         LIMIT 1
     </select>
+    <!--
+         List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
+    -->
+    <select id="getReplysByFeedNo" resultType="Reply">
+        select
+            R.REPLY_NO AS no,
+            R.REPLY_CONTENT AS content,
+            R.REPLY_CREATED_DATE AS createdDate,
+            B.COMMUNITY_NO AS "feed.no",
+            U.USER_NO AS "user.no",
+            U.USER_NAME AS "user.name"
+        from
+            WORKUS_REPLY R
+            INNER JOIN
+            WORKUS_COMMUNITY B
+            ON
+            B.COMMUNITY_NO = R.COMMUNITY_NO
+            INNER JOIN
+            WORKUS_USERS U
+            ON
+            R.USER_NO = U.USER_NO
+
+        WHERE B.COMMUNITY_NO = #{feedNo}
+        ORDER BY R.REPLY_NO desc;
+    </select>
+
+
 </mapper>

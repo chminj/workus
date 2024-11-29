@@ -94,8 +94,7 @@
     }
   });
 
-  // 폼 제출 시 동작 (예시로 alert만 추가)
-
+  // Tagify 라이브러리 사용
   // 해시태그를 위한 Tagify 초기화
   // LocalStorage에서 기존 저장된 태그 불러오기
   // LocalStorage에서 기존 저장된 태그 불러오기
