@@ -436,19 +436,19 @@ table label {
     vertical-align: text-top;
 }
 
-.fc-h-event.annual-leave {
-    background: transparent;
-    border: none;
+.fc-h-event {
+    background: #fff;
+    border: 1px solid #ddd;
 }
 
-.fc-h-event.annual-leave .fc-event-main {
+.fc-h-event .fc-event-main {
     color: #1f1f1f;
     position: relative;
     padding-left: 19px;
-    font-size: 15px;
+    font-size: 14px;
 }
 
-.fc-h-event.annual-leave .fc-event-main:before {
+.fc-h-event .fc-event-main:before {
     content: "";
     width: 8px;
     display: block;
@@ -462,10 +462,10 @@ table label {
 }
 
 .wholeDay:hover, .notWholeDay:hover {
-    background-color: transparent;
+    background-color: #fff;
 }
 
-.fc-h-event.annual-leave.notWholeDay .fc-event-main:before {
+.fc-h-event.notWholeDay .fc-event-main:before {
     background-color: #fff;
     border: 1px solid #e91e63;
 }

@@ -35,16 +35,23 @@ $(function () {
                         type: 'POST',
                         success: function (data) {
                             // 데이터에서 이벤트 형식으로 변환
-                            const events = data.map(leave => ({
-                                title: leave.userName,
-                                start: new Date(leave.fromDate),
-                                end: new Date(leave.toDate),
-                                category: leave.categoryName,
-                                time: leave.time,
-                                deptNo: leave.deptNo,
-                                deptName: leave.deptName,
-                                allDay: true,
-                            }));
+                            const events = data.map(leave => {
+                                const startDate = new Date(leave.fromDate);
+                                const endDate = new Date(leave.toDate);
+                                const isMultiDay = startDate.toISOString().split('T')[0] !== endDate.toISOString().split('T')[0];
+
+                                return {
+                                    title: leave.userName,
+                                    start: startDate,
+                                    end: endDate,
+                                    category: leave.categoryName,
+                                    time: leave.time,
+                                    deptNo: leave.deptNo,
+                                    deptName: leave.deptName,
+                                    allDay: true,
+                                    isMultiDay: isMultiDay // 멀티데이 여부 추가
+                                };
+                            });
 
                             // 날짜와 부서별로 이벤트를 그룹화
                             let groupedEvents = {};
@@ -90,8 +97,22 @@ $(function () {
                             for (let date in groupedEvents) {
                                 const dayCell = atdCalendarEl.querySelector(`.fc-day[data-date="${date}"]`);
                                 const totalEvents = Object.values(groupedEvents[date]).flat().length;
-                                if (totalEvents > 2) {
+                                if (totalEvents > 3) {
                                     dayCell.style.height = '130px';
+                                }
+
+                                // 멀티데이 이벤트에 클래스 추가
+                                const eventsOnDate = groupedEvents[date];
+                                for (let dept in eventsOnDate) {
+                                    eventsOnDate[dept].forEach(event => {
+                                        if (event.isMultiDay) {
+                                            // 이벤트의 DOM 요소를 찾고 클래스 추가
+                                            const eventEl = atdCalendarEl.querySelector(`.fc-event[data-event-id="${event.id}"]`); // event.id가 필요
+                                            if (eventEl) {
+                                                eventEl.classList.add('multi-day-event'); // 원하는 클래스 이름으로 변경
+                                            }
+                                        }
+                                    });
                                 }
                             }
 
@@ -109,8 +130,10 @@ $(function () {
         // 이벤트가 렌더링될 때 호출
         eventDidMount: function (info) {
             const {category, time} = info.event.extendedProps; // categoryNo, time 추출
-            info.el.classList.add(category === '연차' ? 'wholeDay' : 'notWholeDay'); // 병가일 때도 다시 체크해야 함
-            info.el.setAttribute('data-time', time + ' ' + category);
+            info.el.classList.add(category === '연차' ? 'wholeDay' : 'notWholeDay');
+            if (category !== '병가' && category != '연차') {
+                info.el.setAttribute('data-time', time + ' ' + category);
+            }
         },
         eventClick: function (info) {
             //클릭시 구글캘린더 url로 가는 것 막음
@@ -157,9 +180,11 @@ $(function () {
     function filterEventsByDepartment(deptId) {
         const filteredEvents = deptId ? finalEvents.filter(event => event.extendedProps.deptNo == deptId) : finalEvents;
 
-        // 캘린더에 이벤트 업데이트
-        atdCalendar.removeAllEvents(); // 기존 이벤트 제거
-        atdCalendar.addEventSource(filteredEvents); // 필터링된 이벤트 추가
+        // 기존 이벤트 제거
+        atdCalendar.removeAllEvents();
+
+        // 필터링된 이벤트 추가
+        atdCalendar.addEventSource(filteredEvents);
 
         console.log('Filtered Events:', filteredEvents);
     }
