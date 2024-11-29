@@ -1,10 +1,13 @@
 package com.example.workus.attendance.controller;
 
+import com.example.workus.attendance.dto.AnnualLeaveHistoryDto;
 import com.example.workus.attendance.dto.ApprovalRequestDto;
 import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.common.dto.RestResponseDto;
+import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,5 +35,19 @@ public class RestAttendanceController {
         response.setMessage("승인이 완료되었습니다.");
 
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/annualLeaveHistory")
+    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
+        List<AnnualLeaveHistoryDto> events;
+        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+
+        if (roleNo == 100) {
+            events = attendanceService.getAllAnnualLeaveHistory();
+        } else {
+            events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
+        }
+
+        return ResponseEntity.ok(events);
     }
 }

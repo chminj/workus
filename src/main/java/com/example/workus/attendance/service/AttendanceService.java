@@ -5,11 +5,14 @@ import com.example.workus.attendance.mapper.AttendanceMapper;
 import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.util.Pagination;
+import com.example.workus.user.mapper.UserMapper;
+import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +22,8 @@ public class AttendanceService {
 
     @Autowired
     private AttendanceMapper attendanceMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     /**
      * 로그인한 사용자가 근태 페이지에서 본인 근태 정보를 조회할 수 있다.
@@ -87,6 +92,16 @@ public class AttendanceService {
     }
 
     /**
+     * 로그인한 유저의 권한을 조회한다.
+     *
+     * @param userNo 로그인한 유저 번호
+     * @return 권한 번호
+     */
+    public int getUserRoleNo(Long userNo) {
+        return attendanceMapper.getUserRoleNo(userNo);
+    }
+
+    /**
      * 내가 참조자로 추가된 근태 신청 내역을 조회한다.
      *
      * @param userNo    로그인한 참조자 번호
@@ -112,6 +127,10 @@ public class AttendanceService {
         condition.put("offset", offset);
         condition.put("end", end);
 
+        condition.compute("roleNo", (k, roleNo) -> roleNo);
+
+        System.out.println("condition: " + condition);
+
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByUserNo(userNo, condition);
 
         ListDto<RefViewDto> dtoList = new ListDto<>(forms, pagination);
@@ -120,7 +139,7 @@ public class AttendanceService {
     }
 
     /**
-     * 내가 참조자로 추가된 근태 신청 내역을 조회한다.
+     * 내가 결재자로 추가된 근태 신청 내역을 조회한다.
      *
      * @param userNo    로그인한 결재자 번호
      * @param condition 페이징, 검색 조건(date, opt, keyword)
@@ -148,7 +167,6 @@ public class AttendanceService {
         List<ApvViewDto> forms = attendanceMapper.getAllApprovalFormsByUserNo(userNo, condition);
 
         ListDto<ApvViewDto> dtoList = new ListDto<>(forms, pagination);
-
         return dtoList;
     }
 
@@ -190,6 +208,14 @@ public class AttendanceService {
         } else {
             attendanceMapper.updateAnnualLeaveByCtgrCount();
         }
+    }
 
+    public List<AnnualLeaveHistoryDto> getAnnualLeaveHistoryForLoggedInUser(Long userNo) {
+        User user = userMapper.getUserByUserNo(userNo);
+        return attendanceMapper.getUsedAnnualLeaveByUser(user);
+    }
+
+    public List<AnnualLeaveHistoryDto> getAllAnnualLeaveHistory() {
+        return attendanceMapper.getAllUsedAnnualLeave();
     }
 }

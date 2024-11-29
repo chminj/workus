@@ -5,8 +5,9 @@ import com.example.workus.chat.dto.ChatroomInfoDto;
 import com.example.workus.chat.dto.CreatingChatroomDto;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.vo.Chatroom;
-import com.example.workus.user.dto.DeptInChatroomDto;
+import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
+import com.example.workus.user.mapper.UserMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +25,12 @@ import java.util.Map;
 public class ChatroomServcie {
 
     private final ChatroomMapper chatroomMapper;
+    private final UserMapper userMapper;
 
     @Autowired
-    public ChatroomServcie(ChatroomMapper chatroomMapper) {
+    public ChatroomServcie(ChatroomMapper chatroomMapper, UserMapper userMapper) {
         this.chatroomMapper = chatroomMapper;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -60,8 +63,8 @@ public class ChatroomServcie {
         chatroomMapper.updateChatroomConTime(userNo, chatroomNo, now);
     }
 
-    public List<DeptInChatroomDto> getAllDepts() {
-        return chatroomMapper.getAllDepts();
+    public List<DeptDto> getAllDepts() {
+        return userMapper.getAllDepts();
     }
 
     public Map<String, List<ParticipantInChatroomDto>> getAllUsersByDeptName(String deptName) {
@@ -88,7 +91,7 @@ public class ChatroomServcie {
 
         // 채팅방 참여 히스토리에 추가
         Long chatroomNo = chatroom.getNo(); // 한 번만 참조하기 위해서 선언
-        for(Long participantUserNo : participantUserNumbers) {
+        for (Long participantUserNo : participantUserNumbers) {
             chatroomMapper.addChatroomHistory(chatroomNo, participantUserNo);
         }
 

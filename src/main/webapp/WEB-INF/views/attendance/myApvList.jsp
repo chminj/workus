@@ -79,7 +79,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                         <col style="width:5%">
                                         <col style="width:5%">
                                         <col style="width:10%">
-                                        <col style="width:10%">
+                                        <col style="width:12%">
                                         <col style="width:15%">
                                         <col style="width:auto">
                                         <col style="width:15%">
@@ -123,10 +123,10 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                             <td>
                                                 <c:choose>
                                                     <c:when test="${form.status == 'I'}">
-                                                        <span class="badge text-bg-secondary">결재 대기</span>
+                                                        <span class="badge text-bg-primary">결재 대기</span>
                                                     </c:when>
                                                     <c:otherwise>
-                                                        <span class="badge border bg-primary">결재 완료</span>
+                                                        <span class="badge border bg-secondary">결재 완료</span>
                                                     </c:otherwise>
                                                 </c:choose>
                                             </td>

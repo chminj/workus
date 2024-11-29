@@ -145,13 +145,15 @@ $(function () {
     }
 
     // dayTotal count in modal
+    let totalTime = 0;
     $('#atdFromDate').on("change", function () {
+        totalTime = 0;
         let nowFromDate = $(this).val();
         $('#atdToDate').attr('min', nowFromDate).val(nowFromDate);
     });
 
-    let totalTime = 0;
     $('#atdToDate').on("change", function () {
+        totalTime = 0;
         let fromDateStr = $('#atdFromDate').val();
         let toDateStr = $('#atdToDate').val();
 
