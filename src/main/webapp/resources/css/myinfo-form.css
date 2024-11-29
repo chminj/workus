@@ -30,13 +30,13 @@ h2 {
 }
 
 .profile-image {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
+    width: 200px;
+    height: 200px;
+    border-radius: 0%;
     object-fit: cover;
     cursor: pointer;
     margin-bottom: 20px;
-    border: 5px solid #e91e63;
+    border: 1px solid black;
     background-color: #f0f0f0;
     display: block; /* 블록으로 설정하여 중앙 정렬 */
     margin: 0 auto; /* 수평 중앙 정렬 */

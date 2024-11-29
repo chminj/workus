@@ -11,7 +11,7 @@
             <sec:authentication property="principal.id" var="LOGIN_USERID" scope="request"/>
             <sec:authentication property="principal.name"/> 님 환영합니다.
         </sec:authorize>
-            <a href="/user/myinfo" class="mgl5">
+            <a href="/user/myinfo?userNo=${LOGIN_USERNO}" class="mgl5">
                 <span class="badge text-bg-success modify">수정</span>
             </a>
         </li>
