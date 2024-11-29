@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.attendance.mapper.AttendanceMapper">
     <select id="getAttendanceByUserNo" resultType="AttendanceDto">
-        select U.USER_NO as no
+        SELECT U.USER_NO as no
             , U.ROLE_NO as roleNo
             , H.ATD_UNUSED_DATE as unusedAnnualLeave
             , P.ANNUAL_LEAVE_COUNT as annualLeaveCount
@@ -21,14 +21,14 @@
         WHERE U.USER_NO = #{userNo};
     </select>
     <select id="getAllCategories" resultType="atdCategoryDto">
-        select ATD_CATEGORY_NO as no
+        SELECT ATD_CATEGORY_NO as no
             , ATD_CATEGORY_NAME as name
             , ATD_CATEGORY_COUNT as count
-        from
+        FROM
             WORKUS_ATTENDANCE_CATEGORY;
     </select>
     <insert id="insertApproval">
-        insert into
+        INSERT INTO
         WORKUS_ATTENDANCE
         (ATD_TEXT
         , ATD_FROM_DATE
@@ -36,7 +36,7 @@
         , ATD_CATEGORY_NO
         , USER_NO
         , ATD_CATEGORY_TIME)
-        values
+        VALUES
         (#{form.reason}
         , #{form.fromDate}
         , #{form.toDate}
@@ -48,13 +48,13 @@
         </selectKey>
     </insert>
     <insert id="insertApprovalUsers">
-        insert into
+        INSERT INTO
         WORKUS_ATTENDANCE_USER
         (ATD_APPROVAL_STATUS
         , ATD_SEQUENCE
         , USER_NO
         , ATD_NO)
-        values
+        VALUES
         <foreach collection="users" item="user" separator=",">
             (#{user.status}
             , #{user.sequence}
@@ -97,17 +97,16 @@
         LIMIT #{condition.offset}, #{condition.end}
     </select>
     <select id="getTotalRows" resultType="int">
-        select
-        count(*) as CNT
-        from
+        SELECT
+        COUNT(*) as CNT
+        FROM
         WORKUS_ATTENDANCE
-        where
+        WHERE
         USER_NO = #{userNo}
         <if test="condition.status != null">
             AND ATD_NO IN (SELECT U2.ATD_NO
             FROM WORKUS_ATTENDANCE_USER U2
-            JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO
-            WHERE U2.ATD_STATUS = 'I')
+            JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO)
         </if>
     </select>
     <select id="getAllReferenceFormsByUserNo" resultType="refViewDto">
@@ -129,8 +128,56 @@
         WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
         JOIN
         WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
+        <where>
+            <if test="condition.roleNo != 100">
+                AND U.USER_NO = #{userNo}
+                AND U.ATD_APPROVAL_STATUS = 'R'
+            </if>
+        </where>
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'name'">
+                    AND AU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'reason'">
+                    AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+        ORDER BY
+        CASE
+        WHEN U.ATD_STATUS = 'I' THEN 1
+        WHEN U.ATD_STATUS = 'C' THEN 2
+        END,
+        A.ATD_NO ASC
+        LIMIT #{condition.offset}, #{condition.end}
+    </select>
+    <select id="getUserRoleNo" resultType="int">
+        SELECT ROLE_NO
+        FROM WORKUS_USERS
+        WHERE USER_NO = #{userNo}
+    </select>
+    <select id="getAllReferenceFormsByRoleNo" resultType="refViewDto">
+        SELECT A.ATD_NO AS atdNo
+        , U.ATD_APPROVAL_NO as refNo
+        , U.ATD_STATUS AS status
+        , A.ATD_TEXT AS reason
+        , A.ATD_TO_DATE AS toDate
+        , A.ATD_FROM_DATE AS fromDate
+        , A.ATD_CREATED_DATE AS createdDate
+        , A.ATD_CATEGORY_TIME AS time
+        , C.ATD_CATEGORY_NAME AS categoryName
+        , AU.USER_NAME AS reqUserName
+        FROM
+        WORKUS_ATTENDANCE A
+        JOIN
+        WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
+        JOIN
+        WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+        JOIN
+        WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
         WHERE
-        U.USER_NO = #{userNo}
+        U.ROLE_NO = #{roleNo}
         AND U.ATD_APPROVAL_STATUS = 'R'
         <if test="condition.opt != null">
             <choose>
@@ -264,4 +311,41 @@
             WHERE H.ATD_NO = subquery.ATD_NO
             );
     </update>
+    <select id="getUsedAnnualLeaveByUser" resultType="CalDto">
+        SELECT A.USER_NO       as userNo
+             , U.USER_NAME     as userName
+             , A.ATD_FROM_DATE as fromDate
+             , A.ATD_TO_DATE   as toDate
+             , A.ATD_CATEGORY_TIME as time
+        , U.DEPT_NO as deptNo
+        , D.DEPT_NAME as deptName
+        , C.ATD_CATEGORY_NAME as categoryName
+        FROM WORKUS_ATTENDANCE A
+            JOIN
+            WORKUS_USERS U
+        ON A.USER_NO = U.USER_NO
+            JOIN
+            WORKUS_ANNUAL_LEAVE_HISTORY H ON H.ATD_NO = A.ATD_NO
+            JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+            JOIN WORKUS_DEPT D ON D.DEPT_NO = U.DEPT_NO
+        WHERE U.DEPT_NO = #{user.deptNo}
+    </select>
+    <select id="getAllUsedAnnualLeave" resultType="CalDto">
+        SELECT A.USER_NO       as userNo
+             , U.USER_NAME     as userName
+             , A.ATD_FROM_DATE as fromDate
+             , A.ATD_TO_DATE   as toDate
+             , A.ATD_CATEGORY_TIME as time
+        , U.DEPT_NO as deptNo
+        , D.DEPT_NAME as deptName
+        , C.ATD_CATEGORY_NAME as categoryName
+        FROM WORKUS_ATTENDANCE A
+            JOIN
+            WORKUS_USERS U
+        ON A.USER_NO = U.USER_NO
+            JOIN
+            WORKUS_ANNUAL_LEAVE_HISTORY H ON H.ATD_NO = A.ATD_NO
+            JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+            JOIN WORKUS_DEPT D ON D.DEPT_NO = U.DEPT_NO
+    </select>
 </mapper>

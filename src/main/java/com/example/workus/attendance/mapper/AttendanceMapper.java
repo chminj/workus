@@ -2,6 +2,7 @@ package com.example.workus.attendance.mapper;
 
 import com.example.workus.attendance.dto.*;
 import com.example.workus.attendance.vo.AttendanceCategory;
+import com.example.workus.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.type.Alias;
@@ -28,6 +29,8 @@ public interface AttendanceMapper {
 
     List<RefViewDto> getAllReferenceFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
 
+    int getUserRoleNo(@Param("userNo") Long userNo);
+
     List<ApvViewDto> getAllApprovalFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
 
     void insertAnnualLeaveHistory(@Param("apvReqDto") ApprovalRequestDto approvalRequestDto);
@@ -39,4 +42,8 @@ public interface AttendanceMapper {
     void updateAnnualLeaveByCtgrCount();
 
     Map<String, Object> getAnnualLeaveData(@Param("atdNo") Long atdNo);
+
+    List<AnnualLeaveHistoryDto> getUsedAnnualLeaveByUser(@Param("user") User user);
+
+    List<AnnualLeaveHistoryDto> getAllUsedAnnualLeave();
 }

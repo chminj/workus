@@ -106,8 +106,7 @@ public class AttendanceController {
             , Model model
             , @RequestParam(required = false, defaultValue = "1") int page
             , @RequestParam(required = false, defaultValue = "10") int rows
-            , @RequestParam(required = false) String status
-    ) {
+            , @RequestParam(required = false) String status) {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
@@ -130,8 +129,7 @@ public class AttendanceController {
             , @RequestParam(required = false, defaultValue = "1") int page
             , @RequestParam(required = false, defaultValue = "10") int rows
             , @RequestParam(required = false) String opt
-            , @RequestParam(required = false) String keyword
-    ) {
+            , @RequestParam(required = false) String keyword) {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
@@ -154,8 +152,7 @@ public class AttendanceController {
             , @RequestParam(required = false, defaultValue = "1") int page
             , @RequestParam(required = false, defaultValue = "10") int rows
             , @RequestParam(required = false) String opt
-            , @RequestParam(required = false) String keyword
-    ) {
+            , @RequestParam(required = false) String keyword) {
 
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
@@ -165,11 +162,17 @@ public class AttendanceController {
             condition.put("keyword", keyword);
         }
 
+        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+        condition.put("roleNo", roleNo);
+
         ListDto<RefViewDto> forms = attendanceService.getReferenceForms(loginUser.getNo(), condition);
         model.addAttribute("condition", condition);
+        System.out.println("condition: " + condition);
         model.addAttribute("forms", forms.getData());
         model.addAttribute("paging", forms.getPaging());
 
         return "attendance/myRefList";
     }
+
+    
 }

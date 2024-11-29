@@ -10,8 +10,8 @@ import org.apache.ibatis.type.Alias;
 @Getter
 @Setter
 @ToString
-@Alias("DeptInChatroomDto")
-public class DeptInChatroomDto {
+@Alias("DeptDto")
+public class DeptDto {
     private Long deptNo;
     private String deptName;
 }

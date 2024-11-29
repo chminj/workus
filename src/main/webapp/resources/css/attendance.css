@@ -435,3 +435,56 @@ table .badge {
 table label {
     vertical-align: text-top;
 }
+
+.fc-h-event.annual-leave {
+    background: transparent;
+    border: none;
+}
+
+.fc-h-event.annual-leave .fc-event-main {
+    color: #1f1f1f;
+    position: relative;
+    padding-left: 19px;
+    font-size: 15px;
+}
+
+.fc-h-event.annual-leave .fc-event-main:before {
+    content: "";
+    width: 8px;
+    display: block;
+    height: 8px;
+    border-radius: 50px;
+    background-color: #e91e63;
+    left: 7px;
+    top: 50%;
+    position: absolute;
+    transform: translateY(-50%);
+}
+
+.wholeDay:hover, .notWholeDay:hover {
+    background-color: transparent;
+}
+
+.fc-h-event.annual-leave.notWholeDay .fc-event-main:before {
+    background-color: #fff;
+    border: 1px solid #e91e63;
+}
+
+.notWholeDay .fc-event-title {
+    position: relative;
+}
+
+.notWholeDay::after {
+    content: attr(data-time);
+    position: absolute;
+    left: 28%;
+    top: 53%;
+    transform: translateY(-50%);
+    z-index: 10;
+    display: none;
+}
+
+.notWholeDay:hover::after {
+    display: block;
+
+}
