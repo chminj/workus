@@ -2,6 +2,8 @@ package com.example.workus.user.service;
 
 import com.example.workus.common.exception.WorkusException;
 import com.example.workus.common.util.Pagination;
+import com.example.workus.common.util.WebContentFileUtils;
+import com.example.workus.user.dto.MyModifyForm;
 import com.example.workus.user.dto.UserListDto;
 import com.example.workus.user.dto.UserSignUpForm;
 import com.example.workus.user.mapper.UserMapper;
@@ -13,6 +15,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,12 @@ import java.util.Map;
 @Service
 @Transactional
 public class UserService {
+
+    // 파일 경로를 담을 path 설정.
+    private String path ="resources/repository/userprofile/";
+
+    @Autowired
+    WebContentFileUtils webContentFileUtils;
 
     @Autowired
     private UserMapper userMapper;
@@ -125,5 +134,19 @@ public class UserService {
 
     public List<User> getAllUsersByName(String userName) {
         return userMapper.getAllUsersByName(userName);
+    }
+
+    public void modifyMyUser(MyModifyForm form) {
+
+        User user = new User();
+        if (!form.getImage().isEmpty()) {
+            MultipartFile imageFile = form.getImage();
+            String originalFilename = imageFile.getOriginalFilename();
+            String filename = form.getNo() +  originalFilename.substring(originalFilename.lastIndexOf("."));
+            user.setProfileSrc(filename);
+            webContentFileUtils.saveWebContentFile(imageFile, path, filename);
+        }
+
+
     }
 }

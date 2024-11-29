@@ -1,5 +1,6 @@
 package com.example.workus.user.controller;
 
+import com.example.workus.user.dto.MyModifyForm;
 import com.example.workus.user.dto.UserListDto;
 import com.example.workus.user.dto.UserSignUpForm;
 import com.example.workus.user.service.UserService;
@@ -12,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +22,7 @@ import java.util.Map;
 @Slf4j
 public class UserController {
 
-    // 파일 경로를 담을 path 설정.
-    private String path ="resources/repository/userprofile/";
+
 
     @Autowired
     private UserService userService;
@@ -61,8 +62,29 @@ public class UserController {
     }
 
     @GetMapping("/user/myinfo")
-    public String myinfo() {
-        return "user/myinfo-modify";
+    public String myinfo(@RequestParam(name = "userNo") int userNo, Model model) { // userNo는 반드시 존재해야 하는 값
+        User user = userService.getUserByUserNo(userNo); // userNo로 사용자 정보를 조회한다.
+        model.addAttribute("user", user); // 사용자 정보를 model에 담는다. (view에 전달)
+        return "user/myinfo-modify"; // View 페이지를 요청한다. [ View 페이지는 모델에 담은 값으로 구성된다. ]
+    }
+
+    @PostMapping("/user/myinfo")
+    public String changeMyInfo(@ModelAttribute("myModifyForm") MyModifyForm form, BindingResult errors) { // view에서 MyModifyForm에 데이터를 담는다.
+        if (errors.hasErrors()) {
+            System.out.println("바인딩 시 에러가 발생했습니다.");
+        }
+        log.info("입력된 사번은 : " + form.getNo());
+        log.info("입력된 이메일은 : " + form.getEmail());
+        log.info("입력된 비밀번호는 : " + form.getPassword());
+        log.info("입력된 연락처는 : " + form.getPhone());
+        log.info("입력된 자기소개는 : " + form.getPr());
+        log.info("입력된 주소는 : " + form.getAddress());
+        log.info("입력된 이미지는 : " + form.getImage().getOriginalFilename());
+
+        userService.modifyMyUser(form); // Form에 담긴 데이터를 서비스에 전달한다.
+
+        // GET 방식 URL로 localhost/user/myinfo?userNo=사번으로 redirect 하기.
+        return "redirect:/user/myinfo?userNo=" + form.getNo(); // GET 방식으로 리다이렉트
     }
 
     @GetMapping("/address-book/list")
