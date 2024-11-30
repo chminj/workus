@@ -22,8 +22,8 @@ public class ChatService {
         this.chatMapper = chatMapper;
     }
 
-    public List<Chat> getAllChatsByChatroomNo(Long chatroomNo) {
-        return chatMapper.getAllChatsByChatroomNo(chatroomNo);
+    public List<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo) {
+        return chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo);
     }
 
     public Chat insertChat(Chat chat) {
