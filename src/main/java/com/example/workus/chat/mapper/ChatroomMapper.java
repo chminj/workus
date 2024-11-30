@@ -2,9 +2,7 @@ package com.example.workus.chat.mapper;
 
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
-import com.example.workus.chat.dto.CreatingChatroomDto;
 import com.example.workus.chat.vo.Chatroom;
-import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

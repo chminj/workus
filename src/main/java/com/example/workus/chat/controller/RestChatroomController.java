@@ -1,11 +1,13 @@
 package com.example.workus.chat.controller;
 
+import com.example.workus.chat.dto.AddNewUserInChatroomForm;
 import com.example.workus.chat.dto.ChatroomDto;
+import com.example.workus.chat.dto.ChatroomForm;
 import com.example.workus.chat.dto.ChatroomInfoDto;
-import com.example.workus.chat.dto.CreatingChatroomDto;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatroomServcie;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +47,8 @@ public class RestChatroomController {
     @PostMapping("/chatroom")
     ResponseEntity<RestResponseDto<ChatroomDto>> addChatroom(
             @AuthenticationPrincipal LoginUser loginUser,
-            @ModelAttribute CreatingChatroomDto creatingChatroomDto) {
-        return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addChatroom(loginUser.getNo(), creatingChatroomDto)));
+            @ModelAttribute ChatroomForm chatroomForm) {
+        return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addChatroom(loginUser.getNo(), chatroomForm)));
     }
 
     @GetMapping("/chatroom/out/{chatroomNo}")
@@ -57,9 +59,15 @@ public class RestChatroomController {
         return ResponseEntity.ok(RestResponseDto.success(null));
     }
 
-    @GetMapping("chatroom/invited/{chatroomNo}")
+    @GetMapping("/chatroom/invited/{chatroomNo}")
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoByChatroomNo(
             @PathVariable("chatroomNo") Long chatroomNo) {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfoByChatroomNo(chatroomNo)));
+    }
+
+    @PostMapping("/chatroom/addNewUser")
+    ResponseEntity<RestResponseDto<List<User>>> addNewUserByChatroomNo(
+            @RequestBody AddNewUserInChatroomForm addNewUserInChatroomForm) {
+        return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addNewUserByChatroomNo(addNewUserInChatroomForm)));
     }
 }
