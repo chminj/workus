@@ -1,13 +1,15 @@
 package com.example.workus.chat.service;
 
+import com.example.workus.chat.dto.AddNewUserInChatroomForm;
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
-import com.example.workus.chat.dto.CreatingChatroomDto;
+import com.example.workus.chat.dto.ChatroomForm;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.vo.Chatroom;
 import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import com.example.workus.user.mapper.UserMapper;
+import com.example.workus.user.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -75,16 +77,16 @@ public class ChatroomServcie {
     }
 
     // 채팅방 생성
-    public ChatroomDto addChatroom(Long userNo, CreatingChatroomDto creatingChatroomDto) {
+    public ChatroomDto addChatroom(Long userNo, ChatroomForm chatroomForm) {
         // 채팅방 생성
         Chatroom chatroom = new Chatroom();
-        String chatroomTitle = creatingChatroomDto.getChatroomTitle();
+        String chatroomTitle = chatroomForm.getChatroomTitle();
         chatroom.setUserNo(userNo);
         chatroom.setTitle(chatroomTitle);
         chatroomMapper.addChatroom(chatroom);
 
         // 채팅방 참여자들 번호 그릇 participantUserNumbers
-        List<Long> participantUserNumbers = creatingChatroomDto.getUserNo();
+        List<Long> participantUserNumbers = chatroomForm.getUserNo();
 
         // disabled로 해놔서 작성자는 들어오지 않아서 따로 추가
         participantUserNumbers.add(userNo);
@@ -108,5 +110,14 @@ public class ChatroomServcie {
 
     public ChatroomInfoDto getChatroomInfoByChatroomNo(Long chatroomNo) {
         return chatroomMapper.getChatroomInfoByChatroomNo(chatroomNo);
+    }
+
+    public List<User> addNewUserByChatroomNo(AddNewUserInChatroomForm addNewUserInChatroomForm) {
+        List<User> users = new ArrayList<>();
+        for (User user : addNewUserInChatroomForm.getUsers()) {
+            chatroomMapper.addChatroomHistory(addNewUserInChatroomForm.getChatroomNo(), user.getNo());
+            users.add(userMapper.getUserByUserNo(user.getNo()));
+        }
+        return users;
     }
 }

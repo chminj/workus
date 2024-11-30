@@ -22,8 +22,8 @@
 							<!-- 채팅방 목록 -->
 							<div class="col-4 border-end p-0 chatroomDiv vh-100 overflow-auto">
 							  <!-- 채팅방 생성 버튼 -->
-								<div class="border-bottom p-3 creatingChatroomBtnDiv">
-								<button class="btn btn-primary w-100 creatingChatroomBtn" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
+								<div class="border-bottom p-3 openCreateChatroomBtnDiv">
+								<button class="btn btn-primary w-100 openCreateChatroomBtn" data-bs-toggle="modal" data-bs-target="#createChatroomModal">
 								  <i class="bi bi-plus-circle me-2"></i>새 채팅방 만들기
 								</button>
 								</div>
@@ -117,7 +117,7 @@
   <div class="modal-dialog modal-md">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="createChatroomModalLabel">새 채팅방 만들기</h5>
+        <h5 class="modal-title" id="createChatroomModalLabel"></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -299,8 +299,9 @@
 			})
 		})
 
-		// 추가 초대하기
+		// 추가 초대를 위한 버튼
 		$('#chat').on('click', '#addNewUserBtn', async function () {
+			$('#createChatroomModalLabel').text('추가 초대하기');
 			$('#updateUsersInChatroomBtn').removeClass('hide');
 			$('#createChatroomBtn').addClass('hide');
 			resetChatroomModal();
@@ -309,7 +310,7 @@
 				const result = await response.json();
 				const data = result.data;
 				if (response.ok) {
-					$('#chatroomTitle').val('data.chatroomTitle').prop('disabled', true);
+					$('#chatroomTitle').val(data.chatroomTitle).prop('disabled', true);
 					data.users.map(user => {
 						$(`#createChatroomParticipant\${user.no}`).prop('checked', true).prop('disabled', true);
 					});
@@ -320,7 +321,57 @@
 				console.log('사용자 추가 초대에 사용자들을 불러오는데 실패했습니다.', error);
 			}
 		})
-		
+
+		// 추가 초대하기
+		$('#updateUsersInChatroomBtn').click(async function () {
+			// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
+			let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
+				return { no: $(this).val()};
+			}).get();
+
+			// json으로 바꾸기 좋게 형태 변경
+			let formData = {
+				chatroomNo: chatroomNo,
+				users: checkedUserNumbers
+			};
+
+			try {
+				const response = await fetch('/ajax/chatroom/addNewUser', {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify(formData)
+				})
+				const result = await response.json();
+				const data = await result.data;
+				if(response.ok) {
+					// 참여자 목록에 추가
+					addNewUserInParticipantList(data);
+					// 취소 버튼 누르기
+					$('.closeBtn').click();
+				} else {
+					console.log('유저들을 추가로 초대하지 못 했습니다.');
+				}
+			} catch (error) {
+				console.log('유저들을 추가로 초대 중 에러발생', error);
+			}
+		})
+
+		function addNewUserInParticipantList(users) {
+			let div = `
+			\${users.map((user) => `
+				<div class="d-flex align-items-center my-2">
+					<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+					<div class="d-flex align-items-center gap-2">
+						<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
+						<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
+					</div>
+				</div>
+			`).join('')}`;
+			$('#participantList').append(div);
+		}
+
 		// 채팅방 나가기
 		$('#chat').on('click', '#outChatroom', async function () {
 			if (!confirm('채팅방을 나가시겠습니까?')) {
@@ -412,7 +463,7 @@
 			try {
 				const response = await fetch('/ajax/chatroom', {
 					method: 'POST',
-                    // 직렬화한 값은 제대로 잡아주지 못해서 따로 설정해줘야 함
+                    // fetch는 직렬화한 값은 제대로 잡아주지 못해서 따로 설정해줘야 함
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
@@ -448,11 +499,12 @@
 					</div>
 				</div>
 			`;
-			$('.creatingChatroomBtnDiv').after(div);
+			$('.openCreateChatroomBtnDiv').after(div);
 		}
 
-		// 새 채팅방 만들기 버튼을 눌렀을 때
-		$('.creatingChatroomBtn').on('click', function () {
+		// 메뉴 쪽 새 채팅방 만들기 버튼을 눌렀을 때
+		$('.openCreateChatroomBtn').on('click', function () {
+			$('#createChatroomModalLabel').text('새 채팅방 만들기');
 			$('#chatroomTitle').prop('disabled', false);
 			$('#createChatroomBtn').removeClass('hide');
 			$('#updateUsersInChatroomBtn').addClass('hide');
@@ -678,7 +730,7 @@
 							   </button>
 							 </div>
 						   </li>
-						   <li>
+						   <li id="participantList">
 							  \${data.users.map((user) => `
 							<div class="d-flex align-items-center my-2">
 								<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
