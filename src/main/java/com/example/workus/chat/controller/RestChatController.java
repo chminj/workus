@@ -28,8 +28,10 @@ public class RestChatController {
     }
 
     @GetMapping("/chat/{chatroomNo}")
-    ResponseEntity<RestResponseDto<List<Chat>>> getAllChats(@PathVariable("chatroomNo") Long chatroomNo) {
-        List<Chat> chats = chatService.getAllChatsByChatroomNo(chatroomNo);
+    ResponseEntity<RestResponseDto<List<Chat>>> getAllChats(
+            @AuthenticationPrincipal LoginUser loginUser,
+            @PathVariable("chatroomNo") Long chatroomNo) {
+        List<Chat> chats = chatService.getAllChatsByChatroomNo(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(chats));
     }
 

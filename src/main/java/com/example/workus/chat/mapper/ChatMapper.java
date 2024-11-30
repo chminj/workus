@@ -21,7 +21,7 @@ public interface ChatMapper {
      * @param chatroomNo 채팅방 번호
      * @return 채팅 리스트
      */
-    List<Chat> getAllChatsByChatroomNo(@Param("chatroomNo") Long chatroomNo);
+    List<Chat> getAllChatsByChatroomNo(@Param("userNo") Long userNo, @Param("chatroomNo") Long chatroomNo);
 
     /**
      * 채팅 번호로 채팅 객체를 반환한다.
