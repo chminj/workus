@@ -227,11 +227,13 @@
         ORDER BY U.USER_NO
         LIMIT #{condition.begin}, 10
     </select>
+
     <select id="getAllDepts" resultType="DeptDto">
         select DEPT_NO   as deptNo
              , DEPT_NAME as deptName
         from WORKUS_DEPT
     </select>
+
     <select id="getDeptByUserNo" resultType="DeptDto">
         SELECT DEPT_NO   as deptNo
              , DEPT_NAME as deptName
@@ -240,4 +242,24 @@
                          FROM WORKUS_USERS
                          WHERE USER_NO = #{userNo});
     </select>
+
+    <update id="updateMyUser">
+        UPDATE WORKUS_USERS
+        SET USER_PR       = #{user.pr},
+            USER_ADDRESS  = #{user.address},
+            USER_PROFILE_SRC = #{user.profileSrc}
+        WHERE USER_NO = #{user.no}
+    </update>
+
+    <update id="updateMyPassword">
+        UPDATE WORKUS_USERS
+        SET USER_PASSWORD = #{user.password}
+        WHERE USER_NO = #{user.no}
+    </update>
+
+    <update id="updateMyPhone">
+        UPDATE WORKUS_USERS
+        SET USER_PHONE = #{user.phone}
+        WHERE USER_NO = #{user.no}
+    </update>
 </mapper>

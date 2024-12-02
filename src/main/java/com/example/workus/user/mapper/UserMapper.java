@@ -32,4 +32,8 @@ public interface UserMapper {
     void updateMyUser(@Param("user") User user); // 내 정보를 수정한다.
 
     List<DeptDto> getDeptByUserNo(@Param("userNo") long userNo);
+    
+    void updateMyPhone(@Param("user") User user); // 내 연락처를 수정한다.
+    
+    void updateMyPassword(@Param("user") User user); // 내 비밀번호를 수정한다.
 }
