@@ -176,6 +176,8 @@ public class UserService {
         } else {
             user.setProfileSrc(preUser.getProfileSrc()); // 첨부하지 않은 경우에는 기존의 프로필 사진을 그대로 가져간다.
         }
+
+        userMapper.updateMyUser(user); // 유저 정보를 수정한다.
     }
 
     public List<DeptDto> getAllDepts() {
@@ -184,7 +186,6 @@ public class UserService {
 
     public List<DeptDto> getDeptsForUser(Long userNo) {
         return userMapper.getDeptByUserNo(userNo); // 사용자 ID로 부서 조회하는 Mapper 메서드
-        userMapper.updateMyUser(user); // 유저 정보를 수정한다.
     }
 
     /**
