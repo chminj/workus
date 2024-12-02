@@ -49,7 +49,7 @@
         where
             C.CHATROOM_NO = #{chatroomNo}
         and
-            CHAT_TIME <![CDATA[>]]> (select
+            C.CHAT_TIME <![CDATA[>]]> (select
                                         H.CHATROOM_ENTER_TIME
                                     from
                                         WORKUS_CHATROOM_HISTORY H
@@ -66,6 +66,8 @@
                                     order by
                                         H.CHATROOM_ENTER_TIME desc
                                     limit 1)
+        order by CHAT_TIME DESC
+        limit #{begin}, 10
     </select>
 
     <select id="checkDailyFirstChat" resultType="java.lang.Character">
@@ -84,5 +86,36 @@
                     then 'Y'
                 else 'N'
                 end as CHAT_EXISTS
+    </select>
+
+    <select id="getTotalRows" resultType="int">
+        select
+            count(1)
+        from
+            WORKUS_CHAT C
+        inner join
+            WORKUS_USERS U
+        on
+            C.USER_NO = U.USER_NO
+        where
+            C.CHATROOM_NO = #{chatroomNo}
+          and
+            CHAT_TIME <![CDATA[>]]> (select
+                                        H.CHATROOM_ENTER_TIME
+                                    from
+                                        WORKUS_CHATROOM_HISTORY H
+                                    inner join
+                                        WORKUS_USERS LU
+                                    on
+                                        LU.USER_NO = H.USER_NO
+                                    where
+                                        LU.USER_NO = #{userNo}
+                                    and
+                                        H.CHATROOM_NO = #{chatroomNo}
+                                    and
+                                        H.CHATROOM_OUT_TIME is null
+                                    order by
+                                        H.CHATROOM_ENTER_TIME desc
+                                    limit 1)
     </select>
 </mapper>

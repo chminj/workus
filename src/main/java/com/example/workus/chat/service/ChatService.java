@@ -2,13 +2,15 @@ package com.example.workus.chat.service;
 
 import com.example.workus.chat.mapper.ChatMapper;
 import com.example.workus.chat.vo.Chat;
+import com.example.workus.common.dto.ListDto;
+import com.example.workus.common.util.Pagination;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Collections;
 
 @Slf4j
 @Transactional
@@ -22,8 +24,13 @@ public class ChatService {
         this.chatMapper = chatMapper;
     }
 
-    public List<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo) {
-        return chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo);
+    public ListDto<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo, int page) {
+        int totalRows = chatMapper.getTotalRows(userNo, chatroomNo);
+        Pagination pagination = new Pagination(page, totalRows);
+        ListDto<Chat> dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
+        Collections.sort(dto.getData(), (data1, data2) ->
+                data1.getTime().compareTo(data2.getTime()));
+        return dto;
     }
 
     public Chat insertChat(Chat chat) {
