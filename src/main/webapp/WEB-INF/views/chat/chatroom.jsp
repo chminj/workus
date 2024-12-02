@@ -206,6 +206,8 @@
 			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
 			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
 			await $('#chat').html(div);
+            // 스크롤 맨 아래로 이동
+            $('.chat-div').scrollTop($('.chat-div')[0].scrollHeight);
 
 			// 웹소켓 연결
 			$(function () {
@@ -304,13 +306,18 @@
 		$('#chat').on('click', '#loadMoreBtn', async function () {
 			page++;
 			$('#loadMoreBtnDiv').remove();
+            let prevScrollHeight = null;
 			try {
 				const response = await fetch('/ajax/chat/' + page + '/' + chatroomNo);
 				const result = await response.json();
 				const data = result.data;
 				if (response.ok) {
-					data.data.map(item => replaceFormatTime(item));
-					$('.chat-div').prepend(loadPlusChats(data));
+                    data.data.map(item => replaceFormatTime(item));
+                    // 더보기 누르기 전으로 스크롤 이동
+                    prevScrollHeight = $('.chat-div > div').height();
+					$('.chat-div > div').prepend(loadPlusChats(data));
+                    let scrollHeight = $('.chat-div > div').height();
+                    $('.chat-div').scrollTop(scrollHeight - prevScrollHeight);
 				} else {
 					console.log('채팅을 불러오는데 실패했습니다.', result.message);
 				}
@@ -774,53 +781,55 @@
 			return `
 					<!-- 채팅 내용 영역 -->
 					<div class="flex-grow-1 p-3 chat-div" style="overflow-y: auto;">
-					<%-- 더 보기 버튼 --%>
-					\${data.paging.last === false ? `
-					<div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
-						<button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
-							<i class="bi bi-chevron-up me-1"></i>더 보기
-						</button>
-					</div>
-					`:``}
-						\${data.data.map((chat) => `
-							\${chat.isFirst === 'Y' ? `
-								<!-- 날짜 구분선 -->
-								<div class="d-flex align-items-center my-4">
-									<div class="border-bottom flex-grow-1"></div>
-									<span class="mx-3 text-muted">\${chat.time.date}</span>
-									<div class="border-bottom flex-grow-1"></div>
-								</div>
-							` : ``}
-							\${LOGIN_USERNO === chat.user.no ? `
-								<div class="mb-3 w-75 ms-auto">
-									<div class="text-end mb-1">
-										<strong>나</strong>
-									</div>
-									<div class="d-flex justify-content-end">
-										<div class="bg-primary text-white rounded p-2 mb-1">
-											\${chat.content}
-										</div>
-									</div>
-									<div class="text-end">
-										<small class="text-muted">\${chat.time.time}</small>
-									</div>
-								</div>
-							` : `
-							<!-- 상대 메시지 -->
-							<div class="mb-3 w-75">
-								<div class="d-flex align-items-center mb-1">
-									<img src="" alt="프로필" class="rounded-circle me-2"/>
-									<strong>\${chat.user.name}</strong>
-								</div>
-								<div class="d-flex">
-									<div class="bg-light rounded p-2 mb-1">
-										\${chat.content}
-									</div>
-								</div>
-								<small class="text-muted">\${chat.time.time}</small>
-							</div>
-							`}
-						`).join('')}
+					    <div>
+                            <%-- 더 보기 버튼 --%>
+                            \${data.paging.last === true || data.paging.begin === 0 ? ``:`
+                            <div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
+                                <button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
+                                    <i class="bi bi-chevron-up me-1"></i>더 보기
+                                </button>
+                            </div>
+                            `}
+                            \${data.data.map((chat) => `
+                                \${chat.isFirst === 'Y' ? `
+                                    <!-- 날짜 구분선 -->
+                                    <div class="d-flex align-items-center my-4">
+                                        <div class="border-bottom flex-grow-1"></div>
+                                        <span class="mx-3 text-muted">\${chat.time.date}</span>
+                                        <div class="border-bottom flex-grow-1"></div>
+                                    </div>
+                                    ` : ``}
+                                \${LOGIN_USERNO === chat.user.no ? `
+                                    <div class="mb-3 w-75 ms-auto">
+                                        <div class="text-end mb-1">
+                                            <strong>나</strong>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                            <div class="bg-primary text-white rounded p-2 mb-1">
+                                                \${chat.content}
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <small class="text-muted">\${chat.time.time}</small>
+                                        </div>
+                                    </div>
+                                ` : `
+                                <!-- 상대 메시지 -->
+                                <div class="mb-3 w-75">
+                                    <div class="d-flex align-items-center mb-1">
+                                        <img src="" alt="프로필" class="rounded-circle me-2"/>
+                                        <strong>\${chat.user.name}</strong>
+                                    </div>
+                                    <div class="d-flex">
+                                        <div class="bg-light rounded p-2 mb-1">
+                                            \${chat.content}
+                                        </div>
+                                    </div>
+                                    <small class="text-muted">\${chat.time.time}</small>
+                                </div>
+                                `}
+                            `).join('')}
+                        </div>
 					</div>
 				`;
 		}
@@ -834,7 +843,7 @@
 							<i class="bi bi-chevron-up me-1"></i>더 보기
 						</button>
 					</div>
-			`:``}
+			        `:``}
 						\${data.data.map((chat) => `
 							\${chat.isFirst === 'Y' ? `
 								<!-- 날짜 구분선 -->
