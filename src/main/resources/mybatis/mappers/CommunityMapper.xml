@@ -149,7 +149,7 @@
     <!--
         int getTotalRows(@Param("condition")Map<String, Object> condition);
     -->
-    <select id="getTotalRows2" resultType="int">
+    <select id="getTotalRows" resultType="int">
         select
             COUNT(*)
         from
