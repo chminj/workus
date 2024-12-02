@@ -21,7 +21,7 @@
                     , U.USER_NAME as "user.name"
               from
                   WORKUS_COMMUNITY B
-              INNER JOIN
+                  INNER JOIN
                   WORKUS_USERS U
               ON
                   B.USER_NO = U.USER_NO) x
@@ -29,8 +29,21 @@
     </select>
 
     <!--
-     int getTotalRows();
- -->
+         List<HashTag> getHashTags(@Param("feedNo") int feedNo);
+    -->
+    <select id="getHashTagsByFeedNo" resultType="HashTag">
+        SELECT
+            H.HASHTAG_NO    as no,
+        H.HASHTAG_NAME  as name
+        FROM
+            WORKUS_HASHTAG H
+        WHERE
+            H.COMMUNITY_NO = #{feedNo}
+    </select>
+
+    <!--
+        int getTotalRows();
+     -->
     <select id="getTotalRows"  resultType="int">
         select
             count(*)
@@ -62,31 +75,116 @@
     </select>
 
     <!--
-         List<HashTag> getHashTags(@Param("feedNo") int feedNo);
+         List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
     -->
-    <select id="getHashTagsByFeedNo" resultType="HashTag">
-        SELECT
-        H.HASHTAG_NO    as no,
-        H.HASHTAG_NAME  as name
-        FROM
-        WORKUS_HASHTAG H
-        WHERE
-       H.COMMUNITY_NO = #{feedNo}
+    <select id="getReplysByFeedNo" resultType="Reply">
+        select
+            R.REPLY_NO AS no,
+            R.REPLY_CONTENT AS content,
+            R.REPLY_CREATED_DATE AS createdDate,
+            B.COMMUNITY_NO AS "feed.no",
+            U.USER_NO AS "user.no",
+            U.USER_NAME AS "user.name"
+        from
+            WORKUS_REPLY R
+            INNER JOIN
+            WORKUS_COMMUNITY B
+        ON
+            B.COMMUNITY_NO = R.COMMUNITY_NO
+            INNER JOIN
+            WORKUS_USERS U
+            ON
+            R.USER_NO = U.USER_NO
+
+        WHERE B.COMMUNITY_NO = #{feedNo}
+        ORDER BY R.REPLY_NO desc;
+    </select>
+
+    <!--
+        List<Feed> getSearchFeeds(Map<String, Object> condition);
+    -->
+    <select id="getSearchFeeds" resultType="Feed">
+        select
+        x.*
+        from (select
+        row_number() over (order by B.community_no desc) rn
+        , B.community_no as no
+        , B.COMMUNITY_TITLE as title
+        , B.COMMUNITY_CONTENT as content
+        , B.COMMUNITY_MEDIA_URL as mediaUrl
+        , B.COMMUNITY_MEDIA_TYPE as mediaType
+        , B.COMMUNITY_CREATED_DATE as createDate
+        , B.COMMUNITY_UPDATED_DATE as updateDate
+        , B.USER_NO as "user.no"
+        , U.USER_NAME as "user.name"
+        from
+        WORKUS_COMMUNITY B
+        INNER JOIN
+        WORKUS_USERS U
+        ON
+        B.USER_NO = U.USER_NO
+        LEFT JOIN
+            WORKUS_HASHTAG H
+        ON B.COMMUNITY_NO = H.COMMUNITY_NO
+        <where>
+            <if test="condition.opt != null">
+                <choose>
+                    <when test="condition.opt == 'title'">
+                        and B.COMMUNITY_TITLE LIKE CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                    <when test="condition.opt == 'content'">
+                        and B.COMMUNITY_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                    <when test="condition.opt == 'hashtag'">
+                        and H.HASHTAG_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+        ) x
+        where x.rn between #{condition.begin} and #{condition.end}
     </select>
 
 
-    
-    <!--   
-     void addNewFeed(@Param("feed") Feed feed);
+    <!--
+        int getTotalRows(@Param("condition")Map<String, Object> condition);
+    -->
+    <select id="getTotalRows2" resultType="int">
+        select
+            COUNT(*)
+        from
+        WORKUS_COMMUNITY B
+        LEFT JOIN
+        WORKUS_HASHTAG H
+        ON B.COMMUNITY_NO = H.COMMUNITY_NO
+        <where>
+            <if test="condition.opt != null">
+                <choose>
+                    <when test="condition.opt == 'title'">
+                        and B.COMMUNITY_TITLE like CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                    <when test="condition.opt == 'content'">
+                        and B.COMMUNITY_CONTENT like CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                    <when test="condition.opt == 'hashtag'">
+                        and H.HASHTAG_NAME like CONCAT('%', #{condition.keyword}, '%')
+                    </when>
+                </choose>
+            </if>
+        </where>
+    </select>
+
+    <!--
+     void insertFeed(@Param("feed") Feed feed);
     -->
     <insert id="insertFeed">
-    insert into WORKUS_COMMUNITY
+        insert into WORKUS_COMMUNITY
         (COMMUNITY_TITLE
         ,COMMUNITY_CONTENT
         ,COMMUNITY_MEDIA_URL
         ,COMMUNITY_MEDIA_TYPE
         ,USER_NO)
-    values
+        values
         (#{feed.title}
         ,#{feed.content}
         ,#{feed.mediaUrl}
@@ -99,15 +197,15 @@
     </insert>
 
     <!--
-        void addHashTag(@Param("hashTag") HashTag hashTag);
+        void insertHashTag(@Param("hashTag") HashTag hashTag);
     -->
     <insert id="insertHashTag">
         insert into WORKUS_HASHTAG
         (HASHTAG_NAME
         ,COMMUNITY_NO)
         values
-        (#{hashTag.name}
-        ,#{hashTag.feed.no})
+            (#{hashTag.name}
+            ,#{hashTag.feed.no})
     </insert>
 
     <!--
@@ -115,9 +213,9 @@
     -->
     <insert id="insertReply">
         insert into WORKUS_REPLY
-            (REPLY_CONTENT,USER_NO,COMMUNITY_NO)
+        (REPLY_CONTENT,USER_NO,COMMUNITY_NO)
         values
-            (#{reply.content},#{reply.user.no},#{reply.feed.no})
+        (#{reply.content},#{reply.user.no},#{reply.feed.no})
 
         <selectKey resultType="Long" keyProperty="reply.no" keyColumn="REPLY_NO" order="AFTER">
             select last_insert_id()
@@ -138,43 +236,17 @@
             U.USER_NAME AS "user.name"
         from
             WORKUS_REPLY R
-        INNER JOIN
+            INNER JOIN
             WORKUS_COMMUNITY B
         ON
             B.COMMUNITY_NO = R.COMMUNITY_NO
-        INNER JOIN
+            INNER JOIN
             WORKUS_USERS U
-        ON
+            ON
             R.USER_NO = U.USER_NO
         WHERE B.COMMUNITY_NO = #{feedNo}
         ORDER BY R.REPLY_NO DESC
-        LIMIT 1
+            LIMIT 1
     </select>
-    <!--
-         List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
-    -->
-    <select id="getReplysByFeedNo" resultType="Reply">
-        select
-            R.REPLY_NO AS no,
-            R.REPLY_CONTENT AS content,
-            R.REPLY_CREATED_DATE AS createdDate,
-            B.COMMUNITY_NO AS "feed.no",
-            U.USER_NO AS "user.no",
-            U.USER_NAME AS "user.name"
-        from
-            WORKUS_REPLY R
-            INNER JOIN
-            WORKUS_COMMUNITY B
-            ON
-            B.COMMUNITY_NO = R.COMMUNITY_NO
-            INNER JOIN
-            WORKUS_USERS U
-            ON
-            R.USER_NO = U.USER_NO
-
-        WHERE B.COMMUNITY_NO = #{feedNo}
-        ORDER BY R.REPLY_NO desc;
-    </select>
-
 
 </mapper>

@@ -9,9 +9,12 @@ import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/community")
@@ -27,8 +30,17 @@ public class CommunityController {
 
     @GetMapping("/items")
     @ResponseBody
-    public List<Feed> getFeeds(@RequestParam(name ="page", required = false, defaultValue = "1") int page){
-        List<Feed> feeds = communityService.getFeeds(page);
+    public List<Feed> getFeeds(@RequestParam(name ="page", required = false, defaultValue = "1") int page,
+                               @RequestParam(name = "opt", required = false) String opt,
+                               @RequestParam(name = "keyword", required = false) String keyword){
+        Map<String, Object> condition = new HashMap<>();
+        condition.put("page", page);
+
+        if (StringUtils.hasText(opt) && StringUtils.hasText(keyword)) {
+            condition.put("opt", opt);
+            condition.put("keyword", keyword);
+        }
+        List<Feed> feeds = communityService.getFeeds(condition);
         return feeds;
     }
 
@@ -60,8 +72,5 @@ public class CommunityController {
         Feed feed = communityService.getFeed(feedNo);
         return feed;
     }
-
-
-
 
 }
