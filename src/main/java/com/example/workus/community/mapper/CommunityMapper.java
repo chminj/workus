@@ -20,7 +20,6 @@ public interface CommunityMapper {
     Feed getFeedByNo(@Param("feedNo") long feedNo);
     // 게시글에 해당하는 모든 댓글 조회
     List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
-    List<Feed> searchFeeds(Map<String, Object> condition);
 
     // 게시글 작성
     void insertFeed(@Param("feed") Feed feed);
