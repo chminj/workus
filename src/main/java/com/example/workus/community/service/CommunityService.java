@@ -25,15 +25,20 @@ public class CommunityService {
     CommunityMapper communityMapper;
 
     // 게시글 조회 무한스크롤
-    public List<Feed> getFeeds(int page){
-        int totalRows = communityMapper.getTotalRows();
-        Pagination pagination = new Pagination(page, totalRows,2);
+    public List<Feed> getFeeds(Map<String,Object> condtion){
+        int totalRows = communityMapper.getTotalRows2(condtion);
+        int page = (Integer) condtion.get("page");
+        Pagination pagination = new Pagination(page, totalRows,1);
 
-        if(pagination.getTotalPages() < page)
+        if(pagination.getTotalPages() < page) {
                 return null;
-        int begin = pagination.getBegin();
-        int end = pagination.getEnd();
-        List<Feed> feeds = communityMapper.getFeeds(begin,end);
+        }
+
+        condtion.put("begin",pagination.getBegin());
+        condtion.put("end",pagination.getEnd());
+
+        List<Feed> feeds = communityMapper.getSearchFeeds(condtion);
+
         for (Feed feed : feeds) {
             List<HashTag> hashTags = communityMapper.getHashTagsByFeedNo(feed.getNo());
             feed.setHashTags(hashTags);
@@ -50,7 +55,7 @@ public class CommunityService {
         // 멀티파트 파일에 진짜 이름을 가져옴
         String originalFilename = multipartFile.getOriginalFilename();
         // 경로지정
-        String saveDirectory = "C:\\projects\\final-workspace\\src\\main\\webapp\\resources\\images";
+        String saveDirectory = "C:\\projects\\final-workspace\\src\\main\\webapp\\resources\\repository\\communityfeedfile";
         // 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
         FileUtils.saveMultipartFile(multipartFile,saveDirectory,originalFilename);
 

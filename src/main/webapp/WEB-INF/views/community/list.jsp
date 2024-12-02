@@ -17,17 +17,24 @@
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
       <main class="noLnb">
-        <h3 class="title1">Workus Community</h3>
+        <h3 class="title1" ><a href="list">Workus Community</a></h3>
         <div class="content">
           <div class="wrap">
-            <div class="search">
-              <input type="text" placeholder="검색"/>
-              <button>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
-                </svg>
-              </button>
-            </div>
+            <form id="form-search" onsubmit="searchKeyword(event)">
+                <div class="search">
+                  <select name="opt">
+                    <option value="title" > 제목</option>
+                    <option value="content" > 내용</option>
+                    <option value="hashtag" > 해쉬태그</option>
+                  </select>
+                  <input type="text" name="keyword"  placeholder="검색"/>
+                  <button type="button" onclick="searchKeyword(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
+                      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
+                    </svg>
+                  </button>
+                </div>
+            </form>
             <div>
               <button type="button" class="btn btn-outline-dark"><a href="form">글 작성</a></button>
             </div>
@@ -108,11 +115,9 @@
 $(document).ready(function() {
   // 댓글 입력 폼에서 엔터키 눌렀을 때 처리
   $(document).on("keydown", "#feedinsertReply", function(event) {
-    // Enter 키가 눌렸을 때 (key === "Enter")
     if (event.key === "Enter") {
-      event.preventDefault();  // 기본 엔터키 동작 방지 (줄 바꿈 방지)
+      event.preventDefault();
 
-      // 해당 피드의 feedNo를 추출
       var feedNo = $(this).closest("article").attr("id").replace('feed-', ''); // feed-no 추출
 
       // 댓글 추가 함수 호출 (예: inserReply)
@@ -123,10 +128,9 @@ $(document).ready(function() {
 
 $(document).ready(function() {
   $("#postComment").on("keydown", function(event) {
-    // 엔터키가 눌렸을 때 (keyCode 13)
     if (event.key === "Enter") {
-      event.preventDefault();  // 기본 엔터키 동작 방지 (줄 바꿈 방지)
-      inserReplyPopup();       // 댓글 제출 함수 호출
+      event.preventDefault();
+      inserReplyPopup();
     }
   });
 });
@@ -165,6 +169,9 @@ function inserReplyPopup(){
            </p>
          <div>
         `;
+
+      $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+      $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
       $("#postReplys").prepend(content);
     }
   })
@@ -176,8 +183,8 @@ function inserReplyPopup(){
      url: `feed/\${feedNo}`,
      dataType: "json",
      success: function (feed) {
-       $("#postImage").attr("src", "../../../resources/images/"+feed.mediaUrl);
-       $("#postProfile").attr("src", "../../../resources/images/"+feed.mediaUrl);
+       $("#postImage").attr("src", "../../../resources/repository/communityfeedfile/"+feed.mediaUrl);
+       $("#postProfile").attr("src", "../../../resources/repository/communityfeedfile/"+feed.mediaUrl);
        $("#postUsername").text(feed.user.name);
        $("#postTitle").text(feed.title);
        $("#postContent").text(feed.content);
@@ -198,7 +205,6 @@ function inserReplyPopup(){
        }
        $("#postReplys").html(content);
 
-
        document.getElementById("popupOverlay").style.display = "flex";
      }
    })
@@ -211,9 +217,22 @@ function inserReplyPopup(){
   getFeeds(currentPage);
 
   function getFeeds(page) {
+    let data = {
+      page: page
+    };
+
+    let opt = $("select[name=opt]").val();
+    let keyword = $("input[name=keyword]").val();
+
+    if (opt != "" && keyword != "") {
+      data["opt"] = opt;
+      data["keyword"] = keyword;
+    }
+
     $.ajax({
       type: "get",
-      url: "items?page=" + page,
+      url: "items",
+      data: data,
       dataType: "json",
       success: function (items) {
         appendFeeds(items);
@@ -222,6 +241,27 @@ function inserReplyPopup(){
       }
     })
   }
+  function  searchKeyword(event){
+    event.preventDefault();
+    currentPage = 1;
+    $.ajax({
+      type:"get",
+      url:"items",
+      data:{
+        page: currentPage,
+        opt: $("select[name=opt]").val(),
+        keyword: $("input[name=keyword]").val()
+      },
+      dataType:"json",
+      success:function (feeds){
+        currentPage++;
+        $("div.feed_board").empty();
+
+        appendFeeds(feeds);
+
+      }
+    })
+}
 
   function appendFeeds(items) {
     for (let feed of items) {
@@ -232,7 +272,7 @@ function inserReplyPopup(){
         <!--top-->
         <div class="new_poster">
           <div class="poster_img">
-            <img alt="follower profile image" class="round_img" src="../../../resources/images/\${feed.mediaUrl}" />
+            <img alt="follower profile image" class="round_img" src="../../../resources/repository/communityfeedfile/\${feed.mediaUrl}" />
           </div>
           <a href="#n" class="poster_id txt_id">\${feed.user.name}</a>
           <div class="dropdown-container">
@@ -250,7 +290,7 @@ function inserReplyPopup(){
 
         <!--content-->
         <section class="feed_imgs">
-          <img alt="지정된 media가 없습니다" src="../../../resources/images/\${feed.mediaUrl}" />
+          <img alt="지정된 media가 없습니다" src="../../../resources/repository/communityfeedfile/\${feed.mediaUrl}" />
           <div class="interactions">
             <div class="my_emotion">
               <!-- 피드 내 하트 버튼 -->
