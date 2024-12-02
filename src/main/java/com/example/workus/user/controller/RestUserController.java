@@ -31,7 +31,7 @@ public class RestUserController {
         return ResponseEntity.ok(RestResponseDto.success(userService.getUserByUserNo(userNo)));
     }
 
-    @GetMapping("/user/check-no/{userNo}")
+    @GetMapping("/user/check-no/{userNo}") // 로그인 전에는 userNo 사용 가능. 로그인 이후에는 userNo는 무조건 Authentication으로만
     ResponseEntity<RestResponseDto<Boolean>> checkUserNo(@PathVariable("userNo") Long userNo) {
         boolean isUserExist = userService.isUserExistByUserNo(userNo);
         return ResponseEntity.ok(RestResponseDto.success(isUserExist)); // 유저가 존재하면 true
