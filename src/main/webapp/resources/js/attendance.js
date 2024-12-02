@@ -280,23 +280,28 @@ $(function () {
 
         if (opt === '25') {
             $(".annualLeaveOnly").hide();
+            $(".partOpt").addClass("d-none");
             categoryNo.val(opt);
-        } else {
+        } else if (opt === '10') {
             $(".annualLeaveOnly").show();
+            $(".annualLeaveOnly input[type='radio'][value='10']").prop("checked", true);
+        } else {
+            $(".partOpt").removeClass("d-none");
         }
     });
 
     $(document).on("click", ".annualLeaveOnly input[type='radio']", function (e) {
         let val = e.target.value;
 
-        let selectedRadioValue = $("input[name='categoryOpt2']:checked").val();
-        categoryNo.val(selectedRadioValue);
-
+        // 라디오 버튼의 값에 따라 categoryNo 설정 및 .partOpt 클래스 조정
         if (val === '10') {
             $(".partOpt").addClass("d-none");
         } else {
             $(".partOpt").removeClass("d-none");
         }
+
+        let selectedRadioValue = $("input[name='categoryOpt2']:checked").val();
+        categoryNo.val(selectedRadioValue);
     });
 
     // confirm

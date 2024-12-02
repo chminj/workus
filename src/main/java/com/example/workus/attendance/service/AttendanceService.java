@@ -182,39 +182,45 @@ public class AttendanceService {
         // 필요한 값 추출
         BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
         BigDecimal categoryCount = (BigDecimal) annualLeaveData.get("category_count");
-        BigDecimal updatedCount = approvalRequestDto.getDayTotal(); // Integer로 변경
-
-        // 로그 추가
-        System.out.println("Before update - (USERS에 있는)잔여 연차: " + unusedLeave);
-        System.out.println("Before update - categoryCount: " + categoryCount);
-        System.out.println("Before update - dayTotal: " + updatedCount);
+        Long updatedCount = (Long) annualLeaveData.get("total_day");
 
         // 2) 연차 이력 추가
-        if (updatedCount != null && updatedCount.compareTo(BigDecimal.valueOf(1)) > 0) {
-            System.out.println("ㅡㅡㅡㅡㅡ 조건문 ㅡㅡㅡㅡㅡ");
-            approvalRequestDto.setUsedDate(approvalRequestDto.getDayTotal());
-            approvalRequestDto.setUnusedDate(unusedLeave.subtract(approvalRequestDto.getDayTotal()));
+        if (updatedCount != 0) {
+            approvalRequestDto.setUsedDate(BigDecimal.valueOf(updatedCount));
+            approvalRequestDto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
+            approvalRequestDto
+                    .setTotalDay(updatedCount.intValue());
+
         } else {
             approvalRequestDto.setUsedDate(categoryCount);
             approvalRequestDto.setUnusedDate(unusedLeave.subtract(categoryCount));
+            approvalRequestDto.setTotalDay(categoryCount.intValue());
         }
         attendanceMapper.insertAnnualLeaveHistory(approvalRequestDto);
 
         // 3) 상태 업데이트
         attendanceMapper.updateStatusByAtdNo(approvalRequestDto.getAtdNo());
+
         // 4) 잔여 연차 차감
-        if (updatedCount != null && updatedCount.compareTo(BigDecimal.valueOf(1)) > 0) {
-            attendanceMapper.updateAnnualLeaveByDayTotal(approvalRequestDto.getDayTotal());
-        } else {
-            attendanceMapper.updateAnnualLeaveByCtgrCount();
-        }
+        attendanceMapper.updateAnnualLeaveByUnusedDate();
     }
 
+    /**
+     * 근태 이력 팀원 조회
+     *
+     * @param userNo 로그인한 유저 번호
+     * @return 팀원의 승인된 근태 이력 목록
+     */
     public List<AnnualLeaveHistoryDto> getAnnualLeaveHistoryForLoggedInUser(Long userNo) {
         User user = userMapper.getUserByUserNo(userNo);
         return attendanceMapper.getUsedAnnualLeaveByUser(user);
     }
 
+    /**
+     * 근태 이력 관리자 조회
+     *
+     * @return 승인된 근태 이력 목록 전체
+     */
     public List<AnnualLeaveHistoryDto> getAllAnnualLeaveHistory() {
         return attendanceMapper.getAllUsedAnnualLeave();
     }

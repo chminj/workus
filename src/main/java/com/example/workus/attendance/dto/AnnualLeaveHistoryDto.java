@@ -21,4 +21,5 @@ public class AnnualLeaveHistoryDto {
     private Long deptNo;
     private String deptName;
     private String categoryName;
+    private int totalDay;
 }

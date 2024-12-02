@@ -20,4 +20,6 @@ public class ApprovalRequestDto {
 
     private BigDecimal unusedDate;
     private BigDecimal usedDate;
+
+    private int totalDay;
 }

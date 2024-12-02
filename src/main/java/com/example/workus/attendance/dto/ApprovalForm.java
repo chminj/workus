@@ -26,4 +26,5 @@ public class ApprovalForm {
     private String time;
     private String apv;
     private String ref;
+    private int totalDay;
 }
