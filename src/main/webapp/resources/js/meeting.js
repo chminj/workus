@@ -28,19 +28,22 @@
     // full-calendar 생성하기
     var calendar = new FullCalendar.Calendar(calendarEl, {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+        height: 'auto',
+        expandRows: true,            // 화면에 맞게 높이 조절
+        slotMinTime: '06:00',        // Day 캘린더 시작 시간
+        slotMaxTime: '22:00',        // Day 캘린더 종료 시간
         timeZone: 'UTC',
-        initialView: 'resourceTimeline', // 초기 뷰 설정
-        aspectRatio: 1.5,
-
         headerToolbar: {
             left: 'prev,next',
             center: 'title',
             right: 'today'
         },
-        editable: true,
-        resourceAreaHeaderContent: 'Rooms',
+        initialView: 'resourceTimeline', // 초기 뷰 설정
         initialDate: new Date().toISOString().slice(0, 10),
-        height: 'auto',
+        editable: true,
+        selectable: true,
+        aspectRatio: 1.5,
+        resourceAreaHeaderContent: 'Rooms',
         resourceAreaWidth: '7.5%',
         scrollTime: '00:00:00',
         locale: 'ko',
@@ -147,26 +150,48 @@
             $("#meetingModal #endDate").val(endDateString);
             
             if (info.resource && info.resource.id === 'a') {
-                $("#meetingModal #room").val("a"); // 회의실 A
+                $("#meetingModal #room").val("a");
             } else if (info.resource && info.resource.id === 'b') {
-                $("#meetingModal #room").val("b"); // 회의실 B
+                $("#meetingModal #room").val("b");
             }
-            $("#meetingModal #content").val("");
 
-            $("#meetingModal").data("eventId", null);  // eventId 초기화
+            $("#meetingModal #content").val("");
+            $("#meetingModal").data("eventId", null);
 
             $("#delete").hide();
             $("#save").text("예약");
 
             $("#meetingModal").modal("show");
+
+            calendar.unselect();
+        },
+        select: function (info) {
+            let startDate = info.startStr;
+            let endDate = info.endStr;
+
+            console.log(info);
+
+            $("#meetingModalLabel").text("회의실 예약하기");
+
+            $("#meetingModal #startDate").val(startDate.slice(0, 16)); // ISO 포맷 조정
+            $("#meetingModal #endDate").val(endDate.slice(0, 16)); // ISO 포맷 조정
+
+            if (info.resource && info.resource.id === 'a') {
+                $("#meetingModal #room").val("a"); // 회의실 A
+            } else if (info.resource && info.resource.id === 'b') {
+                $("#meetingModal #room").val("b"); // 회의실 B
+            }
+
+            $("#meetingModal #content").val("");
+            $("#meetingModal").data("eventId", null); // eventId 초기화
+
+            $("#delete").hide();
+            $("#save").text("예약");
+
+            $("#meetingModal").modal("show");
+
             calendar.unselect();
         }
-
-        // 이벤트 설정
-        // events: [
-        //     {"resourceId": "a", "title": "event 1", "start": "2024-11-25", "end": "2024-11-26"},
-        //     {"resourceId": "b", "title": "event 2", "start": "2024-11-25T12:00:00+00:00", "end": "2024-11-25T14:00:00+00:00"},
-        // ]
 
     });
 
@@ -221,7 +246,7 @@
                 url: "/meeting/add",
                 data: eventData,
                 success: function (result) {
-                    let event = {
+                    calendar.addEvent({
                         id: result.no,
                         start: result.startDate,
                         end: result.endDate,
@@ -231,9 +256,7 @@
                             content: result.content,
                             userNo: result.userNo,
                         }
-                    };
-
-                    calendar.addEvent(event);
+                    });
 
                     $("#meetingModal").modal("hide");
                     $("#name, #location, #startDate, #endDate, #division, #content").val("");

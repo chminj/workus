@@ -390,7 +390,7 @@
         refreshCalendar();
     }
 
-    function refreshCalendar(event, el) {
+    function refreshCalendar() {
         let el1 = document.querySelector("input[id=division1]");
         let el2 = document.querySelector("input[id=division0]");
         let el3 = document.querySelector("input[id=divisionAll]");
@@ -404,18 +404,19 @@
             values.push(0);
         }
 
-        if (el1.checked === false || el2.checked === false) {
+        if (!el1.checked || !el2.checked) {
             el3.checked = false;
         } else {
             el3.checked = true;
         }
 
         // 기존 이벤트 소스 제거
-        calendar.getEventSources().forEach(function(source) {
-            console.log('Event Source:', source.className); // className 확인용 로그
-            if (!source.className || !source.className.includes('ko_event')) {
-                source.remove(); // 조건을 만족하면 소스를 제거
+        calendar.getEvents().forEach(function(source) {
+            // 구글 공휴일 이벤트는 삭제하지 않음
+            if (source.className && source.className.includes('ko_event')) {
+                return; // 구글 공휴일 이벤트는 건너뜁니다.
             }
+            source.remove(); // 나머지 이벤트 소스는 제거
         });
 
         if (values.length > 0) {
@@ -431,41 +432,28 @@
                 type: 'GET',
                 url: '/calendar/events?' + queryString,
                 success: function (calendars) {
-                    let events = calendars.map(function (calendar) {
-                        return {
-                            id: calendar.no,
-                            title: calendar.name,
-                            start: calendar.startDate,
-                            end: calendar.endDate,
-                            color: divisionColors[calendar.division] || '#6c757d',
+                     calendars.forEach(function (item) {
+                        let event = {
+                            id: item.no,
+                            title: item.name,
+                            start: item.startDate,
+                            end: item.endDate,
+                            color: divisionColors[item.division] || '#6c757d',
                             extendedProps: {
-                                location: calendar.location,
-                                content: calendar.content,
-                                // deptNo: calendar.deptNo
+                                location: item.location,
+                                content: item.content,
+                                deptNo: item.deptNo
                             }
                         };
+                        calendar.addEvent(event);
                     });
-
-                    calendar.addEventSource(events);
                 },
                 error: function (xhr, status, error) {
                     console.error("일정 데이터 로드 실패:", error);
-                }
+                },
             });
         }
     }
-
-    // 체크박스를 클릭할 때마다 선택된 항목에 'selected' 클래스 추가/제거
-    document.querySelectorAll('.lnb-menu input[type="checkbox"]').forEach(function (checkbox) {
-        checkbox.addEventListener('change', function () {
-            let label = this.closest('label');
-            if (this.checked) {
-                label.classList.add('selected');
-            } else {
-                label.classList.remove('selected');
-            }
-        });
-    });
 
     function getDate(date, days) {
         days = days || 0;
