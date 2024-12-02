@@ -24,11 +24,15 @@ import java.util.Map;
 @RequestMapping("/attendance")
 public class AttendanceController {
 
-    @Autowired
-    private AttendanceService attendanceService;
+    private final AttendanceService attendanceService;
+    private final UserService userService;
 
     @Autowired
-    private UserService userService;
+    public AttendanceController(AttendanceService attendanceService, UserService userService) {
+        this.attendanceService = attendanceService;
+        this.userService = userService;
+    }
+
 
     @GetMapping("/list")
     public String list(@AuthenticationPrincipal LoginUser loginUser, Model model) {
@@ -174,5 +178,5 @@ public class AttendanceController {
         return "attendance/myRefList";
     }
 
-    
+
 }

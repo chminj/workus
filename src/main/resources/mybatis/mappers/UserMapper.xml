@@ -232,4 +232,12 @@
              , DEPT_NAME as deptName
         from WORKUS_DEPT
     </select>
+    <select id="getDeptByUserNo" resultType="DeptDto">
+        SELECT DEPT_NO   as deptNo
+             , DEPT_NAME as deptName
+        FROM WORKUS_DEPT
+        WHERE DEPT_NO = (SELECT DEPT_NO
+                         FROM WORKUS_USERS
+                         WHERE USER_NO = #{userNo});
+    </select>
 </mapper>

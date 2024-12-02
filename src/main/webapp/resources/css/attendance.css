@@ -443,7 +443,7 @@ table label {
 
 .fc-h-event .fc-event-main {
     color: #1f1f1f;
-    position: relative;
+    /*position: relative;*/
     padding-left: 19px;
     font-size: 14px;
 }
@@ -474,17 +474,40 @@ table label {
     position: relative;
 }
 
-.notWholeDay::after {
+.notWholeDay::before {
     content: attr(data-time);
     position: absolute;
-    left: 28%;
+    left: 30%;
     top: 53%;
     transform: translateY(-50%);
     z-index: 10;
     display: none;
 }
 
-.notWholeDay:hover::after {
+.notWholeDay:hover::before {
     display: block;
+}
 
+.official-holiday {
+    background: #2c3e50;
+}
+
+.official-holiday.fc-h-event .fc-event-main {
+    color: #fff;
+}
+
+.official-holiday:hover {
+    background-color: #0f132a;
+}
+
+.official-holiday .fc-event-main:before {
+    display: none;
+}
+
+.official-holiday:hover::before {
+    display: none;
+}
+
+.fc-theme-standard .fc-popover {
+    width: 14.66%;
 }
