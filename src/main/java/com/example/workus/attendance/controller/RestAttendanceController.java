@@ -5,13 +5,12 @@ import com.example.workus.attendance.dto.ApprovalRequestDto;
 import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.dto.DeptDto;
+import com.example.workus.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
@@ -22,6 +21,8 @@ public class RestAttendanceController {
 
     @Autowired
     private AttendanceService attendanceService;
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/approve")
     public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<ApprovalRequestDto> requestDtoList) {
@@ -37,17 +38,29 @@ public class RestAttendanceController {
         return ResponseEntity.ok(response);
     }
 
+    /**
+     * 근태 메인 화면 fullCalendar에서 연차 이력을 조회한다.
+     *
+     * @param loginUser 로그인한 유저 정보
+     * @return 연차 이력 목록
+     */
     @PostMapping("/annualLeaveHistory")
-    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
-        List<AnnualLeaveHistoryDto> events;
+    public ResponseEntity<Map<String, Object>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
+        List<AnnualLeaveHistoryDto> events = null;
+        List<DeptDto> depts = null;
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
 
+        // 권한 구분
         if (roleNo == 100) {
             events = attendanceService.getAllAnnualLeaveHistory();
+            depts = userService.getAllDepts();
         } else {
             events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
+            depts = userService.getDeptsForUser(loginUser.getNo());
         }
 
-        return ResponseEntity.ok(events);
+        return ResponseEntity.ok(Map.of("events", events, "depts", depts, "roleNo", roleNo));
     }
+
+
 }

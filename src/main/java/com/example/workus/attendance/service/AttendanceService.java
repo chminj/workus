@@ -5,6 +5,7 @@ import com.example.workus.attendance.mapper.AttendanceMapper;
 import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.util.Pagination;
+import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +21,14 @@ import java.util.Map;
 @Transactional
 public class AttendanceService {
 
+    private final AttendanceMapper attendanceMapper;
+    private final UserMapper userMapper;
+
     @Autowired
-    private AttendanceMapper attendanceMapper;
-    @Autowired
-    private UserMapper userMapper;
+    public AttendanceService(AttendanceMapper attendanceMapper, UserMapper userMapper) {
+        this.attendanceMapper = attendanceMapper;
+        this.userMapper = userMapper;
+    }
 
     /**
      * 로그인한 사용자가 근태 페이지에서 본인 근태 정보를 조회할 수 있다.
@@ -224,4 +229,5 @@ public class AttendanceService {
     public List<AnnualLeaveHistoryDto> getAllAnnualLeaveHistory() {
         return attendanceMapper.getAllUsedAnnualLeave();
     }
+
 }

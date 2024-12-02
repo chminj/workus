@@ -30,6 +30,8 @@ public interface UserMapper {
     List<DeptDto> getAllDepts();
 
     void updateMyUser(@Param("user") User user); // 내 정보를 수정한다.
+
+    List<DeptDto> getDeptByUserNo(@Param("userNo") long userNo);
     
     void updateMyPhone(@Param("user") User user); // 내 연락처를 수정한다.
     

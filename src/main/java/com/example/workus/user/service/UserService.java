@@ -3,6 +3,10 @@ package com.example.workus.user.service;
 import com.example.workus.common.exception.WorkusException;
 import com.example.workus.common.util.Pagination;
 import com.example.workus.common.util.WebContentFileUtils;
+import com.example.workus.user.dto.DeptDto;
+import com.example.workus.user.dto.MyModifyForm;
+import com.example.workus.user.dto.UserListDto;
+import com.example.workus.user.dto.UserSignUpForm;
 import com.example.workus.user.dto.*;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
@@ -24,7 +28,7 @@ import java.util.Map;
 public class UserService {
 
     // 파일 경로를 담을 path 설정.
-    private String path ="/resources/repository/userprofile/";
+    private String path = "resources/repository/userprofile/";
 
     @Autowired
     WebContentFileUtils webContentFileUtils;
@@ -41,6 +45,7 @@ public class UserService {
 
     /**
      * 유저 전체를 조회한다.
+     *
      * @return 유저 정보 전체 리스트
      */
     public List<User> getAllUsers() {
@@ -49,6 +54,7 @@ public class UserService {
 
     /**
      * 회원가입을 통해 그룹웨어의 신규 회원을 등록한다.
+     *
      * @Param 회원가입 폼에 담긴 정보들
      */
     public void addSignUpUser(UserSignUpForm form) {
@@ -75,6 +81,7 @@ public class UserService {
 
     /**
      * 사번으로 해당 사원이 존재하는지 확인한다.
+     *
      * @param userNo 사번
      * @return 해당 사원이 존재하면 true, 존재하지 않으면 false
      */
@@ -84,6 +91,7 @@ public class UserService {
 
     /**
      * 아이디로 일치하는 사원이 존재하는지 확인한다.
+     *
      * @param userId 유저 아이디
      * @return 해당 아이디를 가진 사원이 존재하면 true, 존재하지 않으면 false
      */
@@ -94,6 +102,7 @@ public class UserService {
 
     /**
      * 조회 조건에 맞는 회원 목록을 돌려준다.
+     *
      * @param condition page(페이지 번호), dept(부서 옵션), name(직원명)
      * @return 조회 조건에 맞는 회원목록
      */
@@ -108,7 +117,7 @@ public class UserService {
         System.out.println("----------------------------------" + condition);
         Pagination pagination = new Pagination(page, totalRows, 10);
         System.out.println("===================================" + pagination.toString());
-        
+
         // 페이지번호에 맞는 데이터 조회범위를 검색 조건에 추가한다.
         if (pagination.getBegin() != 0) {
             condition.put("begin", pagination.getBegin() - 1); // 시작 범위
@@ -167,7 +176,14 @@ public class UserService {
         } else {
             user.setProfileSrc(preUser.getProfileSrc()); // 첨부하지 않은 경우에는 기존의 프로필 사진을 그대로 가져간다.
         }
+    }
 
+    public List<DeptDto> getAllDepts() {
+        return userMapper.getAllDepts(); // 부서 목록을 가져오는 Mapper 메서드 호출
+    }
+
+    public List<DeptDto> getDeptsForUser(Long userNo) {
+        return userMapper.getDeptByUserNo(userNo); // 사용자 ID로 부서 조회하는 Mapper 메서드
         userMapper.updateMyUser(user); // 유저 정보를 수정한다.
     }
 
