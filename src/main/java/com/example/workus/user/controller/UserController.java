@@ -1,13 +1,15 @@
 package com.example.workus.user.controller;
 
-import com.example.workus.user.dto.MyModifyForm;
-import com.example.workus.user.dto.UserListDto;
-import com.example.workus.user.dto.UserSignUpForm;
+import com.example.workus.security.LoginUser;
+import com.example.workus.user.dto.*;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -21,8 +23,6 @@ import java.util.Map;
 @Controller
 @Slf4j
 public class UserController {
-
-
 
     @Autowired
     private UserService userService;
@@ -62,21 +62,20 @@ public class UserController {
     }
 
     @GetMapping("/user/myinfo")
-    public String myinfo(@RequestParam(name = "userNo") int userNo, Model model) { // userNo는 반드시 존재해야 하는 값
-        User user = userService.getUserByUserNo(userNo); // userNo로 사용자 정보를 조회한다.
+    @PreAuthorize("isAuthenticated()")
+    public String myinfo(@AuthenticationPrincipal LoginUser loginUser, Model model) { // userNo는 반드시 존재해야 하는 값
+        User user = userService.getUserByUserNo(loginUser.getNo()); // userNo로 사용자 정보를 조회한다.
         model.addAttribute("user", user); // 사용자 정보를 model에 담는다. (view에 전달)
         return "user/myinfo-modify"; // View 페이지를 요청한다. [ View 페이지는 모델에 담은 값으로 구성된다. ]
     }
 
     @PostMapping("/user/myinfo")
-    public String changeMyInfo(@ModelAttribute("myModifyForm") MyModifyForm form, BindingResult errors) { // view에서 MyModifyForm에 데이터를 담는다.
+    @PreAuthorize("isAuthenticated()")
+    public String changeMyInfo(@ModelAttribute("myModifyForm") MyModifyForm form, BindingResult errors, RedirectAttributes redirectAttributes) { // view에서 MyModifyForm에 데이터를 담는다.
         if (errors.hasErrors()) {
             System.out.println("바인딩 시 에러가 발생했습니다.");
         }
         log.info("입력된 사번은 : " + form.getNo());
-        log.info("입력된 이메일은 : " + form.getEmail());
-        log.info("입력된 비밀번호는 : " + form.getPassword());
-        log.info("입력된 연락처는 : " + form.getPhone());
         log.info("입력된 자기소개는 : " + form.getPr());
         log.info("입력된 주소는 : " + form.getAddress());
         log.info("입력된 이미지는 : " + form.getImage().getOriginalFilename());
@@ -84,7 +83,54 @@ public class UserController {
         userService.modifyMyUser(form); // Form에 담긴 데이터를 서비스에 전달한다.
 
         // GET 방식 URL로 localhost/user/myinfo?userNo=사번으로 redirect 하기.
-        return "redirect:/user/myinfo?userNo=" + form.getNo(); // GET 방식으로 리다이렉트
+        redirectAttributes.addFlashAttribute("message", "일반 정보 변경에 성공했습니다.");
+        return "redirect:/user/myinfo"; // GET 방식으로 리다이렉트
+    }
+
+    @GetMapping("/user/changePw")
+    @PreAuthorize("isAuthenticated()")
+    public String changePw(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+        User user = userService.getUserByUserNo(loginUser.getNo());
+        model.addAttribute("user", user);
+        return "user/myinfo-changePw"; // View 페이지를 요청한다.
+    }
+
+    @PostMapping("/user/changePw")
+    @PreAuthorize("isAuthenticated()")
+    public String changePw(@Valid @ModelAttribute("myChangePwForm")MyChangePwForm form, BindingResult errors, RedirectAttributes redirectAttributes) { // view에서 MyChangePwForm에 데이터를 담는다.
+        if (errors.hasErrors()) {
+            System.out.println("바인딩 시 에러가 발생했습니다.");
+        }
+        log.info("입력된 사번은 : " + form.getNo());
+        log.info("입력된 비밀번호는 : " + form.getPassword());
+
+        userService.modifyMyPwd(form); // 비밀번호 변경을 수행한다.
+
+        redirectAttributes.addFlashAttribute("message", "비밀번호가 성공적으로 변경되었습니다.");
+        return "redirect:/user/changePw"; // 비밀번호 변경 후 원래 페이지로 리다이렉트
+    }
+
+    @GetMapping("/user/changePhone")
+    @PreAuthorize("isAuthenticated()")
+    public String changePhone(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+        User user = userService.getUserByUserNo(loginUser.getNo());
+        model.addAttribute("user", user);
+        return "user/myinfo-changePhone";
+    }
+
+    @PostMapping("/user/changePhone")
+    @PreAuthorize("isAuthenticated()")
+    public String changePhone(@Valid @ModelAttribute("mychangePhoneForm")MyChangePhoneForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            System.out.println("바인딩 시 에러가 발생했습니다.");
+        }
+        log.info("입력된 사번은 : " + form.getNo()); 
+        log.info("입력된 연락처는 : " + form.getPhone());
+
+        userService.modifyMyPhone(form); // 연락처 변경을 수행한다.
+
+        redirectAttributes.addFlashAttribute("message", "연락처가 성공적으로 변경되었습니다.");
+        return "redirect:/user/changePhone"; // 연락처 변경 후 원래 페이지로 리다이렉트
     }
 
     @GetMapping("/address-book/list")

@@ -3,9 +3,7 @@ package com.example.workus.user.service;
 import com.example.workus.common.exception.WorkusException;
 import com.example.workus.common.util.Pagination;
 import com.example.workus.common.util.WebContentFileUtils;
-import com.example.workus.user.dto.MyModifyForm;
-import com.example.workus.user.dto.UserListDto;
-import com.example.workus.user.dto.UserSignUpForm;
+import com.example.workus.user.dto.*;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import com.example.workus.util.UserUtils;
@@ -26,7 +24,7 @@ import java.util.Map;
 public class UserService {
 
     // 파일 경로를 담을 path 설정.
-    private String path ="resources/repository/userprofile/";
+    private String path ="/resources/repository/userprofile/";
 
     @Autowired
     WebContentFileUtils webContentFileUtils;
@@ -136,17 +134,64 @@ public class UserService {
         return userMapper.getAllUsersByName(userName);
     }
 
+    /**
+     * 내 정보 수정에서 프로필 사진, 자기 소개, 주소와 같은 기본적인 정보를 수정한다.
+     * @param form 내 정보 수정 폼을 통해 전달되는 데이터
+     */
     public void modifyMyUser(MyModifyForm form) {
 
+        User preUser = userMapper.getUserByUserNo(form.getNo()); // 기존에 입력되어 있던 유저 데이터
         User user = new User();
-        if (!form.getImage().isEmpty()) {
-            MultipartFile imageFile = form.getImage();
-            String originalFilename = imageFile.getOriginalFilename();
-            String filename = form.getNo() +  originalFilename.substring(originalFilename.lastIndexOf("."));
-            user.setProfileSrc(filename);
-            webContentFileUtils.saveWebContentFile(imageFile, path, filename);
+        user.setNo(form.getNo()); // form에 입력된 사번을 새로 전달할 유저의 사번으로 담아야 한다.
+
+        // 입력폼에 값을 입력하지 않은 경우에는 기존의 값을 그대로 가져가자.
+        if (form.getPr() != null) {
+            user.setPr(form.getPr()); // form에 입력한 자기소개 글귀
+        } else {
+            user.setPr(preUser.getPr()); // 기존에 입력한 자기소개 글귀
         }
 
+        if(form.getAddress() != null) {
+            user.setAddress(form.getAddress()); // form에 입력한 주소
+        } else {
+            user.setAddress(preUser.getAddress()); // 기존에 입력한 주소
+        }
 
+        if (!form.getImage().isEmpty()) { // 이미지 파일을 입력했을 때만
+            MultipartFile imageFile = form.getImage(); // 첨부파일
+            String originalFilename = imageFile.getOriginalFilename(); // 실제 파일명
+            String filename = form.getNo() +  originalFilename.substring(originalFilename.lastIndexOf("."));
+            System.out.println("DB에 저장할 파일명은 " + filename);
+            user.setProfileSrc(filename); // profileSrc에는 파일명을 입력한다.
+            webContentFileUtils.saveWebContentFile(imageFile, path, filename);
+        } else {
+            user.setProfileSrc(preUser.getProfileSrc()); // 첨부하지 않은 경우에는 기존의 프로필 사진을 그대로 가져간다.
+        }
+
+        userMapper.updateMyUser(user); // 유저 정보를 수정한다.
+    }
+
+    /**
+     * 내 정보 수정에서 비밀번호만 변경한다.
+     * @param form 내 비밀번호 변경 폼을 통해 전달되는 데이터
+     */
+    public void modifyMyPwd(MyChangePwForm form) {
+        User user = new User();
+        user.setNo(form.getNo()); // 어떤 사용자의 비밀번호를 변경할 지 사번을 전달한다.
+        user.setPassword(passwordEncoder.encode(form.getPassword())); // 암호화된 비밀번호를 DB에 전달한다.
+
+        userMapper.updateMyPassword(user);
+    }
+
+    /**
+     * 내 정보 수정에서 연락처만 변경한다.
+     * @param form 내 연락처 변경 폼을 통해 전달되는 데이터
+     */
+    public void modifyMyPhone(MyChangePhoneForm form) {
+        User user = new User();
+        user.setNo(form.getNo());
+        user.setPhone(UserUtils.getFormatPhoneNumber(form.getPhone())); // 양식에 따라 변경된 연락처를 DB에 전달한다.
+
+        userMapper.updateMyPhone(user);
     }
 }

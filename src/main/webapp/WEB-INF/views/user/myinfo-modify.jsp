@@ -11,39 +11,55 @@
     <title>workus template</title>
 </head>
 <body>
+
 <div id="divWrapper">
     <div id="divContents">
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
-            <div class="lnb">
+            <div class="lnb" style="position: fixed;">
+                <div class="lnb-btn text-center mb-4">
+                    <button type="button" class="btn btn-dark" id="addScheduleBtn">내 정보 보기</button>
+                </div>
+
+                <!-- LNB 메뉴 -->
+                <div class="lnb-menu">
+                    <!-- 직원정보 관리 시스템 -->
+                    <p class="listTitle">내 정보 수정</p>
+                    <label class="menu-label">
+                        <input class="checkbox-input" type="checkbox" checked="checked" id="division1">
+                        <a href="/user/myinfo">일반 정보 변경</a>
+                    </label>
+                    <label class="menu-label">
+                        <input class="checkbox-input" type="checkbox" id="division2">
+                        <a href="/user/changePw">비밀번호 변경</a>
+                    </label>
+                    <label class="menu-label">
+                        <input class="checkbox-input" type="checkbox" id="division3">
+                        <a href="/user/changePhone">연락처 변경</a>
+                    </label>
+                </div>
+
             </div>
             <main>
-                <h3 class="title1">내 정보 수정</h3>
+                <!-- 일반 정보 변경이 성공했을 때만, 보여주는 성공메시지 -->
+                <c:if test="${not empty message}">
+                    <div class="alert alert-success">${message}</div>
+                </c:if>
+
+                <h3 class="title1">일반 정보 변경</h3>
                 <div class="content">
                     <!-- 파일 전송을 위한 multipart/form-data 처리 -->
-                    <form action="/user/myinfo" method="post" enctype="multipart/form-data">
+                    <form action="/user/myinfo" method="post" enctype="multipart/form-data" id="form-modify-myinfo">
                         <!-- 로그인한 유저의 사번을 form 제출 시마다 제출한다. -->
                         <input type="hidden" name="no" value="${LOGIN_USERNO}">
                         <div class="input__block" style="justify-content: center;">
-                            <img src="/resources/repository/userprofile/${user.profileSrc}" alt="" class="profile-image">
+                            <img src="/resources/repository/userprofile/${user.profileSrc}" alt="" class="profile-image" id="previewImage">
                             <input type="file" id="fileInput" class="file-input" name="image" accept="image/*">
                         </div>
 
                         <div class="input__block">
-                            <input type="email" placeholder="이메일을 입력해주세요" name="email" value="${user.email}" />
-                        </div>
-
-                        <div class="input__block">
-                            <input type="password" placeholder="비밀번호 변경을 희망한다면, 변경을 원하는 비밀번호를 입력해주세요" name="password" />
-                        </div>
-
-                        <div class="input__block">
                             <textarea placeholder="자기소개를 입력해주세요" name="pr" >${user.pr}</textarea>
-                        </div>
-
-                        <div class="input__block">
-                            <input type="tel" placeholder="연락처를 입력해주세요" name="phone" value="${user.phone}" />
                         </div>
 
                         <div class="input__block">
@@ -93,15 +109,18 @@
         $('#fileInput').click(); // 파일 선택창이 열리도록 한다.
     });
     // 파일 선택창에서 파일 선택 시 이미지 미리보기
-    function previewImage(e) {
-        const fileInput = event.target;
-        const fileName = fileInput.files[0].name; // 선택된 파일의 이름을 가져옵니다.
-
-        // 파일명을 input의 name 속성에 설정합니다.
-        fileInput.setAttribute('name', fileName);
-
-        // 추가적인 이미지 미리보기 로직을 여기에 추가할 수 있습니다.
-    }
+    $(document).ready(function() {
+        $('#fileInput').on('change', function(event) { // 파일 입력창에 change 이벤트가 발생하면
+            const file = event.target.files[0]; // 선택된 파일
+            if (file) {
+                const reader = new FileReader(); // FileReader 객체 생성
+                reader.onload = function(e) {
+                    $('#previewImage').attr('src', e.target.result); // 미리보기 이미지 설정
+                }
+                reader.readAsDataURL(file); // 파일을 Data URL 형태로 읽기
+            }
+        });
+    });
 </script>
 <!-- 다음 우편번호 검색 스크립트 추가 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>

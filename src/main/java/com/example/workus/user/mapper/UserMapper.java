@@ -28,5 +28,10 @@ public interface UserMapper {
     List<User> getUsersByCondition(@Param("condition") Map<String, Object> condition); // 조건에 맞는 회원 정보 조회
 
     List<DeptDto> getAllDepts();
+
     void updateMyUser(@Param("user") User user); // 내 정보를 수정한다.
+    
+    void updateMyPhone(@Param("user") User user); // 내 연락처를 수정한다.
+    
+    void updateMyPassword(@Param("user") User user); // 내 비밀번호를 수정한다.
 }
