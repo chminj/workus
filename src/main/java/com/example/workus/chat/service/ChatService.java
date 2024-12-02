@@ -27,9 +27,14 @@ public class ChatService {
     public ListDto<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo, int page) {
         int totalRows = chatMapper.getTotalRows(userNo, chatroomNo);
         Pagination pagination = new Pagination(page, totalRows);
-        ListDto<Chat> dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
-        Collections.sort(dto.getData(), (data1, data2) ->
-                data1.getTime().compareTo(data2.getTime()));
+        ListDto<Chat> dto;
+        if(pagination.getBegin() != 0) {
+            dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
+            Collections.sort(dto.getData(), (data1, data2) ->
+                    data1.getTime().compareTo(data2.getTime()));
+        } else {
+            dto = new ListDto<>(Collections.emptyList(), pagination);
+        }
         return dto;
     }
 
