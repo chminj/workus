@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,18 +26,16 @@ public class MeetingController {
     @Autowired
     private MeetingService meetingService;
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String list(){ return "meeting/list"; }
 
     @PostMapping("/add")
     @ResponseBody
-    private Meeting add(MeetingForm form, @AuthenticationPrincipal LoginUser loginUser) {
-
+    public Meeting add(MeetingForm form, @AuthenticationPrincipal LoginUser loginUser) {
         form.setUserNo(loginUser.getNo());
 
-        Meeting meeting = meetingService.addNewMeeting(form);
-
-        return meeting;
+        return meetingService.addNewMeeting(form);
     }
 
     @PostMapping("/delete")
@@ -53,6 +52,7 @@ public class MeetingController {
     @PostMapping("/update")
     @ResponseBody
     public Meeting update(@RequestParam("id") Long eventId, MeetingForm form, @AuthenticationPrincipal LoginUser loginUser) {
+        System.out.println("=++++++++++++++++++++++++++++++++++++++++" + meetingService);
         Meeting meeting = meetingService.getMeetingByNo(eventId, loginUser.getNo());
         if (meeting != null) {
             meeting.setStartDate(DateTimeUtil.getLocalDateTime(form.getStartDate()));

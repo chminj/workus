@@ -6,6 +6,8 @@ import com.example.workus.meeting.mapper.MeetingMapper;
 import com.example.workus.meeting.vo.Meeting;
 import com.example.workus.security.LoginUser;
 import com.example.workus.common.util.DateTimeUtil;
+import com.example.workus.user.mapper.UserMapper;
+import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,18 +22,21 @@ public class MeetingService {
 
     @Autowired
     private MeetingMapper meetingMapper;
+    @Autowired
+    private UserMapper userMapper;
 
     public Meeting addNewMeeting(MeetingForm form) {
+        User user = userMapper.getUserByUserNo(form.getUserNo());
+
         Meeting meeting = new Meeting();
         meeting.setStartDate(DateTimeUtil.getLocalDateTime(form.getStartDate()));
         meeting.setEndDate(DateTimeUtil.getLocalDateTime(form.getEndDate()));
         meeting.setContent(form.getContent());
         meeting.setRoom(form.getRoom());
 
-        meeting.setUserNo(form.getUserNo());
+        meeting.setUserNo(user.getNo());
 
         meetingMapper.insertMeeting(meeting);
-
         return meeting;
     }
 
