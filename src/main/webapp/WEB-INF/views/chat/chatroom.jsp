@@ -193,6 +193,7 @@
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
 
 		let chatroomNo = null;
+		let page = null;
 
 		// 채팅방 입장
 		$('.chatroomDiv').on('click', '.chatroom', async function () {
@@ -297,6 +298,25 @@
 					}
 				});
 			})
+		})
+
+		// 더 보기
+		$('#chat').on('click', '#loadMoreBtn', async function () {
+			page++;
+			$('#loadMoreBtnDiv').remove();
+			try {
+				const response = await fetch('/ajax/chat/' + page + '/' + chatroomNo);
+				const result = await response.json();
+				const data = result.data;
+				if (response.ok) {
+					data.data.map(item => replaceFormatTime(item));
+					$('.chat-div').prepend(loadPlusChats(data));
+				} else {
+					console.log('채팅을 불러오는데 실패했습니다.', result.message);
+				}
+			} catch (error) {
+				console.log('에러메시지', error);
+			}
 		})
 
 		// 추가 초대를 위한 버튼
@@ -690,12 +710,13 @@
 
 		// 채팅방에 해당하는 채팅들을 ajax로 불러온다.
 		async function ajaxChatsData(chatroomNo) {
+			page = 1;
 			try {
-				const response = await fetch('/ajax/chat/' + chatroomNo);
+				const response = await fetch('/ajax/chat/' + page + '/' + chatroomNo);
 				const result = await response.json();
 				const data = result.data;
 				if (response.ok) {
-					data.map(item => replaceFormatTime(item));
+					data.data.map(item => replaceFormatTime(item));
 					return loadChats(data);
 				} else {
 					console.log('채팅을 불러오는데 실패했습니다.', result.message);
@@ -753,7 +774,15 @@
 			return `
 					<!-- 채팅 내용 영역 -->
 					<div class="flex-grow-1 p-3 chat-div" style="overflow-y: auto;">
-						\${data.map((chat) => `
+					<%-- 더 보기 버튼 --%>
+					\${data.paging.last === false ? `
+					<div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
+						<button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
+							<i class="bi bi-chevron-up me-1"></i>더 보기
+						</button>
+					</div>
+					`:``}
+						\${data.data.map((chat) => `
 							\${chat.isFirst === 'Y' ? `
 								<!-- 날짜 구분선 -->
 								<div class="d-flex align-items-center my-4">
@@ -792,6 +821,59 @@
 							</div>
 							`}
 						`).join('')}
+					</div>
+				`;
+		}
+
+		function loadPlusChats(data) {
+			return `
+					<%-- 더 보기 버튼 --%>
+					\${data.paging.last === false ? `
+					<div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
+						<button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
+							<i class="bi bi-chevron-up me-1"></i>더 보기
+						</button>
+					</div>
+			`:``}
+						\${data.data.map((chat) => `
+							\${chat.isFirst === 'Y' ? `
+								<!-- 날짜 구분선 -->
+								<div class="d-flex align-items-center my-4">
+									<div class="border-bottom flex-grow-1"></div>
+									<span class="mx-3 text-muted">\${chat.time.date}</span>
+									<div class="border-bottom flex-grow-1"></div>
+								</div>
+							` : ``}
+							\${LOGIN_USERNO === chat.user.no ? `
+								<div class="mb-3 w-75 ms-auto">
+									<div class="text-end mb-1">
+										<strong>나</strong>
+									</div>
+									<div class="d-flex justify-content-end">
+										<div class="bg-primary text-white rounded p-2 mb-1">
+											\${chat.content}
+										</div>
+									</div>
+									<div class="text-end">
+										<small class="text-muted">\${chat.time.time}</small>
+									</div>
+								</div>
+							` : `
+							<!-- 상대 메시지 -->
+							<div class="mb-3 w-75">
+								<div class="d-flex align-items-center mb-1">
+									<img src="" alt="프로필" class="rounded-circle me-2"/>
+									<strong>\${chat.user.name}</strong>
+								</div>
+								<div class="d-flex">
+									<div class="bg-light rounded p-2 mb-1">
+										\${chat.content}
+									</div>
+								</div>
+								<small class="text-muted">\${chat.time.time}</small>
+							</div>
+							`}
+			`).join('')}
 					</div>
 				`;
 		}

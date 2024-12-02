@@ -1,6 +1,7 @@
 package com.example.workus.chat.controller;
 
 import com.example.workus.chat.dto.ChatForm;
+import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;
@@ -12,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,12 +26,12 @@ public class RestChatController {
         this.chatService = chatService;
     }
 
-    @GetMapping("/chat/{chatroomNo}")
-    ResponseEntity<RestResponseDto<List<Chat>>> getAllChats(
+    @GetMapping("/chat/{page}/{chatroomNo}")
+    ResponseEntity<RestResponseDto<ListDto<Chat>>> getAllChats(
             @AuthenticationPrincipal LoginUser loginUser,
-            @PathVariable("chatroomNo") Long chatroomNo) {
-        List<Chat> chats = chatService.getAllChatsByChatroomNo(loginUser.getNo(), chatroomNo);
-        return ResponseEntity.ok(RestResponseDto.success(chats));
+            @PathVariable("chatroomNo") Long chatroomNo,
+            @PathVariable("page") int page) {
+        return ResponseEntity.ok(RestResponseDto.success(chatService.getAllChatsByChatroomNo(loginUser.getNo(), chatroomNo, page)));
     }
 
     @PostMapping("/chat/{chatroomNo}")
