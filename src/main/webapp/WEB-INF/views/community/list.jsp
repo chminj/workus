@@ -63,9 +63,8 @@
           <img src="" id="postProfile" alt="Profile Picture" class="profile">
           <div class="username" id="postUsername"></div>
           <div class="more-options" onclick="toggleDropdown()">⋮</div>
-          <div class="dropdown-menu" id="dropdownMenu2">
+          <div class="dropdown-menu" id="dropdownMenu">
             <div>수정</div>
-            <div>삭제</div>
           </div>
           <div class="popup-close" onclick="closePopup()">×</div>
         </div>
@@ -118,9 +117,9 @@ $(document).ready(function() {
     if (event.key === "Enter") {
       event.preventDefault();
 
-      var feedNo = $(this).closest("article").attr("id").replace('feed-', ''); // feed-no 추출
+      var feedNo = $(this).closest("article").attr("id").replace('feed-', '');
 
-      // 댓글 추가 함수 호출 (예: inserReply)
+
       inserReply(feedNo);
     }
   });
@@ -241,6 +240,7 @@ function inserReplyPopup(){
       }
     })
   }
+
   function  searchKeyword(event){
     event.preventDefault();
     currentPage = 1;
@@ -261,8 +261,7 @@ function inserReplyPopup(){
 
       }
     })
-}
-
+  }
   function appendFeeds(items) {
     for (let feed of items) {
 
@@ -276,16 +275,21 @@ function inserReplyPopup(){
           </div>
           <a href="#n" class="poster_id txt_id">\${feed.user.name}</a>
           <div class="dropdown-container">
-            <svg class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24" id="dropdownToggle">
+            <svg class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24" id="dropdownToggle" data-bs-toggle="dropdown">
               <circle cx="12" cy="12" r="1.5"></circle>
               <circle cx="6" cy="12" r="1.5"></circle>
               <circle cx="18" cy="12" r="1.5"></circle>
             </svg>
-            <div class="dropdown" id="dropdownMenu1">
-              <div class="dropdown-item">수정</div>
-              <div class="dropdown-item">삭제</div>
+            <ul class="dropdown-menu dropdown-menu-end p-3" id="ul-dropdown">
+               <div class="dropdown-item1" id="box-modify">수정</div>
+               <div class="dropdown-item2" id="box-delete">
+                    <form class="dropdown-delete" method="post" action="deleteFeed">
+                      <input type="hidden" name="feedNo" value="\${feed.no}" />
+                      <button type="submit" class="">삭제</button>
+                  </form>
+                </div>
+            </ul>
             </div>
-          </div>
         </div>
 
         <!--content-->
@@ -324,7 +328,7 @@ function inserReplyPopup(){
         <!--feed text-->
         <section class="feed_txt">
             <div><strong>\${feed.title}</strong><div>
-            <p>\${feed.content}></p>
+            <p>\${feed.content}</p>
             <div id="tags-\${feed.no}" style="margin: 10px 0;"></div>
         </section>
 
@@ -346,10 +350,8 @@ function inserReplyPopup(){
                 </div>
             </form>
         </div>
-
       </article>
     `;
-
       $("div.feed_board").append(content);
 
       let tags = "";
@@ -361,8 +363,25 @@ function inserReplyPopup(){
 
       $("#tags-" + feed.no).append(tags);
       $("#tags-popup" + feed.no).append(tags);
-
     }
   }
+
+
+//  @@@@@@@@@@@@@@@@@@@@ 드롭 다운 js @@@@@@@@@@@@@@@@@@@@
+const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
+
+// 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
+function toggleDropdown() {
+  menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
+}
+
+// 클릭 외부 시 드롭다운 닫기
+window.addEventListener('click', (event) => {
+  if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
+    menu.classList.remove('show'); // 드롭다운 숨기기
+  }
+});
+
 </script>
 </html>

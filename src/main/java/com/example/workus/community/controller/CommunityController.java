@@ -1,5 +1,6 @@
 package com.example.workus.community.controller;
 
+import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
 import com.example.workus.community.service.CommunityService;
@@ -7,10 +8,13 @@ import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,15 +28,15 @@ public class CommunityController {
     CommunityService communityService;
 
     @GetMapping("/list")
-    public String list(){
+    public String list() {
         return "community/list";
     }
 
     @GetMapping("/items")
     @ResponseBody
-    public List<Feed> getFeeds(@RequestParam(name ="page", required = false, defaultValue = "1") int page,
+    public List<Feed> getFeeds(@RequestParam(name = "page", required = false, defaultValue = "1") int page,
                                @RequestParam(name = "opt", required = false) String opt,
-                               @RequestParam(name = "keyword", required = false) String keyword){
+                               @RequestParam(name = "keyword", required = false) String keyword) {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
 
@@ -45,26 +49,26 @@ public class CommunityController {
     }
 
     @GetMapping("form")
-    public String form(){
-       return "community/form";
+    public String form() {
+        return "community/form";
     }
 
     @PostMapping("/insertFeed")
-    public String addFeed(FeedForm form ,@AuthenticationPrincipal LoginUser loginUser){
+    public String addFeed(FeedForm form, @AuthenticationPrincipal LoginUser loginUser) {
         Long userNo = loginUser.getNo();
 
         communityService.insertFeed(form, userNo);
         return "redirect:/community/list";
-   }
+    }
 
-   @PostMapping("/insertReply")
-   @ResponseBody
-    public Reply insertReply(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser ){
-       Long userNo = loginUser.getNo();
-       Reply reply = communityService.insertReply(commentForm, userNo);
+    @PostMapping("/insertReply")
+    @ResponseBody
+    public Reply insertReply(CommentForm commentForm, @AuthenticationPrincipal LoginUser loginUser) {
+        Long userNo = loginUser.getNo();
+        Reply reply = communityService.insertReply(commentForm, userNo);
 
-       return reply;
-   }
+        return reply;
+    }
 
     @GetMapping("/feed/{feedNo}")
     @ResponseBody
@@ -73,4 +77,11 @@ public class CommunityController {
         return feed;
     }
 
+    @PostMapping("deleteFeed")
+    public String deleteFeed(long feedNo, @AuthenticationPrincipal LoginUser loginUser, RedirectAttributes redirectAttributes) {
+        Feed feed = communityService.getFeed(feedNo);
+        Long userNo = loginUser.getNo();
+        communityService.deleteFeed(feedNo, userNo);
+        return "redirect:/community/list";
+    }
 }

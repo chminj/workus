@@ -945,3 +945,27 @@ input[type="text"], textarea {
     background: lightyellow;
     border-color: gold;
 }
+.dropdown-item1{
+    padding: 10px; /* 항목의 여백 */
+    font-size: 14px; /* 글자 크기 */
+    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+
+}
+
+.dropdown-delete{
+    padding: 10px; /* 항목의 여백 */
+    font-size: 14px; /* 글자 크기 */
+    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+    text-align: center; /* 텍스트 중앙 정렬 */
+}
+.dropdown-delete button {
+    font-size: 14px; /* 글자 크기 */
+    cursor: pointer; /* 마우스 커서 포인터로 변경 */
+    padding: 10px; /* 항목의 여백 */
+    display: block; /* 버튼을 블록 요소로 변경 */
+    margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
+}
+
+
+
