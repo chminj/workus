@@ -16,10 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -53,6 +50,19 @@ public class ChatroomServcie {
             }
             chatrooms.add(chatroomDto);
         }
+        // 가장 최근 채팅이 위로 오도록 정렬
+        Collections.sort(chatrooms, (chatroom1, chatroom2) -> {
+            if (chatroom1.getLastChatDate() == null && chatroom2.getLastChatDate() == null) {
+                return 0;
+            }
+            if (chatroom1.getLastChatDate() == null) {
+                return 1;
+            }
+            if (chatroom2.getLastChatDate() == null) {
+                return -1;
+            }
+            return chatroom2.getLastChatDate().compareTo(chatroom1.getLastChatDate());
+        });
         return chatrooms;
     }
 

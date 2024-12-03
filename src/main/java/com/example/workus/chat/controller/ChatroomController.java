@@ -31,7 +31,7 @@ public class ChatroomController {
 
     // 왼쪽 메뉴에 필요한 것들을 가져온다.
     @GetMapping("/list")
-    public String chatroom(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String getAllChatrooms(@AuthenticationPrincipal LoginUser loginUser, Model model) {
         // 1. 채팅방들을 가져온다.
         List<ChatroomDto> chatrooms = chatroomServcie.getAllChatrooms(loginUser.getNo());
         model.addAttribute("chatrooms", chatrooms);
