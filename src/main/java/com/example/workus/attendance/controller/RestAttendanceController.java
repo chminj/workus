@@ -1,7 +1,7 @@
 package com.example.workus.attendance.controller;
 
 import com.example.workus.attendance.dto.AnnualLeaveHistoryDto;
-import com.example.workus.attendance.dto.ApprovalRequestDto;
+import com.example.workus.attendance.dto.AtdApprovalRequestDto;
 import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.security.LoginUser;
@@ -25,8 +25,8 @@ public class RestAttendanceController {
     private UserService userService;
 
     @PostMapping("/approve")
-    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<ApprovalRequestDto> requestDtoList) {
-        for (ApprovalRequestDto reqDto : requestDtoList) {
+    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList) {
+        for (AtdApprovalRequestDto reqDto : requestDtoList) {
             // 각 승인 요청에 대해 서비스 메소드 호출
             attendanceService.approveRequests(reqDto);
         }

@@ -13,7 +13,7 @@ import java.util.Date;
 @ToString
 @Builder
 @Alias("apvForm")
-public class ApprovalForm {
+public class AtdApprovalForm {
     private Long no;
     private String reason;
     @DateTimeFormat(pattern = "yyyy-MM-dd")

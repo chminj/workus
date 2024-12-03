@@ -4,7 +4,6 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,7 +12,7 @@ import java.util.List;
 @ToString
 @Builder
 @Alias("apvReqDto")
-public class ApprovalRequestDto {
+public class AtdApprovalRequestDto {
     private Long atdNo;
     private String status;
     private BigDecimal dayTotal;

@@ -5,7 +5,6 @@ import com.example.workus.attendance.mapper.AttendanceMapper;
 import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.util.Pagination;
-import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -54,7 +52,7 @@ public class AttendanceService {
      *
      * @param form 연차 신청 폼
      */
-    public void insertApprovalForm(ApprovalForm form, List<ApprovalUserDto> users) {
+    public void insertApprovalForm(AtdApprovalForm form, List<AtdApprovalUserDto> users) {
         attendanceMapper.insertApproval(form);
         attendanceMapper.insertApprovalUsers(users, form);
     }
@@ -178,11 +176,11 @@ public class AttendanceService {
     /**
      * 결재 요청이 온 연차 신청을 승인하여 승인 완료 처리한다.
      *
-     * @param approvalRequestDto 요청 승인
+     * @param atdApprovalRequestDto 요청 승인
      */
-    public void approveRequests(ApprovalRequestDto approvalRequestDto) {
+    public void approveRequests(AtdApprovalRequestDto atdApprovalRequestDto) {
         // 1) 연차 이력 추가를 위한 데이터 가져오기
-        Map<String, Object> annualLeaveData = attendanceMapper.getAnnualLeaveData(approvalRequestDto.getAtdNo());
+        Map<String, Object> annualLeaveData = attendanceMapper.getAnnualLeaveData(atdApprovalRequestDto.getAtdNo());
 
         // 필요한 값 추출
         BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
@@ -191,19 +189,19 @@ public class AttendanceService {
 
         // 2) 연차 이력 추가
         if (updatedCount != 0) {
-            approvalRequestDto.setUsedDate(BigDecimal.valueOf(updatedCount));
-            approvalRequestDto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
-            approvalRequestDto.setTotalDay(updatedCount.intValue());
+            atdApprovalRequestDto.setUsedDate(BigDecimal.valueOf(updatedCount));
+            atdApprovalRequestDto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
+            atdApprovalRequestDto.setTotalDay(updatedCount.intValue());
 
         } else {
-            approvalRequestDto.setUsedDate(categoryCount);
-            approvalRequestDto.setUnusedDate(unusedLeave.subtract(categoryCount));
-            approvalRequestDto.setTotalDay(categoryCount.intValue());
+            atdApprovalRequestDto.setUsedDate(categoryCount);
+            atdApprovalRequestDto.setUnusedDate(unusedLeave.subtract(categoryCount));
+            atdApprovalRequestDto.setTotalDay(categoryCount.intValue());
         }
-        attendanceMapper.insertAnnualLeaveHistory(approvalRequestDto);
+        attendanceMapper.insertAnnualLeaveHistory(atdApprovalRequestDto);
 
         // 3) 상태 업데이트
-        attendanceMapper.updateStatusByAtdNo(approvalRequestDto.getAtdNo());
+        attendanceMapper.updateStatusByAtdNo(atdApprovalRequestDto.getAtdNo());
 
         // 4) 잔여 연차 차감
         attendanceMapper.updateAnnualLeaveByUnusedDate();

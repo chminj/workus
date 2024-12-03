@@ -9,6 +9,9 @@
     <%@ include file="../common/common.jsp" %>
     <link rel="stylesheet" href="/resources/css/approval.css">
     <script src="/resources/js/approval.js"></script>
+    <!-- include summernote css/js-->
+    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
     <title>workus ㅣ 결재</title>
 </head>
 <body>
@@ -129,7 +132,7 @@
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
-                                        <td colspan="5">팀장 이름 넣기</td>
+                                        <td colspan="5">${leader.name}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -182,22 +185,97 @@
                             </form>
                         </div>
                         <div id="300" class="form">
-                            <h2>양식 3</h2>
+                            <h2 class="fs-4 text-center">양식 3</h2>
                             <form>
-                                <label for="address">주소:</label>
-                                <input type="text" id="address" name="address" required>
-                                <label for="phone">전화번호:</label>
-                                <input type="text" id="phone" name="phone" required>
-                                <button type="submit">제출</button>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active title">제목</th>
+                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active title">열람/공람자</th>
+                                        <td colspan="5">${leader.name}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active">복직 일자</th>
+                                        <td colspan="5">
+                                            <div class="d-flex">
+                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">복직 사유</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">기타사항</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="btnW mgt40 d-flex justify-content-center">
+                                    <input type="reset" value="입력 취소" class="btn btn-secondary"/>
+                                    <button type="submit" class="btn btn-dark">결재 요청하기</button>
+                                </div>
                             </form>
                         </div>
                         <div id="400" class="form">
-                            <h2>양식 3</h2>
-                            <form>ㄴㄷㄷ
+                            <h2 class="fs-4 text-center">양식 4</h2>
+                            <form>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active title">제목</th>
+                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active title">열람/공람자</th>
+                                        <td colspan="5">${leader.name}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active">협조요청일</th>
+                                        <td colspan="2">
+                                            <div class="d-flex">
+                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                            </div>
+                                        </td>
+                                        <th class="table-active">완료예정일</th>
+                                        <td colspan="2">
+                                            <div class="d-flex">
+                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">예정 작업 내용</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="btnW mgt40 d-flex justify-content-center">
+                                    <input type="reset" value="입력 취소" class="btn btn-secondary"/>
+                                    <button type="submit" class="btn btn-dark">결재 요청하기</button>
+                                </div>
                             </form>
                         </div>
                         <div id="500" class="form">
-                            <h2>양식 3</h2>
+                            <h2 class="fs-4 text-center">양식 5</h2>
                             <form>
                                 <table class="table">
                                     <tbody>
@@ -209,7 +287,151 @@
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
-                                        <td colspan="5">팀장 이름 넣기</td>
+                                        <td colspan="5">${leader.name}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active">교육과정명</th>
+                                        <td colspan="5">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">교육기관</th>
+                                        <td colspan="5">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">교육참석일</th>
+                                        <td colspan="5">
+                                            <div class="d-flex">
+                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <span class="mgl5 mgr5">~</span>
+                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">참석목적</th>
+                                        <td colspan="2">
+                                            <textarea></textarea>
+                                        </td>
+                                        <th class="table-active">동행자</th>
+                                        <td colspan="2">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">교육내용</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="btnW mgt40 d-flex justify-content-center">
+                                    <input type="reset" value="입력 취소" class="btn btn-secondary"/>
+                                    <button type="submit" class="btn btn-dark">결재 요청하기</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="600" class="form">
+                            <h2 class="fs-4 text-center">양식 6</h2>
+                            <form>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active title">제목</th>
+                                        <td colspan="5">
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active title">열람/공람자</th>
+                                        <td colspan="5">${leader.name}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active">외근 일정</th>
+                                        <td colspan="5">
+                                            <div class="d-flex">
+                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <span class="mgl5 mgr5">~</span>
+                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">외근 목적</th>
+                                        <td colspan="5">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">외근 지역</th>
+                                        <td colspan="2">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                        <th class="table-active">외근 동행자</th>
+                                        <td colspan="2">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">주요 업무</th>
+                                        <td colspan="5">
+                                            <input type="text" value="" class="form-control">
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">이동 방안</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">준비 사항</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active">기타 사항</th>
+                                        <td colspan="5">
+                                            <textarea></textarea>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="btnW mgt40 d-flex justify-content-center">
+                                    <input type="reset" value="입력 취소" class="btn btn-secondary"/>
+                                    <button type="submit" class="btn btn-dark">결재 요청하기</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div id="700" class="form">
+                            <h2 class="fs-4 text-center">양식 7</h2>
+                            <form>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active title">제목</th>
+                                        <td colspan="5">
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active title">열람/공람자</th>
+                                        <td colspan="5">${leader.name}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -219,23 +441,25 @@
                                     <tr>
                                         <th class="table-active">방문 날짜</th>
                                         <td colspan="5">
-                                            <input type="text" value="">
+                                            <div class="d-flex">
+                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                            </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">방문처</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <input type="text" value="" class="form-control">
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">방문 동기</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <input type="text" value="" class="form-control">
                                         </td>
                                         <th class="table-active">방문 시간</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <input type="text" value="" class="form-control">
                                         </td>
                                     </tr>
                                     <tr>
@@ -246,28 +470,34 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <div class="btnW d-flex justify-content-center">
+                                <div class="btnW mgt40 d-flex justify-content-center">
                                     <input type="reset" value="입력 취소" class="btn btn-secondary"/>
                                     <button type="submit" class="btn btn-dark">결재 요청하기</button>
                                 </div>
                             </form>
                         </div>
-                        <div id="600" class="form">
-                            <h2>양식 3</h2>
-                            <form>
-                                ㅈㄷㅈㄷ
-                            </form>
-                        </div>
-                        <div id="700" class="form">
-                            <h2>양식 3</h2>
-                            <form>
-                                ㅇㄹㅇㄹ
-                            </form>
-                        </div>
                         <div id="800" class="form">
-                            <h2>양식 8</h2>
+                            <h2 class="fs-4 text-center">양식 8</h2>
                             <form>
-                                <%--                                --%>
+                                <table class="table">
+                                    <tbody>
+                                    <tr>
+                                        <th class="table-active title">제목</th>
+                                        <td colspan="5">
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="table-active title">열람/공람자</th>
+                                        <td colspan="5">${leader.name}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <textarea name="noticeDoc" id="summernote" value=""></textarea>
+                                <div class="btnW mgt40 d-flex justify-content-center">
+                                    <input type="reset" value="입력 취소" class="btn btn-secondary"/>
+                                    <button type="submit" class="btn btn-dark">결재 요청하기</button>
+                                </div>
                             </form>
                         </div>
                     </div>

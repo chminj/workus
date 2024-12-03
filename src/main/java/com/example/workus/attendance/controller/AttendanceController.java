@@ -55,10 +55,10 @@ public class AttendanceController {
     }
 
     @PostMapping("/getApproval")
-    public String getApproval(ApprovalForm form
+    public String getApproval(AtdApprovalForm form
             , @AuthenticationPrincipal LoginUser loginUser
             , @RequestParam(required = false) int dayTotal) {
-        ApprovalForm apvForm = new ApprovalForm();
+        AtdApprovalForm apvForm = new AtdApprovalForm();
         apvForm.setNo(form.getNo());
         apvForm.setReason(form.getReason());
         apvForm.setFromDate(form.getFromDate());
@@ -66,7 +66,7 @@ public class AttendanceController {
         apvForm.setCategoryNo(form.getCategoryNo());
         apvForm.setUserNo(loginUser.getNo());
         apvForm.setTime(form.getTime());
-        List<ApprovalUserDto> users = new ArrayList<>();
+        List<AtdApprovalUserDto> users = new ArrayList<>();
         String[] apvs = form.getApv().split(",");
         String[] refs = form.getRef().split(",");
         // 승인자 리스트 추가
@@ -74,7 +74,7 @@ public class AttendanceController {
         for (String value : apvs) {
             Long intValue = Long.valueOf(value);
 
-            ApprovalUserDto userDto = ApprovalUserDto.builder()
+            AtdApprovalUserDto userDto = AtdApprovalUserDto.builder()
                     .status("A")
                     .userNo(intValue)
                     .sequence(index++)
@@ -86,7 +86,7 @@ public class AttendanceController {
         index = 0;
         for (String value : refs) {
             Long intValue = Long.valueOf(value);
-            ApprovalUserDto userDto = ApprovalUserDto.builder()
+            AtdApprovalUserDto userDto = AtdApprovalUserDto.builder()
                     .status("R")
                     .userNo(intValue)
                     .sequence(index++)
@@ -96,9 +96,9 @@ public class AttendanceController {
         }
 
         // ApprovalRequestDto 생성 및 dayTotal 설정
-        ApprovalRequestDto approvalRequestDto = new ApprovalRequestDto();
-        approvalRequestDto.setAtdNo(form.getNo());
-        approvalRequestDto.setDayTotal(BigDecimal.valueOf(dayTotal));
+        AtdApprovalRequestDto atdApprovalRequestDto = new AtdApprovalRequestDto();
+        atdApprovalRequestDto.setAtdNo(form.getNo());
+        atdApprovalRequestDto.setDayTotal(BigDecimal.valueOf(dayTotal));
 
         attendanceService.insertApprovalForm(apvForm, users);
 
