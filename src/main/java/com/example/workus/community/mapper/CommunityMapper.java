@@ -35,5 +35,10 @@ public interface CommunityMapper {
     // 최신댓글 한개 조회
     Reply getReplyByFeedNo(@Param("feedNo") long feedNo);
 
+    // 게시글 삭제
+    void deleteReplysByFeedNo(@Param("feedNo") long feedNo);
+    void deleteHashTagsByFeedNo(@Param("feedNo") long feedNo);
+    void deleteFeedsByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
+
 
 }

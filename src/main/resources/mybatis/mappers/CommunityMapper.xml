@@ -248,5 +248,20 @@
         ORDER BY R.REPLY_NO DESC
             LIMIT 1
     </select>
-
+    <!--    void deleteReplysByFeedNo(@Param("feedNo") long feedNo);
+            void deleteHashTagsByFeedNo(@Param("feedNo") long feedNo);
+            void deleteFeedsByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
+    -->
+    <delete id="deleteReplysByFeedNo">
+        delete from WORKUS_REPLY
+        where COMMUNITY_NO = #{feedNo}
+    </delete>
+    <delete id="deleteHashTagsByFeedNo">
+        delete from WORKUS_HASHTAG
+        where COMMUNITY_NO = #{feedNo}
+    </delete>
+    <delete id="deleteFeedsByFeedNo">
+        delete from WORKUS_COMMUNITY
+        where  COMMUNITY_NO = #{feedNo} and USER_NO = #{userNo}
+    </delete>
 </mapper>

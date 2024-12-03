@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -131,6 +132,18 @@ public class CommunityService {
         feed.setReplys(replys);
         return feed;
     }
+
+
+    public void deleteFeed(Long feedNo, Long userNo) {
+        Feed feed = communityMapper.getFeedByNo(feedNo); // 번호에 맞는 피드찾기
+        System.out.println(feed.getNo());
+        communityMapper.deleteReplysByFeedNo(feedNo);         // 게시글에 맞는 댓글 삭제
+        communityMapper.deleteHashTagsByFeedNo(feedNo);      // 게시글에 맞는 해쉬태그 삭제
+        communityMapper.deleteFeedsByFeedNo(feedNo,userNo); // 게시글 삭제 맨 마지막에 삭제 되어야함
+
+    }
+
+
 
 
 }
