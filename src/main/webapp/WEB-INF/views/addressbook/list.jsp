@@ -33,7 +33,7 @@
             </label>
             <label class="menu-label">
                 <input class="checkbox-input" type="checkbox" id="division0">
-                <a>신규 직원 등록</a>
+                <a href="/address-book/insert">신규 직원 등록</a>
             </label>
             <label class="menu-label">
                 <input class="checkbox-input" type="checkbox" id="division2">
