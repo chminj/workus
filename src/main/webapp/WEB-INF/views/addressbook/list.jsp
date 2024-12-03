@@ -45,6 +45,7 @@
       <main>
         <h3 class="title1">직원정보 조회</h3>
         <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
+        <p class="description">※ 상세 정보를 보고 싶은 사원의 이름을 클릭해주세요.</p>
         <div class="content">
           <section class="member-search-container">
             <!-- 검색 바 -->
@@ -91,8 +92,10 @@
                         <img loading="lazy" src="/resources/repository/userprofile/${user.profileSrc}" class="avatar-image" alt="${user.profileSrc}" />
                       </a>
                       <div class="info-block">
-                        <h3 class="info-title">${user.name}</h3>
-                        <p class="info-description">${user.deptName}&nbsp;${user.positionName}</p>
+                        <h3 class="info-title"><a href="/address-book/detail?no=${user.no}">${user.name}</a></h3>
+                        <p class="info-description">
+                            ${user.deptName}&nbsp;
+                            ${user.positionName}</p>
                         <p class="contact-info">Email: ${user.email}<br>연락처: ${user.phone}</p>
                         <p class="address-info">주소: ${user.address}</p>
                       </div>
