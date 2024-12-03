@@ -799,6 +799,14 @@
                                         <div class="border-bottom flex-grow-1"></div>
                                     </div>
                                     ` : ``}
+                                <!-- 입장/퇴장 구분선 -->
+                                <div class="d-flex align-items-center my-4">
+                                    <div class="border-bottom flex-grow-1"></div>
+                                        <div class="message">
+                                            <span className="mx-3 text-muted">홍길동님이 입장하셨습니다.</span>
+                                        </div>
+                                    <div class="border-bottom flex-grow-1"></div>
+                                </div>
                                 \${LOGIN_USERNO === chat.user.no ? `
                                     <div class="mb-3 w-75 ms-auto">
                                         <div class="text-end mb-1">
