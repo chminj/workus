@@ -167,4 +167,10 @@ public class UserController {
 
         return "addressbook/list";
     }
+
+    @GetMapping("/address-book/insert")
+    @PreAuthorize("hasRole('ADMIN')") // 관리자 권한이 있을 때만 접근 가능하도록 한다.
+    public String insertEmployeeForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+        return "addressbook/insert-employee";
+    }
 }
