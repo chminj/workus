@@ -1,4 +1,4 @@
-package com.example.workus.attendance.vo;
+package com.example.workus.approval.vo;
 
 import lombok.*;
 import org.apache.ibatis.type.Alias;
@@ -9,9 +9,8 @@ import org.apache.ibatis.type.Alias;
 @Getter
 @Setter
 @ToString
-@Alias("atdCategory")
-public class AttendanceCategory {
-    private Long no;
+@Alias("apvCategory")
+public class ApprovalCategory {
+    private int no;
     private String name;
-    private double count;
 }

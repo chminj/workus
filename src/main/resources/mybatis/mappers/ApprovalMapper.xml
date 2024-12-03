@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.workus.approval.mapper.ApprovalMapper">
+    <select id="getAllCategories" resultType="apvCategory">
+        SELECT APV_CATEGORY_NO as no
+            , APV_CATEGORY_NAME as name
+        FROM
+            WORKUS_APPROVAL_CATEGORY;
+    </select>
+
+</mapper>

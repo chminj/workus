@@ -245,8 +245,8 @@
 
     <update id="updateMyUser">
         UPDATE WORKUS_USERS
-        SET USER_PR       = #{user.pr},
-            USER_ADDRESS  = #{user.address},
+        SET USER_PR          = #{user.pr},
+            USER_ADDRESS     = #{user.address},
             USER_PROFILE_SRC = #{user.profileSrc}
         WHERE USER_NO = #{user.no}
     </update>
@@ -262,4 +262,19 @@
         SET USER_PHONE = #{user.phone}
         WHERE USER_NO = #{user.no}
     </update>
+
+    <select id="getUserRoleNo" resultType="int">
+        SELECT ROLE_NO
+        FROM WORKUS_USERS
+        WHERE USER_NO = #{userNo}
+    </select>
+
+    <select id="getLeaderByDeptNo" resultType="User">
+        SELECT U.USER_NO   as leaderNo
+             , U.USER_NAME as leaderName
+             , U.ROLE_NO   as leaderRoleNo
+        FROM WORKUS_USERS U
+                 JOIN WORKUS_DEPT D ON D.LEADER_NO = U.USER_NO
+        WHERE D.DEPT_NO = #{deptNo}
+    </select>
 </mapper>

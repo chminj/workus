@@ -6,10 +6,8 @@
         List<Feed> getFeeds(@Param("begin") int begin, @Param("end") int end);
     -->
     <select id="getFeeds" resultType="Feed">
-        select
-            x.*
-        from (select
-                  row_number() over (order by B.community_no desc) rn
+        select x.*
+        from (select row_number() over (order by B.community_no desc) rn
                     , B.community_no as no
                     , B.COMMUNITY_TITLE as title
                     , B.COMMUNITY_CONTENT as content
@@ -32,8 +30,7 @@
          List<HashTag> getHashTags(@Param("feedNo") int feedNo);
     -->
     <select id="getHashTagsByFeedNo" resultType="HashTag">
-        SELECT
-            H.HASHTAG_NO    as no,
+        SELECT H.HASHTAG_NO as no,
         H.HASHTAG_NAME  as name
         FROM
             WORKUS_HASHTAG H
@@ -44,19 +41,16 @@
     <!--
         int getTotalRows();
      -->
-    <select id="getTotalRows"  resultType="int">
-        select
-            count(*)
-        from
-            WORKUS_COMMUNITY
+    <select id="getTotalRows" resultType="int">
+        select count(*)
+        from WORKUS_COMMUNITY
     </select>
 
     <!--
         Feed getFeedByNo(@Param("feedNo") long feedNo);
     -->
     <select id="getFeedByNo" resultType="Feed">
-        select
-            B.community_no as no
+        select B.community_no as no
         , B.COMMUNITY_TITLE as title
         , B.COMMUNITY_CONTENT as content
         , B.COMMUNITY_MEDIA_URL as mediaUrl
@@ -78,8 +72,7 @@
          List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
     -->
     <select id="getReplysByFeedNo" resultType="Reply">
-        select
-            R.REPLY_NO AS no,
+        select R.REPLY_NO AS no,
             R.REPLY_CONTENT AS content,
             R.REPLY_CREATED_DATE AS createdDate,
             B.COMMUNITY_NO AS "feed.no",
@@ -124,7 +117,7 @@
         ON
         B.USER_NO = U.USER_NO
         LEFT JOIN
-            WORKUS_HASHTAG H
+        WORKUS_HASHTAG H
         ON B.COMMUNITY_NO = H.COMMUNITY_NO
         <where>
             <if test="condition.opt != null">
@@ -151,7 +144,7 @@
     -->
     <select id="getTotalRows2" resultType="int">
         select
-            COUNT(*)
+        COUNT(*)
         from
         WORKUS_COMMUNITY B
         LEFT JOIN
@@ -201,11 +194,10 @@
     -->
     <insert id="insertHashTag">
         insert into WORKUS_HASHTAG
-        (HASHTAG_NAME
-        ,COMMUNITY_NO)
-        values
-            (#{hashTag.name}
-            ,#{hashTag.feed.no})
+        ( HASHTAG_NAME
+        , COMMUNITY_NO)
+        values ( #{hashTag.name}
+               , #{hashTag.feed.no})
     </insert>
 
     <!--
@@ -227,8 +219,7 @@
         Reply getReplyByFeedNo(@Param("feedNo") long feedNo);
     -->
     <select id="getReplyByFeedNo" resultType="Reply">
-        select
-            R.REPLY_NO AS no,
+        select R.REPLY_NO AS no,
             R.REPLY_CONTENT AS content,
             R.REPLY_CREATED_DATE AS createdDate,
             B.COMMUNITY_NO AS "feed.no",
