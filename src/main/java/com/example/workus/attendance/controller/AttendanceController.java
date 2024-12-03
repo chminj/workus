@@ -95,7 +95,7 @@ public class AttendanceController {
             users.add(userDto);
         }
 
-        // ApprovalRequestDto 생성 및 dayTotal 설정 (아직 수정중)
+        // ApprovalRequestDto 생성 및 dayTotal 설정
         ApprovalRequestDto approvalRequestDto = new ApprovalRequestDto();
         approvalRequestDto.setAtdNo(form.getNo());
         approvalRequestDto.setDayTotal(BigDecimal.valueOf(dayTotal));

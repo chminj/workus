@@ -103,7 +103,7 @@ public class AttendanceService {
      * @return 권한 번호
      */
     public int getUserRoleNo(Long userNo) {
-        return attendanceMapper.getUserRoleNo(userNo);
+        return userMapper.getUserRoleNo(userNo);
     }
 
     /**
@@ -193,8 +193,7 @@ public class AttendanceService {
         if (updatedCount != 0) {
             approvalRequestDto.setUsedDate(BigDecimal.valueOf(updatedCount));
             approvalRequestDto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
-            approvalRequestDto
-                    .setTotalDay(updatedCount.intValue());
+            approvalRequestDto.setTotalDay(updatedCount.intValue());
 
         } else {
             approvalRequestDto.setUsedDate(categoryCount);

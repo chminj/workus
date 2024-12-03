@@ -11,7 +11,7 @@
         where U.POSITION_NO = P.POSITION_NO
           and U.User_NO = #{userNo}
     </select>
-    <select id="getAllCategories" resultType="atdCategoryDto">
+    <select id="getAllCategories" resultType="atdCategory">
         SELECT ATD_CATEGORY_NO as no
             , ATD_CATEGORY_NAME as name
             , ATD_CATEGORY_COUNT as count
@@ -144,11 +144,6 @@
         END,
         A.ATD_NO ASC
         LIMIT #{condition.offset}, #{condition.end}
-    </select>
-    <select id="getUserRoleNo" resultType="int">
-        SELECT ROLE_NO
-        FROM WORKUS_USERS
-        WHERE USER_NO = #{userNo}
     </select>
     <select id="getAllReferenceFormsByRoleNo" resultType="refViewDto">
         SELECT A.ATD_NO AS atdNo

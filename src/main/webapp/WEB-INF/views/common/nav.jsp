@@ -1,4 +1,4 @@
-<%@ page pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8" %>
 <%@ include file="tags.jsp" %>
 <div class="leftMenu">
     <div class="gnb">
@@ -125,7 +125,7 @@
         </div>
         <div class="gnbList">
             <ul>
-                <li class="gnb">
+                <li class="gnb d-none">
                     <a href="">
                         <span class="gnbIcon">
                             <i class="bi bi-envelope"></i>
@@ -173,8 +173,8 @@
                         <span class="gnbText">근태</span>
                     </a>
                 </li>
-                <li class="gnb">
-                    <a href="">
+                <li class="gnb ${menu eq 'approval' ? 'on' : '' }">
+                    <a href="../approval/form-list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topEas"></use>

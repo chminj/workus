@@ -35,9 +35,6 @@ public interface AttendanceMapper {
     // 내가 참조자인 목록 조회
     List<RefViewDto> getAllReferenceFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
 
-    // 권한 조회
-    int getUserRoleNo(@Param("userNo") Long userNo);
-
     // 내가 결재자인 목록 조회
     List<ApvViewDto> getAllApprovalFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
 

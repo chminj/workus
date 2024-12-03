@@ -31,7 +31,7 @@ public class User {
     private double unusedAnnualLeave;
     private long positionNo;
     private String positionName;
-    private long deptNo;
+    private Long deptNo;
     private String deptName;
     private int roleNo;
     private String roleName;

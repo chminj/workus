@@ -1,0 +1,158 @@
+@charset "UTF-8";
+
+.lnb li a {
+    position: relative;
+    z-index: 1;
+    padding: 4px 2px;
+}
+
+.lnb li a:after {
+    content: "";
+    left: 0;
+    bottom: 3px;
+    width: 0;
+    height: 9px;
+    z-index: -1;
+    background-color: #e91e63;
+    position: absolute;
+    display: inline-block;
+    transition: all 0.3s ease;
+    opacity: 0.1;
+}
+
+.lnb li a:hover:after {
+    width: 100%;
+}
+
+.lnb li.on a:after {
+    opacity: 0.3;
+    width: 100%;
+}
+
+.approvalDepth {
+    border: none;
+}
+
+.approvalDepth .accordion-item {
+    background-color: transparent;
+    border: none;
+}
+
+.approvalDepth .accordion-item:last-of-type .accordion-button.collapsed, .approvalDepth .accordion-button:not(.collapsed) {
+    padding: 16px 0;
+    border-radius: 0;
+    background-color: transparent;
+    color: #1f1f1f;
+}
+
+.accordion-button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+}
+
+.lnb .list1 li {
+    padding: 10px 0;
+}
+
+.lnb .list1 {
+    margin-bottom: 5px;
+}
+
+.lnb .list2 li {
+    padding: 2px 1px;
+}
+
+.containerW {
+    display: flex;
+    width: 100%;
+    margin-top: 32px;
+}
+
+.sidebar {
+    width: 230px;
+    height: calc(100vh - 165px);
+    box-sizing: border-box;
+    border: 2px solid #ddd;
+    box-shadow: 1px 3px 4px 2px #f3f3f3;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar li {
+    font-size: 17px;
+    padding: 7px 10px;
+    cursor: pointer;
+}
+
+.sidebar li:hover {
+    background-color: #f3f3f3;
+}
+
+.content {
+    flex: 1;
+    padding: 0 20px 0 40px;
+    margin: 0;
+}
+
+.form {
+    display: none;
+    border: 1px solid #ddd;
+    padding: 20px;
+    border-radius: 0;
+    height: calc(100vh - 165px);
+    box-shadow: 1px 3px 4px 2px #f3f3f3;
+}
+
+.form.active {
+    display: block;
+}
+
+.form .text-center {
+    margin: 20px 0 36px;
+}
+
+.form table {
+    font-size: 17px;
+    border: 1px solid #ddd;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.form table textarea {
+    width: 100%;
+    resize: none;
+    border: 1px solid #ddd;
+    border-radius: 1px;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.form .table > :not(caption) > * > * {
+    padding: 15px 12px;
+    vertical-align: middle;
+}
+
+.form table th.table-active {
+    font-weight: normal;
+    background-color: #f1f1f1;
+    box-shadow: none;
+}
+
+.form table .mgl5.mgr5 {
+    font-size: 20px;
+    vertical-align: middle
+}
+
+.btnW input {
+    border-radius: 6px;
+}
+
+.btnW button {
+    margin-left: 10px;
+}

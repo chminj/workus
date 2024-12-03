@@ -62,5 +62,4 @@ public class RestAttendanceController {
         return ResponseEntity.ok(Map.of("events", events, "depts", depts, "roleNo", roleNo));
     }
 
-
 }
