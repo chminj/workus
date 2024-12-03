@@ -83,7 +83,7 @@ public class UserController {
         userService.modifyMyUser(form); // Form에 담긴 데이터를 서비스에 전달한다.
 
         // GET 방식 URL로 localhost/user/myinfo?userNo=사번으로 redirect 하기.
-        redirectAttributes.addFlashAttribute("message", "일반 정보 변경에 성공했습니다.");
+        RedirectAttributes message = redirectAttributes.addFlashAttribute("message", "일반 정보 변경에 성공했습니다.");
         return "redirect:/user/myinfo"; // GET 방식으로 리다이렉트
     }
 
@@ -172,5 +172,13 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')") // 관리자 권한이 있을 때만 접근 가능하도록 한다.
     public String insertEmployeeForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
         return "addressbook/insert-employee";
+    }
+
+    @GetMapping("/address-book/detail")
+    public String detail(int no, Model model) {
+        User user = userService.getUserByUserNo(no); // 사번으로 해당 유저를 조회한다.
+        model.addAttribute("user", user); // 유저를 view 객체에 전달한다.
+
+        return "addressbook/detail-info";
     }
 }
