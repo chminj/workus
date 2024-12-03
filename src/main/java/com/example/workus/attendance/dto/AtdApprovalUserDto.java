@@ -1,9 +1,6 @@
 package com.example.workus.attendance.dto;
 
-import com.example.workus.user.vo.User;
 import lombok.*;
-
-import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,7 +8,7 @@ import java.util.Map;
 @Setter
 @ToString
 @Builder
-public class ApprovalUserDto {
+public class AtdApprovalUserDto {
     private Long no;
     private String status;
     private int sequence;

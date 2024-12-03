@@ -7,7 +7,6 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.type.Alias;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +21,10 @@ public interface AttendanceMapper {
     List<AttendanceCategory> getAllCategories();
 
     // 연차 신청 정보 추가
-    void insertApproval(@Param("form") ApprovalForm form);
+    void insertApproval(@Param("form") AtdApprovalForm form);
 
     // 연차 결재 요청자, 참조자 정보 추가
-    void insertApprovalUsers(@Param("users") List<ApprovalUserDto> users, @Param("form") ApprovalForm form);
+    void insertApprovalUsers(@Param("users") List<AtdApprovalUserDto> users, @Param("form") AtdApprovalForm form);
 
     // 내 연차 결재 요청 목록 조회
     List<ReqViewDto> getAllRequestFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
@@ -43,7 +42,7 @@ public interface AttendanceMapper {
     Map<String, Object> getAnnualLeaveData(@Param("atdNo") Long atdNo);
 
     // 승인 이력에 추가
-    void insertAnnualLeaveHistory(@Param("apvReqDto") ApprovalRequestDto approvalRequestDto);
+    void insertAnnualLeaveHistory(@Param("apvReqDto") AtdApprovalRequestDto atdApprovalRequestDto);
 
     // 승인 상태 변경
     void updateStatusByAtdNo(@Param("atdNo") Long atdNo);

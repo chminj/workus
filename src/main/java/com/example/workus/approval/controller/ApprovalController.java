@@ -35,9 +35,10 @@ public class ApprovalController {
         model.addAttribute("categories", categories);
 
         Long userNo = loginUser.getNo();
-        User leader = userService.getUserByUserNo(userNo);
-        long deptNo = leader.getDeptNo();
-        approvalService.getLeader(deptNo);
+        User user = userService.getUserByUserNo(userNo);
+        long deptNo = user.getDeptNo();
+        // leader 열람/공람자에서 조회
+        User leader = approvalService.getLeader(deptNo);
         model.addAttribute("leader", leader);
 
         return "approval/form-list";

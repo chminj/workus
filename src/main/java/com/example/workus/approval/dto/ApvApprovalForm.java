@@ -1,7 +1,7 @@
 package com.example.workus.approval.dto;
 
 
-public class ApprovalForm {
+public class ApvApprovalForm {
 
     private String title;
     private String text;

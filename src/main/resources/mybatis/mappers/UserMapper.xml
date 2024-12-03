@@ -270,11 +270,12 @@
     </select>
 
     <select id="getLeaderByDeptNo" resultType="User">
-        SELECT U.USER_NO   as leaderNo
-             , U.USER_NAME as leaderName
-             , U.ROLE_NO   as leaderRoleNo
+        SELECT U.USER_NO as no
+             , U.USER_NAME as name
+             , U.ROLE_NO   as roleNo
         FROM WORKUS_USERS U
-                 JOIN WORKUS_DEPT D ON D.LEADER_NO = U.USER_NO
+            JOIN WORKUS_DEPT D
+        ON D.LEADER_NO = U.USER_NO
         WHERE D.DEPT_NO = #{deptNo}
     </select>
 </mapper>
