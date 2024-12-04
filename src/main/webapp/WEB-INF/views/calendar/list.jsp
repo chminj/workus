@@ -18,7 +18,7 @@
         <%@ include file="../common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
-            <c:set var="lnb" value="myCalendar" />
+            <c:set var="lnb" value="all" />
             <div class="lnb">
                 <!-- 일정 추가 버튼 -->
                 <div class="lnb-btn text-center mb-4">
@@ -27,21 +27,14 @@
 
                 <!-- LNB 메뉴 -->
                 <div class="lnb-menu">
-                    <!-- 캘린더 -->
-                    <label class="checkbox-label">
-                        <input class="checkbox-input" type="checkbox" id="divisionAll" onchange="divisionAll()">
-                        <a>캘린더</a>
-                    </label>
-                    <!-- 내 캘린더 섹션 -->
-                    <label class="checkbox-label">
-                        <input class="checkbox-input" type="checkbox" checked="checked" id="division1" value="1" onchange="refreshCalendar()">
-                        <a>[기본] 내 캘린더</a>
-                    </label>
-                    <!-- 팀 캘린더 섹션 -->
-                    <label class="checkbox-label">
-                        <input class="checkbox-input" type="checkbox" id="division0" value="0" onchange="refreshCalendar()">
-                        <a>팀 캘린더</a>
-                    </label>
+                    <ul class="list1 myResInfo">
+                        <li class="${lnb eq 'myCalInfo' ? 'on' : '' }"><a href="#" id="myCalendar">내 일정 목록</a></li>
+                    </ul>
+                    <p class="listTitle ${lnb eq 'all' ? 'on' : '' }" id="divisionAll">캘린더</p>
+                    <ul class="list2 roomList">
+                        <li class="${lnb eq 'my' ? 'on' : '' }"><a href="#" id="division1">내 캘린더</a></li>
+                        <li class="${lnb eq 'team' ? 'on' : '' }"><a href="#" id="division0">팀 캘린더</a></li>
+                    </ul>
                 </div>
             </div>
             <main>

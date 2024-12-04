@@ -5,6 +5,8 @@ import com.example.workus.calendar.service.CalendarService;
 import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.security.LoginUser;
 import com.example.workus.common.util.DateTimeUtil;
+import com.example.workus.user.mapper.UserMapper;
+import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -14,10 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -26,6 +25,8 @@ public class CalendarController {
 
     @Autowired
     private CalendarService calendarService;
+    @Autowired
+    private UserMapper userMapper;
 
     // 일정 목록 화면
     @PreAuthorize("isAuthenticated()")
@@ -80,8 +81,8 @@ public class CalendarController {
     // 일정 상세 조회
     @PostMapping("/detail")
     @ResponseBody
-    public ResponseEntity<Calendar> getCalendarDetail(@RequestParam("id") Long calendarNo, @AuthenticationPrincipal LoginUser loginUser) {
-        Calendar calendar = calendarService.getCalendarByNo(calendarNo, loginUser.getNo());
+    public ResponseEntity<Calendar> getCalendarDetail(@RequestParam("id") Long calendarNo) {
+        Calendar calendar = calendarService.getCalendarByNo(calendarNo);
         if (calendar != null) {
             return ResponseEntity.ok(calendar);
         } else {
@@ -94,11 +95,24 @@ public class CalendarController {
     public List<Calendar> events(
             @RequestParam("start") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
             @RequestParam("end") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end,
-            @RequestParam("division") List<Integer> division,
+            @RequestParam String filter,
+            @RequestParam List<Integer> division,
             @AuthenticationPrincipal LoginUser loginUser) {
 
-        List<Calendar> events = calendarService.getTeamAndPersonalEvents(start, end, division, loginUser);
+        // 로그인 사용자 정보 조회
+        User user = userMapper.getUserByUserNo(loginUser.getNo());
 
-        return (events != null && !events.isEmpty()) ? events : new ArrayList<>();
+        switch (filter) {
+            case "division1":
+                return calendarService.getEventsByDateRange(start, end, user.getNo(), null, division); // 개인 일정
+            case "division0":
+                return calendarService.getEventsByDateRange(start, end, null, user.getDeptNo(), division); // 팀 일정
+            case "divisionAll":
+                return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 개인 + 팀 일정`
+            case "myCalendar":
+                return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 내 일정 목록
+            default:
+                return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 기본 개인 + 팀 일정
+        }
     }
 }
