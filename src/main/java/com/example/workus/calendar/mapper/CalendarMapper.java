@@ -10,7 +10,9 @@ import java.util.List;
 @Mapper
 public interface CalendarMapper {
 
-    Calendar selectCalendarByNo(@Param("calendarNo") Long calendarNo, @Param("userNo") Long userNo);
+    Calendar selectCalendarByNoAndUser(@Param("calendarNo") Long calendarNo, @Param("userNo") Long userNo);
+    Calendar selectCalendarByNo(@Param("calendarNo") Long calendarNo);
+
     List<Calendar> selectTeamAndPersonalEvents(
             @Param("userNo") long userNo,
             @Param("deptNo") long deptNo,
@@ -23,5 +25,17 @@ public interface CalendarMapper {
     void deleteCalendar(@Param("eventId") Long eventId);
     void updateCalendar(@Param("calendar") Calendar calendar);
 
-    Calendar selectCalendarByNoAndUser(@Param("calendarNo") long no, @Param("userNo") Long userNo);
+    List<Calendar> selectPersonalEvents(
+            @Param("userNo") Long userNo,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("division") List<Integer> division
+    );
+    List<Calendar> selectTeamEvents(
+            @Param("deptNo") Long deptNo,
+            @Param("startDateTime") LocalDateTime startDateTime,
+            @Param("endDateTime") LocalDateTime endDateTime,
+            @Param("division") List<Integer> division
+    );
+
 }

@@ -25,6 +25,7 @@
         0: '#28a745'  // 팀 캘린더
     };
 
+    let filter = "divisionAll";
     let start, end;
 
     var calendarEl = $('#calendar')[0];
@@ -39,10 +40,10 @@
         headerToolbar: {             // 헤더 툴바 설정
             left: 'prev,next today',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
         },
         initialView: 'dayGridMonth', // 초기 보이는 화면
-        initialDate: new Date(),   // 초기 날짜 설정
+        initialDate: new Date(),     // 초기 날짜 설정
         navLinks: true,              // 날짜 선택 시 Day/Week 뷰로 이동 가능
         editable: true,              // 일정 수정 가능
         selectable: true,            // 드래그로 일정 생성 가능
@@ -58,58 +59,62 @@
                 , className : 'ko_event'
             }
         ],
+
         events: function(info, successCallback, failureCallback) {
-            start = info.startStr.split("T")[0];
-            end = info.endStr.split("T")[0];
+            let start = info.startStr.split("T")[0]; // 시작 날짜
+            let end = info.endStr.split("T")[0]; // 끝 날짜
+            let divisions = [];
 
-            let divisions = [1, 2];
-
-            console.log("AJAX 요청 데이터:", {
-                start: start,
-                end: end,
-                division: divisions
-            });
+            // 필터 상태에 따른 division 설정
+            if (filter === "divisionAll") {
+                divisions = [0];
+            } else if (filter === "division1") {
+                divisions = [1];
+            } else if (filter === "division0") {
+                divisions = [0];
+            }
 
             $.ajax({
                 type: 'GET',
                 url: '/calendar/events',
                 data: {
-                    start: info.startStr.split("T")[0],
-                    end: info.endStr.split("T")[0],
-                    division: 1
+                    start: start,
+                    end: end,
+                    division: divisions,
+                    filter: filter
                 },
                 success: function(calendars) {
                     console.log("서버 응답:", calendars);
                     let events = calendars.map(function(calendar) {
-                        let event = {};
-                        event.id = calendar.no;
-                        event.title = calendar.name;
-                        event.start = calendar.startDate;
-                        event.end = calendar.endDate;
-                        event.color = divisionColors[calendar.division] || '#6c757d';
-
-                        event.extendedProps = {
-                            division: calendar.division
+                        let event = {
+                            id: calendar.no,
+                            title: calendar.name,
+                            start: calendar.startDate,
+                            end: calendar.endDate,
+                            color: divisionColors[calendar.division] || '#6c757d',
+                            extendedProps: {
+                                division: calendar.division
+                            }
                         };
                         return event;
                     });
 
                     console.log(events);
-                    successCallback(events); // FullCalendar에 이벤트 렌더링
+                    successCallback(events);
                 },
                 error: function(xhr, status, error) {
                     console.error("일정 불러오기 실패:", error);
                     failureCallback(error);
                 }
-
             });
         },
+
         eventClick: function(info) {
             info.jsEvent.stopPropagation();
             info.jsEvent.preventDefault();
 
             var eventId = info.event.id;
-            console.log(eventId);  // 여기서 확인
+            console.log(eventId);
 
             if (!eventId) {
                 console.error("이벤트 ID가 없습니다.");
@@ -160,7 +165,7 @@
             $.ajax({
                 type: 'post',
                 url: '/calendar/update',
-                data: updatedEventData,    // 업데이트된 이벤트 데이터
+                data: updatedEventData,
 
                 error: function(xhr, status, error) {
                     console.error("이벤트 업데이트 실패:", error);
@@ -187,9 +192,9 @@
             $("#calendarModal #content").val("");
 
             $("#calendarModal #startDate").val(`${startDateParts[0]}T${currentTime}`);
-            $("#calendarModal #endDate").val(""); // 종료 시간 초기화
+            $("#calendarModal #endDate").val("");
 
-            $("#calendarModal").data("eventId", null);  // eventId 초기화
+            $("#calendarModal").data("eventId", null);
 
             $("#delete").hide();
             $("#save").text("추가");
@@ -223,7 +228,7 @@
             $("#calendarModal #startDate").val(`${startDateParts[0]}T${currentTime}`);
             $("#calendarModal #endDate").val(`${endDateParts[0]}T${currentTime}`);
 
-            $("#calendarModal").data("eventId", null);  // eventId 초기화
+            $("#calendarModal").data("eventId", null);
 
             $("#delete").hide();
             $("#save").text("추가");
@@ -354,106 +359,21 @@
                     $("#calendarModal").data("eventId", null);
 
                     $("#calendarModal").modal("hide");
-                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                    $("#confirmDeleteModal").modal("hide");
                 },
                 error: function (xhr, status, error) {
                     console.error("일정 삭제 실패:", error);
                     alert("일정 삭제에 실패했습니다. 다시 시도해주세요.");
-                    $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
+                    $("#confirmDeleteModal").modal("hide");
                 }
             });
         });
 
-        // 취소 버튼 클릭 시 경고창 닫기
         $("#confirmDeleteModal .btn-secondary").off("click").on("click", function() {
             $("#confirmDeleteModal").modal("hide");
         });
 
     })
-
-    // FullCalendar 렌더링
-    calendar.render();
-
-    function divisionAll(){
-        let el1 = document.querySelector("input[id=division1]");
-        let el2 = document.querySelector("input[id=division0]");
-        let el3 = document.querySelector("input[id=divisionAll]");
-
-        if (el3.checked) {
-            el1.checked = true;
-            el2.checked = true;
-        } else {
-            el1.checked = false;
-            el2.checked = false;
-        }
-
-        refreshCalendar();
-    }
-
-    function refreshCalendar() {
-        let el1 = document.querySelector("input[id=division1]");
-        let el2 = document.querySelector("input[id=division0]");
-        let el3 = document.querySelector("input[id=divisionAll]");
-
-        let values = [];
-
-        if (el1.checked) {
-            values.push(1);
-        }
-        if (el2.checked) {
-            values.push(0);
-        }
-
-        if (!el1.checked || !el2.checked) {
-            el3.checked = false;
-        } else {
-            el3.checked = true;
-        }
-
-        // 기존 이벤트 소스 제거
-        calendar.getEvents().forEach(function(source) {
-            // 구글 공휴일 이벤트는 삭제하지 않음
-            if (source.className && source.className.includes('ko_event')) {
-                return; // 구글 공휴일 이벤트는 건너뜁니다.
-            }
-            source.remove(); // 나머지 이벤트 소스는 제거
-        });
-
-        if (values.length > 0) {
-            let queryString = values.map(function (value) {
-                return "division=" + value;
-            }).join("&");
-
-            let startDate = start || "2024-01-01"; // 기본 값 설정 (예시)
-            let endDate = end || "2024-12-31"; // 기본 값 설정 (예시)
-            queryString += `&start=${startDate}&end=${endDate}`;
-
-            $.ajax({
-                type: 'GET',
-                url: '/calendar/events?' + queryString,
-                success: function (calendars) {
-                     calendars.forEach(function (item) {
-                        let event = {
-                            id: item.no,
-                            title: item.name,
-                            start: item.startDate,
-                            end: item.endDate,
-                            color: divisionColors[item.division] || '#6c757d',
-                            extendedProps: {
-                                location: item.location,
-                                content: item.content,
-                                deptNo: item.deptNo
-                            }
-                        };
-                        calendar.addEvent(event);
-                    });
-                },
-                error: function (xhr, status, error) {
-                    console.error("일정 데이터 로드 실패:", error);
-                },
-            });
-        }
-    }
 
     function getDate(date, days) {
         days = days || 0;
@@ -464,3 +384,23 @@
 
         return year +  '-' + (month < 10 ? '0' + month : month) + '-' +(day < 10 ? '0' + day : day);
     }
+
+    // FullCalendar 렌더링
+    calendar.render();
+
+    // 필터 버튼 클릭 공통 함수
+    function setFilter(newFilter, view) {
+        filter = newFilter;
+        calendar.changeView(view);
+
+        $('.lnb li, .listTitle').removeClass('on');
+        $(`#${newFilter}`).closest('li').addClass('on');
+        $(`#${newFilter}`).closest('p').addClass('on');
+        calendar.refetchEvents();
+    }
+
+    // 필터 버튼 이벤트 핸들러
+    $('#myCalendar').on('click', () => setFilter("myCalendar", 'listMonth'));
+    $('#divisionAll').on('click', () => setFilter("divisionAll", 'dayGridMonth'));
+    $('#division1').on('click', () => setFilter("division1", 'dayGridMonth'));
+    $('#division0').on('click', () => setFilter("division0", 'dayGridMonth'));

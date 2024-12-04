@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -43,22 +44,31 @@ public class CalendarService {
         return calendar;
     }
 
-    // 기간 및 구분별 일정 조회
-    public List<Calendar> getTeamAndPersonalEvents(Date start, Date end, List<Integer> division, LoginUser loginUser) {
-        // 로그인 사용자 정보 조회
-        User user = userMapper.getUserByUserNo(loginUser.getNo());
-
-        // 날짜 범위 변환
+    public List<Calendar> getEventsByDateRange(Date start, Date end, Long userNo, Long deptNo, List<Integer> division) {
         LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
 
-        // 개인 및 팀 일정 조회
-        return calendarMapper.selectTeamAndPersonalEvents(user.getNo(), user.getDeptNo(), startDateTime, endDateTime, division);
+        if (userNo != null) {
+            return calendarMapper.selectPersonalEvents(userNo, startDateTime, endDateTime, division);
+        } else if (deptNo != null) {
+            return calendarMapper.selectTeamEvents(deptNo, startDateTime, endDateTime, division);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    public List<Calendar> getAllEventsByDateRange(Date start, Date end, Long userNo, Long deptNo, List<Integer> division) {
+        LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
+        LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
+        return calendarMapper.selectTeamAndPersonalEvents(userNo, deptNo, startDateTime, endDateTime, division);
     }
 
     // 특정 일정 조회
     public Calendar getCalendarByNo(Long calendarNo, Long userNo) {
-        return calendarMapper.selectCalendarByNo(calendarNo, userNo);
+        return calendarMapper.selectCalendarByNoAndUser(calendarNo, userNo);
+    }
+    public Calendar getCalendarByNo(Long calendarNo) {
+        return calendarMapper.selectCalendarByNo(calendarNo);
     }
 
     // 일정 수정
