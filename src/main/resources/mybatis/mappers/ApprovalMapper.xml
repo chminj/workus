@@ -7,5 +7,38 @@
         FROM
             WORKUS_APPROVAL_CATEGORY;
     </select>
-
+    <insert id="insertApprovalFormBase">
+        <selectKey keyProperty="apvFormBase.no" resultType="Long" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        INSERT INTO WORKUS_APPROVAL
+        ( APV_TEXT
+        , APV_TO_DATE
+        , APV_TITLE
+        , APV_CATEGORY_NO
+        , USER_NO
+        , APV_REASON)
+        VALUES ( #{apvFormBase.commonText}
+        , #{apvFormBase.toDate}
+        , #{apvFormBase.title}
+        , #{apvFormBase.categoryNo}
+        , #{apvFormBase.userNo}
+        , #{apvFormBase.reason})
+    </insert>
+    <insert id="insertApprovalFormOption">
+        INSERT INTO WORKUS_APPROVAL_TEXT_AREA
+        ( APV_TEXT_NAME
+        , APV_TEXT_VALUE
+        , APV_NO)
+        VALUES ( #{termName}
+               , #{termValue}
+               , #{apvNo})
+    </insert>
+    <select id="getUsersByRoleNo" resultType="User">
+        SELECT USER_NO as no
+            , ROLE_NO as roleNo
+            , USER_NAME as name
+        FROM WORKUS_USERS
+        WHERE ROLE_NO = #{roleNo}
+    </select>
 </mapper>

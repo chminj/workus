@@ -9,9 +9,9 @@
     <%@ include file="../common/common.jsp" %>
     <link rel="stylesheet" href="/resources/css/approval.css">
     <script src="/resources/js/approval.js"></script>
-    <!-- include summernote css/js-->
-    <link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.css" rel="stylesheet">
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.8/summernote.js"></script>
+    <!-- Include the Quill library -->
+    <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
     <title>workus ㅣ 결재</title>
 </head>
 <body>
@@ -39,10 +39,10 @@
                         <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
                             <div class="accordion-body">
                                 <ul class="list2 myAtdList">
-                                    <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a href="myWaitList">대기건</a></li>
-                                    <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="myEndList">종결건</a></li>
-                                    <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="myEndList">반려건</a></li>
-                                    <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="myRefList">열람건</a></li>
+                                    <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a href="my/waitList">대기건</a></li>
+                                    <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="my/endList">종결건</a></li>
+                                    <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="my/backList">반려건</a></li>
+                                    <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="my/refList">열람건</a></li>
                                 </ul>
                             </div>
                         </div>
@@ -57,19 +57,24 @@
                     <nav class="sidebar">
                         <ul>
                             <c:forEach var="category" items="${categories}">
-                                <li onClick="showForm('${category.no}', '${category.name}')">${category.name}</li>
+                                <li class="category-item" data-id="${category.no}"
+                                    data-name="${category.name}">${category.name}</li>
                             </c:forEach>
                         </ul>
                     </nav>
                     <div class="content">
                         <div id="100" class="form">
                             <h2 class="fs-4 text-center">양식 1</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo" value="1"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
-                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                        <th class="table-active title require">제목</th>
+                                        <td colspan="5">
+                                            <input type="text" class="form-control titleInput"
+                                                   value="카테고리 이름" required name="title"/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
@@ -80,37 +85,38 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">휴직 기간</th>
+                                        <th class="table-active require">휴직 기간</th>
                                         <td colspan="5">
-                                            <div class="d-flex">
+                                            <div class="d-flex align-items-center">
                                                 <input type="date" name="fromDate" class="form-control wd150"
-                                                       id="apvFromDate"/>
+                                                       id="apvFromDate" required/>
                                                 <span class="mgl5 mgr5">~</span>
                                                 <input type="date" name="todate" class="form-control wd150"
-                                                       id="apvToDate"/>
+                                                       id="apvToDate" required/>
+                                                <span class="dayCheck">총 <span class="dayTotal">0</span>일</span>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">휴직 사유</th>
+                                        <th class="table-active require">휴직 사유</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea required name="reason"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">업무 대행자</th>
+                                        <th class="table-active require">업무 대행자</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea required name="optionTexts[agent]"></textarea>
                                         </td>
-                                        <th class="table-active">인수인계 상황</th>
+                                        <th class="table-active require">인수인계 상황</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea required name="optionTexts[handover]"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">비고</th>
+                                        <th class="table-active">기타사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="commonText"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -123,12 +129,16 @@
                         </div>
                         <div id="200" class="form">
                             <h2 class="fs-4 text-center">양식 2</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
-                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                        <th class="table-active title require">제목</th>
+                                        <td colspan="5">
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
@@ -139,41 +149,41 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">휴직 기간</th>
+                                        <th class="table-active require">휴직 기간</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                                <input type="date" name="toDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">휴직 사유</th>
+                                        <th class="table-active require">휴직 사유</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="reason" required></textarea>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">병명</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[diseaseName]"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">업무 대행자</th>
+                                        <th class="table-active require">업무 대행자</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[agent]" required></textarea>
                                         </td>
-                                        <th class="table-active">인수인계 상황</th>
+                                        <th class="table-active require">인수인계 상황</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[handover]" required></textarea>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">기타사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="commonText"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -186,12 +196,16 @@
                         </div>
                         <div id="300" class="form">
                             <h2 class="fs-4 text-center">양식 3</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
-                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                        <th class="table-active title require">제목</th>
+                                        <td colspan="5">
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
@@ -202,23 +216,23 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">복직 일자</th>
+                                        <th class="table-active require">복직 일자</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">복직 사유</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="reason"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">기타사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="commonText"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -231,12 +245,16 @@
                         </div>
                         <div id="400" class="form">
                             <h2 class="fs-4 text-center">양식 4</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
-                                        <td colspan="5"><input type="text" class="form-control" value="카테고리 이름"/></td>
+                                        <th class="table-active title require">제목</th>
+                                        <td colspan="5">
+                                            <input type="text" class="titleInput form-control"
+                                                   value="카테고리 이름" name="title" required/>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active title">열람/공람자</th>
@@ -247,23 +265,24 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">협조요청일</th>
+                                        <th class="table-active require">협조요청일</th>
                                         <td colspan="2">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                         <th class="table-active">완료예정일</th>
                                         <td colspan="2">
                                             <div class="d-flex">
-                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                                <input type="date" name="toDate" class="form-control wd150"/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">예정 작업 내용</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name=""></textarea>
+                                            <input type="hidden" name="optionTexts[work]"/>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -276,13 +295,15 @@
                         </div>
                         <div id="500" class="form">
                             <h2 class="fs-4 text-center">양식 5</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
+                                        <th class="table-active title require">제목</th>
                                         <td colspan="5">
-
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -297,39 +318,41 @@
                                     <tr>
                                         <th class="table-active">교육과정명</th>
                                         <td colspan="5">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control"
+                                                   name="optionTexts[curriculum]">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">교육기관</th>
+                                        <th class="table-active require">교육기관</th>
                                         <td colspan="5">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control" required
+                                                   name="optionTexts[location]">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">교육참석일</th>
+                                        <th class="table-active require">교육참석일</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                                <input type="date" name="toDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">참석목적</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea name="reason"></textarea>
                                         </td>
                                         <th class="table-active">동행자</th>
                                         <td colspan="2">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[accompany]"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">교육내용</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[content]"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -342,13 +365,15 @@
                         </div>
                         <div id="600" class="form">
                             <h2 class="fs-4 text-center">양식 6</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
+                                        <th class="table-active title require">제목</th>
                                         <td colspan="5">
-
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -361,53 +386,55 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">외근 일정</th>
+                                        <th class="table-active require">외근 일정</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="fromDate" class="form-control wd150"/>
+                                                <input type="date" name="toDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">외근 목적</th>
                                         <td colspan="5">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control" name="reason">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">외근 지역</th>
+                                        <th class="table-active require">외근 지역</th>
                                         <td colspan="2">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control"
+                                                   name="optionTexts[location]" required>
                                         </td>
                                         <th class="table-active">외근 동행자</th>
                                         <td colspan="2">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control"
+                                                   name="optionTexts[accompany]">
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">주요 업무</th>
                                         <td colspan="5">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control" name="optionTexts[work]">
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">이동 방안</th>
+                                        <th class="table-active require">이동 방안</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[transport]" required></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">준비 사항</th>
+                                        <th class="table-active">준비사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="optionTexts[ready]"></textarea>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">기타 사항</th>
+                                        <th class="table-active">기타사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="commonText"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -420,13 +447,15 @@
                         </div>
                         <div id="700" class="form">
                             <h2 class="fs-4 text-center">양식 7</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
+                                        <th class="table-active title require">제목</th>
                                         <td colspan="5">
-
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -439,33 +468,35 @@
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active">방문 날짜</th>
+                                        <th class="table-active require">방문 날짜</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required/>
                                             </div>
                                         </td>
                                     </tr>
                                     <tr>
-                                        <th class="table-active">방문처</th>
+                                        <th class="table-active require">방문처</th>
                                         <td colspan="5">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control"
+                                                   name="optionTexts[location]" required>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">방문 동기</th>
                                         <td colspan="2">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control" name="reason">
                                         </td>
-                                        <th class="table-active">방문 시간</th>
+                                        <th class="table-active require">방문 시간</th>
                                         <td colspan="2">
-                                            <input type="text" value="" class="form-control">
+                                            <input type="text" value="" class="form-control" name="optionTexts[time]"
+                                                   required>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th class="table-active">특이사항</th>
                                         <td colspan="5">
-                                            <textarea></textarea>
+                                            <textarea name="commonText"></textarea>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -478,13 +509,16 @@
                         </div>
                         <div id="800" class="form">
                             <h2 class="fs-4 text-center">양식 8</h2>
-                            <form>
+                            <form method="post" action="${pageContext.request.contextPath}/approval/addForm">
+                                <input type="hidden" name="categoryNo" class="categoryNo"/>
+                                <textarea name="commonText" class="hiddenEditor" hidden></textarea>
                                 <table class="table">
                                     <tbody>
                                     <tr>
-                                        <th class="table-active title">제목</th>
+                                        <th class="table-active title require">제목</th>
                                         <td colspan="5">
-
+                                            <input type="text" class="form-control titleInput" value="카테고리 이름"
+                                                   name="title" required/>
                                         </td>
                                     </tr>
                                     <tr>
@@ -493,7 +527,9 @@
                                     </tr>
                                     </tbody>
                                 </table>
-                                <textarea name="noticeDoc" id="summernote" value=""></textarea>
+                                <!-- Create the editor container -->
+                                <div id="editor">
+                                </div>
                                 <div class="btnW mgt40 d-flex justify-content-center">
                                     <input type="reset" value="입력 취소" class="btn btn-secondary"/>
                                     <button type="submit" class="btn btn-dark">결재 요청하기</button>
@@ -506,29 +542,5 @@
         </section>
     </div>
 </div>
-<script>
-    function showForm(formId, categoryName) {
-        // 모든 양식 숨기기
-        const forms = document.querySelectorAll('.form');
-        forms.forEach(form => {
-            form.style.display = 'none';
-        });
-
-        // 선택한 양식만 보이기
-        let selectedForm = document.getElementById(formId);
-        selectedForm.style.display = 'block';
-
-        // 제목 업데이트
-        let titleElement = selectedForm.querySelector('h2');
-        // let titleElementInTable = selectedForm.querySelector('td:first-child');
-        titleElement.textContent = categoryName;
-        // titleElementInTable.textContent = categoryName;
-    }
-
-    // 페이지 로드 시 첫 번째 양식 보이기
-    document.addEventListener('DOMContentLoaded', () => {
-        showForm('100', '휴직원');
-    });
-</script>
 </body>
 </html>

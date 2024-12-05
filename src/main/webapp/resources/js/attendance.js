@@ -6,76 +6,29 @@ $(function () {
     let selectedDeptNo; // 선택된 부서 번호
     const selectBox = $('<select id="deptSelect" class="form-select"><option value="">Select a department</option></select>');
 
-    // 페이지 로드 시 사용자 역할 및 연차 기록, 부서 목록 조회
+// 페이지 로드 시 사용자 역할 조회
     $.ajax({
-        url: '/api/attendances/annualLeaveHistory',
-        type: 'POST',
+        url: '/api/attendances/role',
+        type: 'GET',
         success: function (data) {
-            roleNo = data.roleNo; // roleNo 값 저장
-            finalEvents = data.events.map(leave => {
-                const startDate = new Date(leave.fromDate);
-                const endDate = new Date(leave.toDate);
-                return {
-                    title: leave.userName,
-                    start: startDate,
-                    end: endDate,
-                    category: leave.categoryName,
-                    time: leave.time,
-                    deptNo: leave.deptNo,
-                    deptName: leave.deptName,
-                    allDay: true,
-                    extendedProps: { // extendedProps에 deptNo 추가
-                        deptNo: leave.deptNo, // 부서 번호 추가
-                        deptName: leave.deptName // 부서 이름 추가
-                    }
-                };
-            }); // 연차 기록 저장
-            loadDepartmentList(data.depts); // 부서 목록 로드
-
-            // 이벤트 필터링 (기본적으로 자신의 부서로 설정)
-            if (roleNo !== 100) {
-                selectedDeptNo = data.depts[0].deptNo; // 자신의 부서 ID 저장
-                filterEventsByDepartment(selectedDeptNo);
-            } else {
-                selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child'))
-                    .on('change', function () {
-                        selectedDeptNo = $(this).val();
-                        filterEventsByDepartment(selectedDeptNo);
-                    });
-            }
+            roleNo = data; // roleNo 값 저장
         },
         error: function () {
-            console.error('연차 기록 및 부서 목록을 가져오는 데 실패했습니다.');
+            console.error('사용자 역할을 가져오는 데 실패했습니다.');
         }
     });
 
-    // 부서 select option 추가
+// 부서 select option 추가
     function populateDepartmentSelect(deptSelect) {
         selectBox.empty().append('<option value="">부서별 조회</option>'); // 초기화
         deptSelect.forEach(dept => {
-            selectBox.append(`<option value="${dept.deptNo}">${dept.deptName}</option>`);
+            selectBox.append(`<option value="${dept.id}">${dept.name}</option>`);
         });
-    }
-
-    // 부서 목록을 가져오는 함수
-    function loadDepartmentList(depts) {
-        populateDepartmentSelect(depts); // 부서 선택 옵션 추가
-
-        // 역할에 따라 부서 선택 박스 이벤트 추가
-        if (roleNo === 100) { // 관리자일 경우
-            selectBox.on('change', function () {
-                selectedDeptNo = $(this).val();
-                // 선택된 부서에 따라 이벤트 필터링
-                filterEventsByDepartment(selectedDeptNo);
-            });
-        } else { // 일반 사용자일 경우
-            selectedDeptNo = depts[0].deptNo; // 자신의 부서 ID 저장
-            filterEventsByDepartment(selectedDeptNo); // 해당 부서로 필터링
-        }
     }
 
     let atdCalendar = new FullCalendar.Calendar(atdCalendarEl, {
         schedulerLicenseKey: 'CC-Attribution-NonCommercial-NoDerivatives',
+        googleCalendarApiKey: 'AIzaSyDIvWEKCFDKbJPdBUzOMSBSbf_cCtdRRTk',
         initialView: 'dayGridMonth',
         headerToolbar: {
             left: '',
@@ -90,8 +43,6 @@ $(function () {
             week: '주별',
             day: '일별',
         },
-        height: 1002,
-        contentHeight: 900,
         aspectRatio: 2,
         displayEventTime: false,
         eventSources: [
@@ -105,7 +56,9 @@ $(function () {
                         url: '/api/attendances/annualLeaveHistory',
                         type: 'POST',
                         success: function (data) {
-                            const events = data.events.map(leave => {
+                            finalEvents = []; // 초기화
+
+                            const events = data.map(leave => {
                                 const startDate = new Date(leave.fromDate);
                                 const endDate = new Date(leave.toDate);
                                 return {
@@ -114,12 +67,10 @@ $(function () {
                                     end: endDate,
                                     category: leave.categoryName,
                                     time: leave.time,
-                                    deptNo: leave.deptNo,
-                                    deptName: leave.deptName,
                                     allDay: true,
-                                    extendedProps: { // extendedProps에 deptNo 추가
-                                        deptNo: leave.deptNo, // 부서 번호 추가
-                                        deptName: leave.deptName // 부서 이름 추가
+                                    extendedProps: {
+                                        deptNo: leave.deptNo,
+                                        deptName: leave.deptName
                                     }
                                 };
                             });
@@ -127,9 +78,26 @@ $(function () {
                             // 최종 이벤트 배열 저장
                             finalEvents = events; // 전체 이벤트 저장
 
+                            // const eventSourceId = "dataList"; // 이벤트 소스 ID 정의
+                            // // 새로운 이벤트 소스 추가
+                            // atdCalendar.addEventSource({
+                            //     id: eventSourceId,
+                            //     events: finalEvents // 필터링된 이벤트를 새로운 소스로 추가
+                            // });
+                            //
+                            // // 기존 이벤트 소스 확인 및 제거
+                            // if (atdCalendar.getEventSourceById(eventSourceId) != null) {
+                            //     console.log('됨');
+                            //     atdCalendar.getEventSourceById(eventSourceId).remove(); // 기존 이벤트 소스 제거
+                            //     console.log('진짜 됨');
+                            // }
+
+
                             // 선택된 부서로 필터링된 이벤트 호출
                             const filteredEvents = filterEventsByDepartment(selectedDeptNo, true);
                             successCallback(filteredEvents); // 필터링된 이벤트 전달
+
+                            console.log(filteredEvents);
                         },
                         error: function () {
                             failureCallback();
@@ -149,7 +117,6 @@ $(function () {
         // 이벤트가 렌더링될 때 호출
         eventDidMount: function (info) {
             const {category, time} = info.event.extendedProps;
-
             if (category === '연차') {
                 info.el.classList.add('wholeDay');
             }
@@ -163,22 +130,49 @@ $(function () {
             info.jsEvent.preventDefault();
         },
     });
-
     atdCalendar.render();
 
-    // 부서별 필터링 로직
+// 부서 목록을 가져오는 AJAX 호출
+    function loadDepartmentList() {
+        $.ajax({
+            url: '/api/attendances/departments',
+            type: 'GET',
+            success: function (data) {
+                const deptSelect = [];
+                data.forEach(dept => {
+                    deptSelect.push({id: dept.deptNo, name: dept.deptName});
+                });
+
+                // 역할에 따라 부서 선택 옵션 추가
+                if (roleNo === 100) { // 관리자일 경우
+                    selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child')) // 툴바 오른쪽에 추가
+                        .on('change', function () {
+                            selectedDeptNo = $(this).val();
+                            filterEventsByDepartment(selectedDeptNo);
+                        });
+                    populateDepartmentSelect(deptSelect); // 부서 선택 옵션 추가
+                } else { // 일반 사용자일 경우
+                    selectedDeptNo = deptSelect[0].id; // 자신의 부서 ID 저장
+                    filterEventsByDepartment(selectedDeptNo);
+                }
+            },
+            error: function () {
+                console.error('부서 목록을 가져오는 데 실패했습니다.');
+            }
+        });
+    }
+
+// 부서별 필터링 로직
     function filterEventsByDepartment(deptNo, returnFiltered = false) {
         // deptNo를 기준으로 필터링
-        const filteredEvents = deptNo ? finalEvents.filter(event =>
-            event.extendedProps && event.extendedProps.deptNo == deptNo
-        ) : finalEvents;
+        const filteredEvents = deptNo ? finalEvents.filter(event => event.extendedProps.deptNo == deptNo) : finalEvents;
 
-        // 기존 이벤트 제거
-        atdCalendar.removeAllEvents();
+        atdCalendar.removeAllEvents(); // 기존 이벤트 모두 제거
 
         // 필터링된 이벤트 추가
         filteredEvents.forEach(event => {
             atdCalendar.addEvent(event); // addEvent를 사용하여 필터링된 이벤트 추가
+            console.log(event);
         });
 
         // 필터링된 이벤트를 반환할지 여부에 따라 반환
@@ -187,11 +181,13 @@ $(function () {
         }
     }
 
+    loadDepartmentList();
+
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 달력 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 근태 메인 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
-    // 잔여 연차 조회 시 BigDecimal 조건 처리
+// 잔여 연차 조회 시 BigDecimal 조건 처리
     function formatBigDecimal(value) {
         const numberValue = Number(value);
 
@@ -226,7 +222,7 @@ $(function () {
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 승인 모달 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
-    // ajax 호출
+// ajax 호출
     async function atdForm() {
         let responseUser = await fetch("/attendance/atdFormInUser");
         let resultUser = await responseUser.json();
@@ -278,23 +274,23 @@ $(function () {
 
     atdForm();
 
-    // dialog modal
+// dialog modal
     let atdDialog = document.getElementById('atdRequestForm');
     let openButton = document.getElementById('atdApplyBtnForModal');
 
-    // dialog open
+// dialog open
     openButton.addEventListener('click', () => {
         atdDialog.showModal();
         $('html, body').css('overflow', 'hidden');
     })
 
-    // dialog close
+// dialog close
     $("#atdRequestForm button.closeBtn").on('click', function () {
         atdDialog.close();
         $('html, body').css('overflow', 'auto');
     })
 
-    // today default setting in modal
+// today default setting in modal
     let todayDate = new Date().toISOString().substring(0, 10);
     $('#atdFromDate').val(todayDate);
     $('#atdToDate').val(todayDate);
@@ -341,7 +337,7 @@ $(function () {
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 공휴일 OPEN API ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
-    // dayTotal count (API + 함수 사용)
+// dayTotal count (API + 함수 사용)
     let totalTime = 0;
     $('#atdFromDate').on("change", function () {
         totalTime = 0;
@@ -375,7 +371,7 @@ $(function () {
         }
     });
 
-    // 날짜 범위 내 주중 날짜 계산
+// 날짜 범위 내 주중 날짜 계산
     function calculateWeekdays(startDate, endDate, locdateArray) {
         let currentDate = new Date(startDate);
         let toDate = new Date(endDate);
@@ -453,7 +449,7 @@ $(function () {
         $("#refUserList").val(refUserList.join(","));
     })
 
-    // 재정렬 로직
+// 재정렬 로직
     function sortReset(targetId, checkedLiTag) {
         let labels = $("#" + targetId).find("label");
         // labels 오름차순 정렬
@@ -504,7 +500,7 @@ $(function () {
     });
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 연차 선택 옵션 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
-    // confirm
+// confirm
     $("#atdApproval").on("submit", function (e) {
         e.preventDefault();
         if ($("#apvUserList").val().trim() === "" || $("#refUserList").val().trim() === "") {

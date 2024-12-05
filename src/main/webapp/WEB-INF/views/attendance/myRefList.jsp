@@ -92,7 +92,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                     <thead>
                                     <tr>
                                         <th>No.</th>
-                                        <th>요청자 ${condition.roleNo}</th>
+                                        <th>요청자</th>
                                         <th>유형</th>
                                         <th>요청일</th>
                                         <th>사유</th>

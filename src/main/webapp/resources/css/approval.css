@@ -73,7 +73,7 @@
     width: 230px;
     min-height: calc(100vh - 165px);
     box-sizing: border-box;
-    border: 2px solid #ddd;
+    border: 1px solid #ddd;
     box-shadow: 1px 3px 4px 2px #f3f3f3;
     border-radius: 10px;
     padding: 15px;
@@ -90,7 +90,7 @@
     cursor: pointer;
 }
 
-.sidebar li:hover {
+.sidebar li:hover, .sidebar li.active {
     background-color: #f3f3f3;
 }
 
@@ -155,4 +155,43 @@
 
 .btnW button {
     margin-left: 10px;
+}
+
+form .ql-editor {
+    height: 400px;
+}
+
+.titleDefault {
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.require {
+    position: relative;
+}
+
+.require:after {
+    content: "*";
+    display: inline-block;
+    font-size: 17px;
+    position: relative;
+    right: -7px;
+    top: 0;
+    color: #e91e63;
+}
+
+
+.dayCheck {
+    border-radius: 20px;
+    background-color: #737373;
+    font-size: 17px;
+    letter-spacing: -0.02em;
+    color: #fff;
+    padding: 3px 12px;
+    margin-left: 10px;
+}
+
+.dayTotal {
+    min-width: 10px;
+    display: inline-block;
 }
