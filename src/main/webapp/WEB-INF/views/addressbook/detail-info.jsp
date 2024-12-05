@@ -19,25 +19,38 @@
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
       <div class="lnb" style="position: fixed;">
-        <div class="lnb-btn text-center mb-4">
-          <button type="button" class="btn btn-dark" id="addScheduleBtn">내 정보 보기</button>
-        </div>
 
         <!-- LNB 메뉴 -->
         <div class="lnb-menu">
             <!-- 직원정보 관리 시스템 -->
-            <p class="listTitle">직원정보 관리 시스템</p>
+            <p class="listTitle">마이페이지</p>
             <label class="menu-label">
-                <input class="checkbox-input" type="checkbox" checked="checked" id="division1">
-                <a href="/address-book/list">직원 정보 조회</a>
+                <input class="checkbox-input" type="checkbox" id="division1">
+                <a href="/address-book/detail?no=${LOGIN_USERNO}">내 정보 보기</a>
             </label>
             <label class="menu-label">
                 <input class="checkbox-input" type="checkbox" id="division0">
-                <a href="/address-book/insert">신규 직원 등록</a>
+                <a href="/user/myinfo">내 정보 수정</a>
+            </label>
+
+            <p class="listTitle">
+                직원검색 시스템
+            </p>
+            <label class="menu-label">
+                <input class="checkbox-input" type="checkbox" checked="checked" id="division2">
+                <a href="/address-book/list">직원 조회</a>
+            </label>
+
+            <p class="listTitle">
+                인사관리 시스템
+            </p>
+            <label class="menu-label">
+                <input class="checkbox-input" type="checkbox" id="division3">
+                <a href="/address-book/manage/list">직원 관리</a>
             </label>
             <label class="menu-label">
-                <input class="checkbox-input" type="checkbox" id="division2">
-                <a>기존 직원 관리</a>
+                <input class="checkbox-input" type="checkbox" id="division4">
+                <a href="/address-book/insert">직원 등록</a>
             </label>
         </div>
 
