@@ -44,6 +44,10 @@
       </div>
 
       <main>
+        <!-- 신규 회원 등록이 성공했을 때만 성공 메세지를 보여준다. -->
+        <c:if test="${not empty insert}">
+          <div class="alert alert-success">${insert}</div>
+        </c:if>
         <h3 class="title1">직원 상세 정보</h3>
         <p class="description">※ 직원의 상세 정보를 확인해보세요. </p>
 

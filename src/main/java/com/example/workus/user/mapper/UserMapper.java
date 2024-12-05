@@ -40,4 +40,10 @@ public interface UserMapper {
     int getUserRoleNo(@Param("userNo") Long userNo); // 권한 조회
 
     User getLeaderByDeptNo(@Param("deptNo") long deptNo); // 팀장 조회
+
+    double getAnnualLeaveByPositionNo(@Param("positionNo") long positionNo); // 직급에 맞는 기본 연차수를 조회한다.
+
+    long getNextUserNoSequence(); // 다음번 유저 사번을 획득한다.
+
+    void insertNewEmployee(@Param("user") User user); // 신규 직원을 등록한다.
 }

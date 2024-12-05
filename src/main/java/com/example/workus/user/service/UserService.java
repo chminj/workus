@@ -211,4 +211,48 @@ public class UserService {
 
         userMapper.updateMyPhone(user);
     }
+
+    /**
+     * 신규 직원등록 시 사번 등록을 위해 다음 번 사번을 가져온다.
+     * @return 사번 (Sequence)
+     */
+    public long getNextUserSequence() {
+        return userMapper.getNextUserNoSequence();
+    }
+
+    /**
+     * 신규 직원등록 시 직책에 따른 기본 연차개수를 가져온다.
+     * @param positionNo 직책 번호
+     * @return 기본 연차 개수
+     */
+    public double getBasicAnnualLeave(long positionNo) {
+        return userMapper.getAnnualLeaveByPositionNo(positionNo);
+    }
+
+    /**
+     * 신규 직원 등록폼의 데이터를 가지고 DB에 저장하는 작업을 수행한다.
+     * @param form 신규 직원 등록폼
+     */
+    public void registerNewEmployeee(RegisterNewEmployeeForm form) {
+        User user = new User();
+        user.setNo(form.getNo());
+        user.setName(form.getName());
+        user.setBirthday(form.getBirthDate());
+        user.setHireDate(form.getHireDate());
+        user.setDeptNo(form.getDeptNo());
+        user.setPositionNo(form.getPositionNo());
+        user.setUnusedAnnualLeave(form.getUnusedAnnualLeave());
+
+        // 프로필 사진 업로드
+        if (!form.getImage().isEmpty()) { // 이미지 파일을 입력했을 때만
+            MultipartFile imageFile = form.getImage(); // 첨부파일
+            String originalFilename = imageFile.getOriginalFilename(); // 실제 파일명
+            String filename = form.getNo() +  originalFilename.substring(originalFilename.lastIndexOf("."));
+            System.out.println("DB에 저장할 파일명은 " + filename);
+            user.setProfileSrc(filename); // profileSrc에는 파일명을 입력한다.
+            webContentFileUtils.saveWebContentFile(imageFile, path, filename);
+        }
+
+        userMapper.insertNewEmployee(user); // 신규 직원을 등록한다.
+    }
 }
