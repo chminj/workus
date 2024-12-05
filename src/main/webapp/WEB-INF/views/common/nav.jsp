@@ -134,7 +134,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'address-book' ? 'on' : '' }">
-                    <a href="../address-book/list">
+                    <a href="/address-book/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topAddress"></use>
@@ -144,7 +144,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'calendar' ? 'on' : '' }">
-                    <a href="../calendar/list" class="">
+                    <a href="/calendar/list" class="">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#calendar_date_22"></use>
@@ -154,7 +154,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'meeting' ? 'on' : '' }">
-                    <a href="../meeting/list">
+                    <a href="/meeting/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topReserve"></use>
@@ -164,7 +164,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'attendance' ? 'on' : '' }">
-                    <a href="../attendance/list">
+                    <a href="/attendance/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topWorknote"></use>
@@ -174,7 +174,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'approval' ? 'on' : '' }">
-                    <a href="../approval/form-list">
+                    <a href="/approval/form-list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topEas"></use>
@@ -184,7 +184,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="../notice/list">
+                    <a href="/notice/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topTask"></use>
@@ -194,7 +194,7 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="../community/list">
+                    <a href="/community/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topBoard"></use>
@@ -204,7 +204,7 @@
                     </a>
                 </li>
                 <li class="gnb ${menu eq 'archive' ? 'on' : '' }">
-                    <a href="../archive/list">
+                    <a href="/archive/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
                                 <use href="#topWebhard"></use>

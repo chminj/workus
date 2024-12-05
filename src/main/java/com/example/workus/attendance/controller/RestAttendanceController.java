@@ -3,6 +3,7 @@ package com.example.workus.attendance.controller;
 import com.example.workus.attendance.dto.AnnualLeaveHistoryDto;
 import com.example.workus.attendance.dto.AtdApprovalRequestDto;
 import com.example.workus.attendance.service.AttendanceService;
+import com.example.workus.common.vo.Constants;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.dto.DeptDto;
@@ -13,7 +14,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/attendances")
@@ -45,21 +45,51 @@ public class RestAttendanceController {
      * @return 연차 이력 목록
      */
     @PostMapping("/annualLeaveHistory")
-    public ResponseEntity<Map<String, Object>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
-        List<AnnualLeaveHistoryDto> events = null;
-        List<DeptDto> depts = null;
+    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
+        List<AnnualLeaveHistoryDto> events;
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
-
         // 권한 구분
-        if (roleNo == 100) {
+        if (roleNo == Constants.ROLE_NO_ADMIN) {
             events = attendanceService.getAllAnnualLeaveHistory();
-            depts = userService.getAllDepts();
         } else {
             events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
+        }
+
+        return ResponseEntity.ok(events);
+    }
+
+    /**
+     * 필터링할 부서 정보를 조회한다.
+     *
+     * @param loginUser 로그인한 사용자 정보
+     * @return 조회 가능한 부서 목록
+     */
+    @GetMapping("/departments")
+    public ResponseEntity<List<DeptDto>> getDepartments(@AuthenticationPrincipal LoginUser loginUser) {
+        List<DeptDto> depts;
+        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+
+        if (roleNo == Constants.ROLE_NO_ADMIN) {
+            // 관리자일 경우 모든 부서 목록을 가져옴
+            depts = userService.getAllDepts();
+        } else {
+            // 일반 사용자일 경우 본인 부서만 조회
             depts = userService.getDeptsForUser(loginUser.getNo());
         }
 
-        return ResponseEntity.ok(Map.of("events", events, "depts", depts, "roleNo", roleNo));
+        return ResponseEntity.ok(depts);
+    }
+
+    /**
+     * 연차 이력 조회 시 사용할 권한 정보를 조회한다. (권한에 따라서 연차 이력 조회가 제한된다.)
+     *
+     * @param loginUser 로그인한 사용자 정보
+     * @return roleNo
+     */
+    @GetMapping("/role")
+    public ResponseEntity<Integer> getUserRole(@AuthenticationPrincipal LoginUser loginUser) {
+        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+        return ResponseEntity.ok(roleNo);
     }
 
 }
