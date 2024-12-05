@@ -89,13 +89,12 @@
                       <!-- 사진 링크는 src에 적는다. -->
                       <!-- webapp까지는 알아서 찾아주니깐 /resources부터 적기 -->
                       <a href="/resources/repository/userprofile/${user.profileSrc}" target="_blank">
-                        <img loading="lazy" src="/resources/repository/userprofile/${user.profileSrc}" class="avatar-image" alt="${user.profileSrc}" />
+                        <img loading="lazy" src="/resources/repository/userprofile/${user.profileSrc}" class="avatar-image" alt="" />
                       </a>
                       <div class="info-block">
                         <h3 class="info-title"><a href="/address-book/detail?no=${user.no}">${user.name}</a></h3>
                         <p class="info-description">
-                            ${user.deptName}&nbsp;
-                            ${user.positionName}</p>
+                            ${user.deptName}&nbsp;${user.positionName}</p>
                         <p class="contact-info">Email: ${user.email}<br>연락처: ${user.phone}</p>
                         <p class="address-info">주소: ${user.address}</p>
                       </div>

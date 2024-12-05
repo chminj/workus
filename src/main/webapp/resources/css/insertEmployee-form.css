@@ -125,6 +125,7 @@ form {
     font-size: 14px;
     box-shadow: 0 15px 30px rgba(233, 30, 99, 0.36);
     transition: .2s linear;
+    margin-left: 40px;
 }
 
 .signup__btn:hover {

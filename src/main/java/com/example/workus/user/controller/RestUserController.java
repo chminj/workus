@@ -47,4 +47,14 @@ public class RestUserController {
     ResponseEntity<RestResponseDto<List<User>>> getAllUsersByUserName(@PathVariable("userName") String userName) {
         return ResponseEntity.ok(RestResponseDto.success(userService.getAllUsersByName(userName)));
     }
+
+    @GetMapping("/user/get-sequence/userNo") // 현재 사번을 조회해온다.
+    ResponseEntity<RestResponseDto<Long>> getUserSequence() {
+        return ResponseEntity.ok(RestResponseDto.success(userService.getNextUserSequence()));
+    }
+
+    @GetMapping("/user/count-annualLeave/{positionNo}") // 기본 연차 개수를 조회해온다.
+    ResponseEntity<RestResponseDto<Double>> getAnnualLeave(@PathVariable("positionNo") Long positionNo) {
+        return ResponseEntity.ok(RestResponseDto.success(userService.getBasicAnnualLeave(positionNo)));
+    }
 }

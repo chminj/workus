@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -170,8 +171,30 @@ public class UserController {
 
     @GetMapping("/address-book/insert")
     @PreAuthorize("hasRole('ADMIN')") // 관리자 권한이 있을 때만 접근 가능하도록 한다.
-    public String insertEmployeeForm(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String insertEmployeeForm() {
         return "addressbook/insert-employee";
+    }
+
+    @PostMapping("/address-book/insert")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String registerNewEmployee(@ModelAttribute("registerNewEmployeeForm")RegisterNewEmployeeForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            System.out.println("바인딩 시 에러가 발생했습니다.");
+        }
+
+        log.info("입력된 프로필 사진은" + form.getImage().getOriginalFilename());
+        log.info("입력된 사번은 : " + form.getNo());
+        log.info("입력된 이름은 : " + form.getName());
+        log.info("입력된 생년월일은 : " + form.getBirthDate());
+        log.info("입력된 입사일은 : " + form.getHireDate());
+        log.info("입력된 부서 번호는 : " + form.getDeptNo());
+        log.info("입력된 직책 번호는 : " + form.getPositionNo());
+        log.info("입력된 미사용 연차일수는 : " + form.getUnusedAnnualLeave());
+
+        userService.registerNewEmployeee(form); // 신규 유저 등록을 수행한다.
+
+        redirectAttributes.addFlashAttribute("insert", "신규 직원이 성공적으로 등록되었습니다.");
+        return "redirect:/address-book/detail?no=" + form.getNo(); // 연락처 변경 후 등록한 회원의 상세 페이지로 리다이렉트
     }
 
     @GetMapping("/address-book/detail")

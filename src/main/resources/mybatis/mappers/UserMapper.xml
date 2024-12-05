@@ -278,4 +278,40 @@
         ON D.LEADER_NO = U.USER_NO
         WHERE D.DEPT_NO = #{deptNo}
     </select>
+
+    <select id="getAnnualLeaveByPositionNo" resultType="double">
+        SELECT ANNUAL_LEAVE_COUNT
+        FROM WORKUS_POSITION
+        WHERE POSITION_NO = #{positionNo}
+    </select>
+
+    <select id="getNextUserNoSequence" resultType="long">
+        SELECT MAX(USER_NO) + 1
+        FROM WORKUS_USERS
+    </select>
+
+    <insert id="insertNewEmployee">
+        INSERT INTO WORKUS_USERS
+        (
+            USER_PROFILE_SRC,
+            USER_NO,
+            USER_NAME,
+            USER_BIRTH_DATE,
+            USER_HIRE_DATE,
+            DEPT_NO,
+            POSITION_NO,
+            USER_UNUSED_ANNUAL_LEAVE
+         )
+        VALUES
+        (
+            #{user.profileSrc},
+            #{user.no},
+            #{user.name},
+            #{user.birthday},
+            #{user.hireDate},
+            #{user.deptNo},
+            #{user.positionNo},
+            #{user.unusedAnnualLeave}
+        )
+    </insert>
 </mapper>
