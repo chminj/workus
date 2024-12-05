@@ -62,10 +62,7 @@
         <div class="popup-header">
           <img src="" id="postProfile" alt="Profile Picture" class="profile">
           <div class="username" id="postUsername"></div>
-          <div class="more-options" onclick="toggleDropdown()">⋮</div>
-          <div class="dropdown-menu" id="dropdownMenu">
-            <div>수정</div>
-          </div>
+
           <div class="popup-close" onclick="closePopup()">×</div>
         </div>
         <div class="popup-content">
@@ -281,7 +278,13 @@ function inserReplyPopup(){
               <circle cx="18" cy="12" r="1.5"></circle>
             </svg>
             <ul class="dropdown-menu dropdown-menu-end p-3" id="ul-dropdown">
-               <div class="dropdown-item1" id="box-modify">수정</div>
+               <div class="dropdown-item1" id="box-modify">
+
+                 <form class="dropdown-delete" method="get" action="modify">
+                      <input type="hidden" name="feedNo" value="\${feed.no}" />
+                      <button type="submit">수정</button>
+                  </form>
+               </div>
                <div class="dropdown-item2" id="box-delete">
                     <form class="dropdown-delete" method="post" action="deleteFeed">
                       <input type="hidden" name="feedNo" value="\${feed.no}" />
