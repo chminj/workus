@@ -18,9 +18,6 @@
         <section class="verticalLayoutFixedSection">
             <%@ include file="../common/nav.jsp" %>
             <div class="lnb" style="position: fixed;">
-                <div class="lnb-btn text-center mb-4">
-                    <button type="button" class="btn btn-dark" id="addScheduleBtn">내 정보 보기</button>
-                </div>
 
                 <!-- LNB 메뉴 -->
                 <div class="lnb-menu">

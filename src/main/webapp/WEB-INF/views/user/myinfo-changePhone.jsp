@@ -18,25 +18,22 @@
     <section class="verticalLayoutFixedSection">
       <%@ include file="../common/nav.jsp" %>
       <div class="lnb" style="position: fixed;">
-        <div class="lnb-btn text-center mb-4">
-          <button type="button" class="btn btn-dark" id="addScheduleBtn">내 정보 보기</button>
-        </div>
 
         <!-- LNB 메뉴 -->
         <div class="lnb-menu">
           <!-- 직원정보 관리 시스템 -->
           <p class="listTitle">내 정보 수정</p>
           <label class="menu-label">
-            <input class="checkbox-input" type="checkbox" id="division1" checked="checked">
-            <a href="/user/changePhone">연락처 변경</a>
-          </label>
-          <label class="menu-label">
-            <input class="checkbox-input" type="checkbox" id="division2">
+            <input class="checkbox-input" type="checkbox" id="division1">
             <a href="/user/myinfo">일반 정보 변경</a>
           </label>
           <label class="menu-label">
-            <input class="checkbox-input" type="checkbox" id="division3">
+            <input class="checkbox-input" type="checkbox" id="division2">
             <a href="/user/changePw">비밀번호 변경</a>
+          </label>
+          <label class="menu-label">
+            <input class="checkbox-input" type="checkbox" checked="checked" id="division3">
+            <a href="/user/changePhone">연락처 변경</a>
           </label>
         </div>
 

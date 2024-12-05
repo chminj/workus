@@ -204,4 +204,39 @@ public class UserController {
 
         return "addressbook/detail-info";
     }
+
+    @GetMapping("/address-book/manage/list")
+    public String manageList(
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page,
+            @RequestParam(name = "dept", required = false) String dept,
+            @RequestParam(name = "name", required = false) String name,
+            Model model) {
+
+        log.info("페이지번호: {}", page);
+        log.info("부서: {}", dept);
+        log.info("직원명: {}", name);
+
+        Map<String, Object> condition = new HashMap<>(); // 검색 조건을 담을 Map 객체
+        condition.put("page", page); // 페이지 번호
+        if (!"all".equals(dept)) {
+            condition.put("dept", dept); // 부서 선택 옵션
+        }
+        if (StringUtils.hasText(name)) {
+            condition.put("name", name); // 직원명
+        }
+
+        System.out.println("---------------------------" + condition);
+        // 검색 조건으로 유저 목록을 조회해야 한다.
+        UserListDto<User> dto = userService.getUserListByCondition(condition);
+        System.out.println(dto.toString());
+        System.out.println(dto.getData());
+        // UserListDto<User>를 "users"로 모델에 저장한다.
+        model.addAttribute("userList", dto.getData()); // 유저 목록
+
+        System.out.println("-----------------------------------------" + dto.getPaging().toString());
+        // Pagination을 "paging"으로 모델에 저장한다.
+        model.addAttribute("paging", dto.getPaging()); // 페이지네이션 객체
+
+        return "addressbook/manage-list";
+    }
 }

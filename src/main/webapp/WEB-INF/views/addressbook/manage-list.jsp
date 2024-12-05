@@ -37,7 +37,7 @@
                 직원검색 시스템
             </p>
             <label class="menu-label">
-                <input class="checkbox-input" type="checkbox" checked="checked" id="division2">
+                <input class="checkbox-input" type="checkbox" id="division2">
                 <a href="/address-book/list">직원 조회</a>
             </label>
 
@@ -45,7 +45,7 @@
                 인사관리 시스템
             </p>
             <label class="menu-label">
-                <input class="checkbox-input" type="checkbox" id="division3">
+                <input class="checkbox-input" type="checkbox" checked="checked" id="division3">
                 <a href="/address-book/manage/list">직원 관리</a>
             </label>
             <label class="menu-label">
@@ -56,9 +56,9 @@
 
       </div>
       <main>
-        <h3 class="title1">직원정보 조회</h3>
+        <h3 class="title1">직원정보 관리</h3>
         <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
-        <p class="description">※ 상세 정보를 보고 싶은 사원의 이름을 클릭해주세요.</p>
+        <p class="description">※ 관리를 원하는 직원의 이름을 클릭해주세요.</p>
         <div class="content">
           <section class="member-search-container">
             <!-- 검색 바 -->
