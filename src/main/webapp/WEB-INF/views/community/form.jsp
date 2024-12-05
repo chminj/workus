@@ -57,9 +57,7 @@
 
             <!-- 게시 버튼 -->
             <button type="submit" class="btn-post" id="upfile">게시하기</button>
-            <button type="button" class="btn-cancel" onclick="cancelPost()">
-              <a href="list">취소</a>
-            </button>
+            <button type="button" class="btn-cancel"><a href="list">취소</a></button>
           </form>
         </div>
       </div>

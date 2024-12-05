@@ -1,7 +1,9 @@
 package com.example.workus.community.service;
 
+import com.example.workus.common.util.WebContentFileUtils;
 import com.example.workus.community.dto.CommentForm;
 import com.example.workus.community.dto.FeedForm;
+import com.example.workus.community.dto.ModifyFrom;
 import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
@@ -15,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
@@ -22,8 +25,12 @@ import java.util.Map;
 @Service
 public class CommunityService {
 
+    private String path = "resources/repository/communityfeedfile/";
+
     @Autowired
     CommunityMapper communityMapper;
+    @Autowired
+    private WebContentFileUtils webContentFileUtils;
 
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(Map<String,Object> condtion){
@@ -46,7 +53,6 @@ public class CommunityService {
             Reply reply = communityMapper.getReplyByFeedNo(feed.getNo());
             feed.setReply(reply);
         }
-
         return feeds;
     }
 
@@ -55,10 +61,8 @@ public class CommunityService {
         MultipartFile multipartFile = form.getUpfile();
         // 멀티파트 파일에 진짜 이름을 가져옴
         String originalFilename = multipartFile.getOriginalFilename();
-        // 경로지정
-        String saveDirectory = "C:\\projects\\final-workspace\\src\\main\\webapp\\resources\\repository\\communityfeedfile";
         // 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
-        FileUtils.saveMultipartFile(multipartFile,saveDirectory,originalFilename);
+        webContentFileUtils.saveWebContentFile(multipartFile,path,originalFilename);
 
         // 게시글 생성
         Feed feed = new Feed();
@@ -70,10 +74,8 @@ public class CommunityService {
         feed.setReply(new Reply());
         // feed -> {no:0, title:'xxxx'}
 
-        System.out.println(feed.getNo());
         // 인서트 sql 내용에 데이터 넣음
         communityMapper.insertFeed(feed);
-        System.out.println(feed.getNo());
         // feed -> {no:34}
 
         try {
@@ -136,11 +138,62 @@ public class CommunityService {
 
     public void deleteFeed(Long feedNo, Long userNo) {
         Feed feed = communityMapper.getFeedByNo(feedNo); // 번호에 맞는 피드찾기
-        System.out.println(feed.getNo());
         communityMapper.deleteReplysByFeedNo(feedNo);         // 게시글에 맞는 댓글 삭제
         communityMapper.deleteHashTagsByFeedNo(feedNo);      // 게시글에 맞는 해쉬태그 삭제
         communityMapper.deleteFeedsByFeedNo(feedNo,userNo); // 게시글 삭제 맨 마지막에 삭제 되어야함
+    }
 
+    public Feed getFeedByFeedNo(long feedNo){
+         return communityMapper.getFeedByNo(feedNo);
+    }
+
+    public List<HashTag> getHashTagByFeedNo(long feedNo){
+        return communityMapper.getHashTagsByFeedNo(feedNo);
+    }
+
+
+    public void updateFeed(ModifyFrom form,long userNo) {
+        Feed existingFeed = communityMapper.getFeedByNo(form.getFeedNo());
+        existingFeed = communityMapper.getFeedByNo(form.getFeedNo());
+        System.out.println(existingFeed);
+        existingFeed.setTitle(form.getTitle());
+        existingFeed.setContent(form.getContent());
+
+        if (!form.getUpfile().isEmpty()) {
+            MultipartFile multipartFile = form.getUpfile();
+            // 멀티파트 파일에 진짜 이름을 가져옴
+            String originalFilename = multipartFile.getOriginalFilename();
+            // 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
+            webContentFileUtils.saveWebContentFile(multipartFile,path,originalFilename);
+            existingFeed.setMediaUrl(originalFilename);
+        }
+
+        communityMapper.updateFeed(existingFeed);
+
+        communityMapper.deleteHashTagsByFeedNo(form.getFeedNo());
+        try {
+            // jsonText = [{"value":"#222"},{"value":"#333"}]
+            String jsonText = form.getTags();
+            ObjectMapper mapper = new ObjectMapper();
+
+            // list ---> [map, map]
+            // map -> {key:"value" value:"#222"}
+            // map -> {key:"value" value:"#333"} 이렇게 담겨 있다.
+            List<Map<String, String>> list = mapper.readValue(jsonText, new TypeReference<List<Map<String, String>>>() {});
+
+            // 반복문 사용해서 객체 데이터 뽑아서 담음
+            for (Map<String, String> map : list) {
+                String value = map.get("value");
+
+                HashTag hashTag = new HashTag();
+                hashTag.setFeed(existingFeed);
+                hashTag.setName(value);
+
+                communityMapper.insertHashTag(hashTag);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
 

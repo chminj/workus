@@ -16,7 +16,8 @@ public interface CommunityMapper {
     List<Feed> getFeeds(@Param("begin") int begin, @Param("end") int end);
     List<HashTag> getHashTagsByFeedNo(@Param("feedNo") long feedNo);
     int getTotalRows();
-    // 게시글 상세 조회
+
+    // 게시글 번호로 팝업 조회
     Feed getFeedByNo(@Param("feedNo") long feedNo);
     // 게시글에 해당하는 모든 댓글 조회
     List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
@@ -35,10 +36,18 @@ public interface CommunityMapper {
     // 최신댓글 한개 조회
     Reply getReplyByFeedNo(@Param("feedNo") long feedNo);
 
-    // 게시글 삭제
+
+    // 게시글 번호로 게시글,댓글,해쉬태그 삭제
+    // 게시글 댓글 삭제
     void deleteReplysByFeedNo(@Param("feedNo") long feedNo);
+    // 게시글 해쉬태그 삭제
     void deleteHashTagsByFeedNo(@Param("feedNo") long feedNo);
+    // 게시글 삭제
     void deleteFeedsByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
+
+    // 게시글 수정
+    void updateFeed(@Param("feed") Feed feed);
+    void updateHashTag(@Param("hashTag") HashTag hashTag);
 
 
 }

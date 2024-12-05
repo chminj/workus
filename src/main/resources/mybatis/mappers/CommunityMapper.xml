@@ -6,8 +6,10 @@
         List<Feed> getFeeds(@Param("begin") int begin, @Param("end") int end);
     -->
     <select id="getFeeds" resultType="Feed">
-        select x.*
-        from (select row_number() over (order by B.community_no desc) rn
+        select
+            x.*
+        from (select
+                  row_number() over (order by B.community_no desc) rn
                     , B.community_no as no
                     , B.COMMUNITY_TITLE as title
                     , B.COMMUNITY_CONTENT as content
@@ -30,7 +32,8 @@
          List<HashTag> getHashTags(@Param("feedNo") int feedNo);
     -->
     <select id="getHashTagsByFeedNo" resultType="HashTag">
-        SELECT H.HASHTAG_NO as no,
+        SELECT
+            H.HASHTAG_NO    as no,
         H.HASHTAG_NAME  as name
         FROM
             WORKUS_HASHTAG H
@@ -41,16 +44,19 @@
     <!--
         int getTotalRows();
      -->
-    <select id="getTotalRows" resultType="int">
-        select count(*)
-        from WORKUS_COMMUNITY
+    <select id="getTotalRows"  resultType="int">
+        select
+            count(*)
+        from
+            WORKUS_COMMUNITY
     </select>
 
     <!--
         Feed getFeedByNo(@Param("feedNo") long feedNo);
     -->
     <select id="getFeedByNo" resultType="Feed">
-        select B.community_no as no
+        select
+            B.community_no as no
         , B.COMMUNITY_TITLE as title
         , B.COMMUNITY_CONTENT as content
         , B.COMMUNITY_MEDIA_URL as mediaUrl
@@ -72,7 +78,8 @@
          List<Reply> getReplysByFeedNo(@Param("feedNo") long feedNo);
     -->
     <select id="getReplysByFeedNo" resultType="Reply">
-        select R.REPLY_NO AS no,
+        select
+            R.REPLY_NO AS no,
             R.REPLY_CONTENT AS content,
             R.REPLY_CREATED_DATE AS createdDate,
             B.COMMUNITY_NO AS "feed.no",
@@ -116,9 +123,6 @@
         WORKUS_USERS U
         ON
         B.USER_NO = U.USER_NO
-        LEFT JOIN
-        WORKUS_HASHTAG H
-        ON B.COMMUNITY_NO = H.COMMUNITY_NO
         <where>
             <if test="condition.opt != null">
                 <choose>
@@ -129,7 +133,9 @@
                         and B.COMMUNITY_CONTENT LIKE CONCAT('%', #{condition.keyword}, '%')
                     </when>
                     <when test="condition.opt == 'hashtag'">
-                        and H.HASHTAG_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                        and B.COMMUNITY_NO IN (SELECT DISTINCT H.COMMUNITY_NO
+                                               FROM WORKUS_HASHTAG H
+                                               WHERE H.HASHTAG_NAME LIKE CONCAT('%', #{condition.keyword}, '%'));)
                     </when>
                 </choose>
             </if>
@@ -144,7 +150,7 @@
     -->
     <select id="getTotalRows2" resultType="int">
         select
-        COUNT(*)
+            COUNT(*)
         from
         WORKUS_COMMUNITY B
         LEFT JOIN
@@ -194,10 +200,11 @@
     -->
     <insert id="insertHashTag">
         insert into WORKUS_HASHTAG
-        ( HASHTAG_NAME
-        , COMMUNITY_NO)
-        values ( #{hashTag.name}
-               , #{hashTag.feed.no})
+        (HASHTAG_NAME
+        ,COMMUNITY_NO)
+        values
+            (#{hashTag.name}
+            ,#{hashTag.feed.no})
     </insert>
 
     <!--
@@ -219,7 +226,8 @@
         Reply getReplyByFeedNo(@Param("feedNo") long feedNo);
     -->
     <select id="getReplyByFeedNo" resultType="Reply">
-        select R.REPLY_NO AS no,
+        select
+            R.REPLY_NO AS no,
             R.REPLY_CONTENT AS content,
             R.REPLY_CREATED_DATE AS createdDate,
             B.COMMUNITY_NO AS "feed.no",
@@ -255,4 +263,30 @@
         delete from WORKUS_COMMUNITY
         where  COMMUNITY_NO = #{feedNo} and USER_NO = #{userNo}
     </delete>
+
+
+    <!--
+        void updateFeed(@Param("feed") Feed feed);
+    -->
+    <update id="updateFeed">
+        update WORKUS_COMMUNITY
+        set
+             COMMUNITY_TITLE        = #{feed.title}
+            ,COMMUNITY_CONTENT      = #{feed.content}
+            ,COMMUNITY_MEDIA_URL    = #{feed.mediaUrl}
+            ,COMMUNITY_MEDIA_TYPE   = #{feed.mediaType}
+            ,COMMUNITY_CREATED_DATE = #{feed.createDate}
+            ,COMMUNITY_UPDATED_DATE = now()
+        where COMMUNITY_NO = #{feed.no} and USER_NO = #{feed.user.no}
+    </update>
+
+    <!--
+         void updateHashTag(@Param("hashTag") HashTag hashTag);
+    -->
+    <update id="updateHashTag">
+        update WORKUS_HASHTAG
+        set
+            HASHTAG_NAME = #{hashTag.name}
+    </update>
+
 </mapper>
