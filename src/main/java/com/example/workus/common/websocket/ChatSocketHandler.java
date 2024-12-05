@@ -1,5 +1,6 @@
 package com.example.workus.common.websocket;
 
+import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;
 import com.example.workus.chat.vo.Chatroom;
@@ -24,8 +25,16 @@ import java.util.*;
 @Transactional
 @Service
 public class ChatSocketHandler extends TextWebSocketHandler {
-    @Autowired private UserMapper userMapper;
-    @Autowired private ChatService chatService;
+    private UserMapper userMapper;
+    private ChatService chatService;
+    private ChatroomMapper chatroomMapper;
+
+    @Autowired
+    public ChatSocketHandler(UserMapper userMapper, ChatService chatService, ChatroomMapper chatroomMapper) {
+        this.userMapper = userMapper;
+        this.chatService = chatService;
+        this.chatroomMapper = chatroomMapper;
+    }
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,15 +46,69 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         ChatMessage chatMessage = objectMapper.readValue(message.getPayload(), ChatMessage.class);
         String cmd = chatMessage.getCmd();
         if ("chat-open".equals(cmd)) {
-            openchatroom(session, chatMessage);
+            // 토스트 입장 표시
+            openChatroom(session, chatMessage);
         } else if ("chat-message".equals(cmd)) {
             chatting(chatMessage);
         } else if ("chat-close".equals(cmd)) {
-            closechatroom(session, chatMessage);
+            // 토스트 퇴장 표시
+            closeChatroom(session, chatMessage);
+        } else if ("chat-enter".equals(cmd)) {
+            // 입장 구분선
+            enterChatroom(chatMessage);
+        } else if ("chat-leave".equals(cmd)) {
+            // 퇴장 구분선
+            leaveChatroom(chatMessage);
         }
     }
 
-    private void openchatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
+    private void enterChatroom(ChatMessage responseMessage) throws IOException {
+        List<String> userNames = new ArrayList<>();
+        List<User> users = responseMessage.getUsers();
+        List<User> updateUsers = new ArrayList<>();
+        Long chatroomNo = responseMessage.getChatroomNo();
+        for (User user : users) {
+            chatroomMapper.addChatroomHistory(chatroomNo, user.getNo());
+            User updateUser = userMapper.getUserByUserNo(user.getNo());
+            userNames.add(updateUser.getName());
+            updateUsers.add(updateUser);
+        }
+        responseMessage.setCmd("chat-enter-success");
+        responseMessage.setUsers(updateUsers);
+        responseMessage.setText(chatService.getEnterTextMessage(userNames));
+
+        Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
+        // 변환 한 번만 하기 위해서 담기
+        byte[] chatMessageBytes = objectMapper.writeValueAsBytes(responseMessage);
+
+        for (WebSocketSession userSession : chatroom.values()) {
+            if (userSession != null && userSession.isOpen()) {
+                userSession.sendMessage(new TextMessage(chatMessageBytes));
+            }
+        }
+    }
+
+    private void leaveChatroom(ChatMessage responseMessage) throws IOException {
+        Long userNo = responseMessage.getUser().getNo();
+        Long chatroomNo = responseMessage.getChatroomNo();
+        chatroomMapper.outChatroomByChatroomNo(userNo, chatroomNo);
+        Chat chat = new Chat();
+        responseMessage.setText(responseMessage.getUser().getName() + "님이 퇴장하셨습니다.");
+        responseMessage.setChat(chat);
+        responseMessage.setCmd("chat-leave-success");
+
+        // 그 채팅방에 참여중인 유저들에게 전송하기
+        Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
+        // 변환 한 번만 하기 위해서 담기
+        byte[] chatMessageBytes = objectMapper.writeValueAsBytes(responseMessage);
+        for (WebSocketSession userSession : chatroom.values()) {
+            if (userSession != null && userSession.isOpen()) {
+                userSession.sendMessage(new TextMessage(chatMessageBytes));
+            }
+        }
+    }
+
+    private void openChatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
         // 채팅방에 들어온 유저 id
         String userId = chatMessage.getUser().getId();
         // 채팅방 no
@@ -88,11 +151,12 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         }
     }
 
-    private void closechatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
+    private void closeChatroom(WebSocketSession session, ChatMessage chatMessage) throws IOException {
         Long chatroomNo = chatMessage.getChatroomNo();
         ChatMessage responseChatMessage = new ChatMessage();
         User user = userMapper.getUserById(chatMessage.getUser().getId());
         responseChatMessage.setCmd("chat-close-success");
+        responseChatMessage.setChatroomNo(chatroomNo);
         responseChatMessage.setText(user.getName() + "님이 채팅방에서 나갔습니다.");
         responseChatMessage.setUser(user);
 

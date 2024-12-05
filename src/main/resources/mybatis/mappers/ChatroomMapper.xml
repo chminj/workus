@@ -122,8 +122,13 @@
     <update id="outChatroomByChatroomNo">
         update
             WORKUS_CHATROOM_HISTORY
-        set CHATROOM_OUT_TIME = CURRENT_TIMESTAMP
-        where CHATROOM_NO = #{chatroomNo}
-          and USER_NO = #{userNo}
+        set
+            CHATROOM_OUT_TIME = CURRENT_TIMESTAMP
+        where
+            CHATROOM_NO = #{chatroomNo}
+        and
+            USER_NO = #{userNo}
+        and
+            CHATROOM_OUT_TIME is null
     </update>
 </mapper>

@@ -188,6 +188,8 @@
 	<script>
 		const LOGIN_USERNO = ${LOGIN_USERNO};
 		const LOGIN_USERID = "${LOGIN_USERID}";
+		const LOGIN_USERNAME = "${LOGIN_USERNAME}";
+
 		// 모달 객체 생성
 		const profileModal = new bootstrap.Modal('#profileModal');
 		const createChatroomModal = new bootstrap.Modal('#createChatroomModal');
@@ -197,17 +199,24 @@
 
 		// 채팅방 입장
 		$('.chatroomDiv').on('click', '.chatroom', async function () {
+			// 다른 채팅방 입장 시 con time 업데이트
+			if (chatroomNo !== null) {
+				updateContime();
+			}
+
 			// data-chatroom-no 속성 가져오기
 			chatroomNo = $(this).data("chatroomNo");
+
 			// 읽지 않은 메시지 수 화면에서 삭제
-			$(`.not-read-count \${chatroomNo}`).text("");
+			$(`.not-read-count\${chatroomNo}`).text("");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
 			const chatDiv = await ajaxChatsData(chatroomNo);
 			const chatSubmitForm = loadSubmitChatForm(chatroomNo);
 			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
 			await $('#chat').html(div);
+
             // 스크롤 맨 아래로 이동
-            $('.chat-div').scrollTop($('.chat-div')[0].scrollHeight);
+            $('.outer-chat-div').scrollTop($('.outer-chat-div')[0].scrollHeight);
 
 			// 웹소켓 연결
 			$(function () {
@@ -230,31 +239,78 @@
 					}
 
 					// 메시지가 도착한 경우
-					ws.onmessage = function (message) {
+					ws.onmessage = async function (message) {
 						let data = JSON.parse(message.data);
 						if (data.cmd === "chat-open-success") {
 							userJoinToast(data);
 							checkOnline(data);
+							// 입장 시 con time 갱신
+							updateContime();
 						} else if (data.cmd === "chat-message") {
 							replaceFormatTime(data.chat);
 							if (data.user.no === LOGIN_USERNO) {
 								const div = appearSubmittedMyChat(data.chat);
-								$('.chat-div').append(div);
+								$('.inner-chat-div').append(div);
 							} else {
 								const div = appearSubmittedOtherChat(data.chat);
-								$('.chat-div').append(div);
+								$('.inner-chat-div').append(div);
 							}
 						} else if (data.cmd === "chat-close-success") {
 							userJoinToast(data);
 							checkOnline(data);
+							// 퇴장 시 con time 갱신
+							updateContime();
+						} else if (data.cmd === "chat-enter-success") {
+							// 참여자 목록에 추가
+							addNewUserInParticipantList(data.users);
+							// 취소 버튼 누르기
+							$('.closeBtn').click();
+							appearEnterAndOutDiv(data.text);
+						} else if (data.cmd === "chat-leave-success") {
+							appearEnterAndOutDiv(data.text);
+							$(`.participant-name-div[data-user-no="\${data.user.no}"]`).remove();
 						}
 					}
 				}
 
 				connect();
 
+				// 추가 초대하기
+				$('#updateUsersInChatroomBtn').click(async function () {
+					// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
+					let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
+						return { no: $(this).val()};
+					}).get();
+
+					let message = {
+						cmd: 'chat-enter',
+						chatroomNo: chatroomNo,
+						users: checkedUserNumbers
+					}
+					send(message);
+				})
+
+				// 채팅방 나가기
+				$('#chat').on('click', '#outChatroom', async function () {
+					if (!confirm('채팅방을 나가시겠습니까?')) {
+						return;
+					}
+					let message = {
+						cmd: 'chat-leave',
+						chatroomNo: chatroomNo,
+						user: {
+							no: LOGIN_USERNO,
+							name: LOGIN_USERNAME
+						},
+					}
+					send(message);
+					window.location.replace('/chatroom/list');
+				})
+
 				// 채팅 소켓으로 전송
 				function chat() {
+					// 채팅 전송하고 con time 업데이트
+					updateContime();
 					let inputMessage = $('input[name=content]').val();
 					if (inputMessage) {
 						let message = {
@@ -272,7 +328,7 @@
 				}
 
 				// 다른 페이지로 이동하거나 창이 꺼지기 직전
-				$(window).on('beforeunload', function () {
+				window.addEventListener('beforeunload', function () {
 					let message = {
 						cmd: 'chat-close',
 						chatroomNo: chatroomNo,
@@ -302,6 +358,37 @@
 			})
 		})
 
+		function appearEnterAndOutDiv(text) {
+			let div = `
+			<div class="d-flex align-items-center my-4">
+				<div class="border-bottom flex-grow-1"></div>
+				<div class="message">
+					<span class="mx-3 text-muted">\${text}</span>
+				</div>
+				<div class="border-bottom flex-grow-1"></div>
+			</div>
+			`
+			$('.inner-chat-div').append(div);
+		}
+
+		// 연결 시간 업데이트
+		function updateContime() {
+			$.ajax({
+				url: '/ajax/chatroom/' + chatroomNo,
+				method: 'PUT',
+				success: function (response) {
+					if(response.ok) {
+						console.log('연결시간 업데이트 완료');
+					} else {
+						console.log('연결시간 업데이트 실패');
+					}
+				},
+				error: function (error) {
+					console.log('연결시간 업데이트 에러 발생', error);
+				}
+			})
+		}
+
 		// 더 보기
 		$('#chat').on('click', '#loadMoreBtn', async function () {
 			page++;
@@ -314,10 +401,10 @@
 				if (response.ok) {
                     data.data.map(item => replaceFormatTime(item));
                     // 더보기 누르기 전으로 스크롤 이동
-                    prevScrollHeight = $('.chat-div > div').height();
-					$('.chat-div > div').prepend(loadPlusChats(data));
-                    let scrollHeight = $('.chat-div > div').height();
-                    $('.chat-div').scrollTop(scrollHeight - prevScrollHeight);
+                    prevScrollHeight = $('.inner-chat-div').height();
+					$('.inner-chat-div').prepend(loadPlusChats(data));
+                    let scrollHeight = $('.inner-chat-div').height();
+                    $('.outer-chat-div').scrollTop(scrollHeight - prevScrollHeight);
 				} else {
 					console.log('채팅을 불러오는데 실패했습니다.', result.message);
 				}
@@ -349,46 +436,11 @@
 			}
 		})
 
-		// 추가 초대하기
-		$('#updateUsersInChatroomBtn').click(async function () {
-			// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
-			let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
-				return { no: $(this).val()};
-			}).get();
-
-			// json으로 바꾸기 좋게 형태 변경
-			let formData = {
-				chatroomNo: chatroomNo,
-				users: checkedUserNumbers
-			};
-
-			try {
-				const response = await fetch('/ajax/chatroom/addNewUser', {
-					method: 'POST',
-					headers: {
-						'Content-Type': 'application/json',
-					},
-					body: JSON.stringify(formData)
-				})
-				const result = await response.json();
-				const data = await result.data;
-				if(response.ok) {
-					// 참여자 목록에 추가
-					addNewUserInParticipantList(data);
-					// 취소 버튼 누르기
-					$('.closeBtn').click();
-				} else {
-					console.log('유저들을 추가로 초대하지 못 했습니다.');
-				}
-			} catch (error) {
-				console.log('유저들을 추가로 초대 중 에러발생', error);
-			}
-		})
-
+		// 참여자 목록에 추가
 		function addNewUserInParticipantList(users) {
 			let div = `
 			\${users.map((user) => `
-				<div class="d-flex align-items-center my-2">
+				<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
 					<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 					<div class="d-flex align-items-center gap-2">
 						<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
@@ -398,17 +450,6 @@
 			`).join('')}`;
 			$('#participantList').append(div);
 		}
-
-		// 채팅방 나가기
-		$('#chat').on('click', '#outChatroom', async function () {
-			if (!confirm('채팅방을 나가시겠습니까?')) {
-				return;
-			}
-			const response = await fetch('/ajax/chatroom/out/' + chatroomNo);
-			if (response.ok) {
-				window.location.replace('/chatroom/list');
-			}
-		})
 
 		<%-- 채팅방 생성 js 시작 --%>
 
@@ -559,17 +600,6 @@
 
 		<%-- 채팅방 생성 js 끝 --%>
 
-		// 페이지 변화 시 연결 시간 업데이트
-		$(document).on('visibilitychange', async function () {
-			try {
-				await fetch('/ajax/chatroom/' + chatroomNo, {
-					method: 'PUT'
-				})
-			} catch (error) {
-				console.log('페이지 변화에 대한 이벤트 에러가 발생했습니다.', error);
-			}
-		})
-
 		// 프로필 모달 등장
 		$('#chat').on('click', '.participant-name', async function () {
 			try {
@@ -624,10 +654,10 @@
 			return `
 				\${chat.isFirst === 'Y' ? `
 			<!-- 날짜 구분선 -->
-			<div className="d-flex align-items-center my-4">
-				<div className="border-bottom flex-grow-1"></div>
-				<span className="mx-3 text-muted">\${chat.time.date}</span>
-				<div className="border-bottom flex-grow-1"></div>
+			<div class="d-flex align-items-center my-4">
+				<div class="border-bottom flex-grow-1"></div>
+				<span class="mx-3 text-muted">\${chat.time.date}</span>
+				<div class="border-bottom flex-grow-1"></div>
 			</div>
 				` : ``}
 				<div class="mb-3 w-75 ms-auto">
@@ -651,10 +681,10 @@
 			return `
 				\${chat.isFirst === 'Y' ? `
 			<%-- 날짜 구분선 --%>
-			<div className="d-flex align-items-center my-4">
-				<div className="border-bottom flex-grow-1"></div>
-				<span className="mx-3 text-muted">\${chat.time.date}</span>
-				<div className="border-bottom flex-grow-1"></div>
+			<div class="d-flex align-items-center my-4">
+				<div class="border-bottom flex-grow-1"></div>
+				<span class="mx-3 text-muted">\${chat.time.date}</span>
+				<div class="border-bottom flex-grow-1"></div>
 			</div>
 				` : ``}
 				<div class="mb-3 w-75">
@@ -708,7 +738,7 @@
 				if (response.ok) {
 					return loadTitleAndUsers(data);
 				} else {
-					console.log(data.message);
+					console.log('채팅방 제목과 참여중인 유저들을 ajax로 불러오지 못했습니다.', data.message);
 				}
 			} catch (error) {
 				console.log('에러메시지', error);
@@ -760,7 +790,7 @@
 						   </li>
 						   <li id="participantList">
 							  \${data.users.map((user) => `
-							<div class="d-flex align-items-center my-2">
+							<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
 								<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 								<div class="d-flex align-items-center gap-2">
 									<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
@@ -779,35 +809,44 @@
 		// 클릭한 채팅방에 맞는 채팅들 불러오기
 		function loadChats(data) {
 			return `
-					<!-- 채팅 내용 영역 -->
-					<div class="flex-grow-1 p-3 chat-div" style="overflow-y: auto;">
-					    <div>
-                            <%-- 더 보기 버튼 --%>
-                            \${data.paging.last === true || data.paging.begin === 0 ? ``:`
-                            <div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
-                                <button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
-                                    <i class="bi bi-chevron-up me-1"></i>더 보기
-                                </button>
+        <!-- 채팅 내용 영역 -->
+        <div class="flex-grow-1 p-3 outer-chat-div" style="overflow-y: auto;">
+            <div class="inner-chat-div">
+                \${data.paging.last === true || data.paging.begin === 0
+                    ? ``
+                    : `
+                        <div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
+                            <button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
+                                <i class="bi bi-chevron-up me-1"></i>더 보기
+                            </button>
+                        </div>
+                    `}
+                \${data.data.map((chat) => `
+                    \${chat.isFirst === 'Y'
+                        ? `
+                            <!-- 날짜 구분선 -->
+                            <div class="d-flex align-items-center my-4">
+                                <div class="border-bottom flex-grow-1"></div>
+                                <span class="mx-3 text-muted">\${chat.time.date}</span>
+                                <div class="border-bottom flex-grow-1"></div>
                             </div>
-                            `}
-                            \${data.data.map((chat) => `
-                                \${chat.isFirst === 'Y' ? `
-                                    <!-- 날짜 구분선 -->
-                                    <div class="d-flex align-items-center my-4">
-                                        <div class="border-bottom flex-grow-1"></div>
-                                        <span class="mx-3 text-muted">\${chat.time.date}</span>
-                                        <div class="border-bottom flex-grow-1"></div>
-                                    </div>
-                                    ` : ``}
-                                <!-- 입장/퇴장 구분선 -->
-                                <div class="d-flex align-items-center my-4">
-                                    <div class="border-bottom flex-grow-1"></div>
-                                        <div class="message">
-                                            <span className="mx-3 text-muted">홍길동님이 입장하셨습니다.</span>
-                                        </div>
-                                    <div class="border-bottom flex-grow-1"></div>
+                        `
+                        : ``}
+
+                    \${chat.type === 'message'
+                        ? `
+                            <!-- 입장/퇴장 구분선 -->
+                            <div class="d-flex align-items-center my-4">
+                                <div class="border-bottom flex-grow-1"></div>
+                                <div class="message">
+                                    <span class="mx-3 text-muted">\${chat.content}</span>
                                 </div>
-                                \${LOGIN_USERNO === chat.user.no ? `
+                                <div class="border-bottom flex-grow-1"></div>
+                            </div>
+                        `
+                        : `
+                            \${LOGIN_USERNO === chat.user.no
+                                ? `
                                     <div class="mb-3 w-75 ms-auto">
                                         <div class="text-end mb-1">
                                             <strong>나</strong>
@@ -821,25 +860,27 @@
                                             <small class="text-muted">\${chat.time.time}</small>
                                         </div>
                                     </div>
-                                ` : `
-                                <!-- 상대 메시지 -->
-                                <div class="mb-3 w-75">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <img src="" alt="프로필" class="rounded-circle me-2"/>
-                                        <strong>\${chat.user.name}</strong>
-                                    </div>
-                                    <div class="d-flex">
-                                        <div class="bg-light rounded p-2 mb-1">
-                                            \${chat.content}
+                                `
+                                : `
+                                    <!-- 상대 메시지 -->
+                                    <div class="mb-3 w-75">
+                                        <div class="d-flex align-items-center mb-1">
+                                            <img src="" alt="프로필" class="rounded-circle me-2"/>
+                                            <strong>\${chat.user.name}</strong>
                                         </div>
+                                        <div class="d-flex">
+                                            <div class="bg-light rounded p-2 mb-1">
+                                                \${chat.content}
+                                            </div>
+                                        </div>
+                                        <small class="text-muted">\${chat.time.time}</small>
                                     </div>
-                                    <small class="text-muted">\${chat.time.time}</small>
-                                </div>
                                 `}
-                            `).join('')}
-                        </div>
-					</div>
-				`;
+                        `}
+                `).join('')}
+            </div>
+        </div>
+    `;
 		}
 
 		function loadPlusChats(data) {
@@ -861,6 +902,18 @@
 									<div class="border-bottom flex-grow-1"></div>
 								</div>
 							` : ``}
+							\${chat.type === 'message'
+							? `
+                            <!-- 입장/퇴장 구분선 -->
+                            <div class="d-flex align-items-center my-4">
+                                <div class="border-bottom flex-grow-1"></div>
+                                <div class="message">
+                                    <span class="mx-3 text-muted">\${chat.content}</span>
+                                </div>
+                                <div class="border-bottom flex-grow-1"></div>
+                            </div>
+                        	`
+							: `
 							\${LOGIN_USERNO === chat.user.no ? `
 								<div class="mb-3 w-75 ms-auto">
 									<div class="text-end mb-1">
@@ -890,6 +943,7 @@
 								<small class="text-muted">\${chat.time.time}</small>
 							</div>
 							`}
+                        `}
 			`).join('')}
 					</div>
 				`;
