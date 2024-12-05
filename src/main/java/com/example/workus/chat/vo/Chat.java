@@ -22,4 +22,5 @@ public class Chat {
     private Character isFirst;
     private User user;
     private Chatroom chatroom;
+    private String type;
 }

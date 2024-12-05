@@ -9,8 +9,9 @@
         <sec:authorize access="isAuthenticated()">
             <sec:authentication property="principal.no" var="LOGIN_USERNO" scope="request"/>
             <sec:authentication property="principal.id" var="LOGIN_USERID" scope="request"/>
-            <sec:authentication property="principal.name"/> 님 환영합니다.
+            <sec:authentication property="principal.name" var="LOGIN_USERNAME" scope="request"/>
         </sec:authorize>
+            ${LOGIN_USERNAME} 님 환영합니다.
             <a href="/user/myinfo" class="mgl5">
                 <span class="badge text-bg-success modify">수정</span>
             </a>
