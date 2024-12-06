@@ -127,4 +127,25 @@
                                      JOIN WORKUS_DEPT D ON D.LEADER_NO = #{leaderNo}
                                 AND U.DEPT_NO = D.DEPT_NO)
     </select>
+    <select id="getReqDetailByApvNo" resultMap="apvResultMap">
+        SELECT a.apv_no            as apv_no
+             , a.apv_text          as apv_text
+             , a.apv_to_date       as apv_to_date
+             , a.apv_from_date     as apv_from_date
+             , a.apv_created_date  as apv_created_date
+             , a.apv_title         as apv_title
+             , a.apv_category_no   as apv_category_no
+             , c.apv_category_name as apv_category_name
+             , a.user_no           as user_no
+             , a.apv_reason        as apv_reason
+             , a.apv_status        as apv_status
+             , a.apv_approver_no   as apvUserNo
+             , t.apv_text_no       as apv_text_no
+             , t.APV_TEXT_NAME     as apv_text_name
+             , t.APV_TEXT_VALUE    as apv_text_value
+        FROM WORKUS_APPROVAL a
+                 JOIN WORKUS_APPROVAL_CATEGORY c ON c.APV_CATEGORY_NO = a.APV_CATEGORY_NO
+                 LEFT JOIN WORKUS_APPROVAL_TEXT_AREA t ON t.apv_no = a.apv_no
+        WHERE a.apv_no = #{apvNo}
+    </select>
 </mapper>

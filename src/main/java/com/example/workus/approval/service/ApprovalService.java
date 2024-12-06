@@ -1,17 +1,12 @@
 package com.example.workus.approval.service;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.RefListViewDto;
 import com.example.workus.approval.dto.ReqListViewDto;
-import com.example.workus.approval.dto.WaitListViewDto;
 import com.example.workus.approval.mapper.ApprovalMapper;
 import com.example.workus.approval.vo.ApprovalCategory;
-import com.example.workus.attendance.mapper.AttendanceMapper;
-import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -126,4 +121,13 @@ public class ApprovalService {
         return approvalMapper.getRefListByLeaderNo(leaderNo);
     }
 
+    /**
+     * 요청 내역 리스트에서 특정 글을 클릭해서 상세 정보를 조회한다.
+     *
+     * @param apvNo 글 번호
+     * @return 해당 글 상세 정보
+     */
+    public ReqListViewDto getMyReqDetail(Long apvNo) {
+        return approvalMapper.getReqDetailByApvNo(apvNo);
+    }
 }

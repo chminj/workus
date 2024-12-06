@@ -275,3 +275,48 @@ table a.link:hover {
     text-decoration: underline;
     text-underline-position: under;
 }
+
+.containerW > div.additionalW {
+    margin-left: 30px;
+    width: 300px;
+}
+
+.userInfoHeader {
+    background: #0f132a;
+    color: #fff;
+    padding: 10px 12px;
+    font-size: 18px;
+}
+
+.userInfoW {
+    border: 1px solid #ddd;
+    padding: 20px 12px;
+}
+
+.userInfoW img {
+    width: 4rem;
+    margin-right: 20px;
+    margin-left: 20px;
+}
+
+.userInfo {
+    font-size: 16px;
+}
+
+.btn-custom2 {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: #0f132a;
+    --bs-btn-border-color: #0f132a;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #232957FF;
+    --bs-btn-hover-border-color: #232957FF;
+}
+
+.description {
+    font-size: 16px;
+    margin-bottom: 12px;
+}
+
+#rejectedReason {
+    height: 120px;
+}

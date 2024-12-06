@@ -24,8 +24,8 @@
             <c:set var="lnb" value="signOff"/>
             <div class="lnb">
                 <ul class="list1">
-                    <li class="${lnb eq 'signOff' ? 'on' : '' }"><a href="form-list">결재 요청하기</a></li>
-                    <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="myReqList">요청 내역</a></li>
+                    <li class="${lnb eq 'signOff' ? 'on' : '' }"><a href="${pageContext.request.contextPath}/approval/form-list">결재 요청하기</a></li>
+                    <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="${pageContext.request.contextPath}/approval/my/reqList">요청 내역</a></li>
                 </ul>
                 <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_LEADER')">
                     <div class="approvalDepth accordion" id="accordionPanelsStayOpenExample">
@@ -42,15 +42,15 @@
                                     <ul class="list2 myAtdList">
                                         <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
                                             <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a
-                                                    href="my/waitList">대기건</a>
+                                                    href="${pageContext.request.contextPath}/approval/my/waitList">대기건</a>
                                             </li>
-                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="my/endList">종결건</a>
+                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
-                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="my/backList">반려건</a>
+                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="${pageContext.request.contextPath}/approval/my/backList">반려건</a>
                                             </li>
                                         </sec:authorize>
                                         <sec:authorize access="hasRole('ROLE_LEADER')">
-                                            <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="my/refList">열람건</a>
+                                            <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="${pageContext.request.contextPath}/approval/my/refList">열람건</a>
                                             </li>
                                         </sec:authorize>
                                     </ul>

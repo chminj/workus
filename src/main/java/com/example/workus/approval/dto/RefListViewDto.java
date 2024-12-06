@@ -26,6 +26,6 @@ public class RefListViewDto {
     private String status;
     private Long apvUserNo;
 
-    private String textName;
-    private String textValue;
+//    private String textName;
+//    private String textValue;
 }
