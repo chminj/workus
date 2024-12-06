@@ -199,13 +199,12 @@
 
 		// 채팅방 입장
 		$('.chatroomDiv').on('click', '.chatroom', async function () {
-			// 다른 채팅방 입장 시 con time 업데이트
 			if (chatroomNo !== null) {
 				updateContime();
 			}
-
 			// data-chatroom-no 속성 가져오기
 			chatroomNo = $(this).data("chatroomNo");
+			updateContime();
 
 			// 읽지 않은 메시지 수 화면에서 삭제
 			$(`.not-read-count\${chatroomNo}`).text("");
@@ -244,9 +243,8 @@
 						if (data.cmd === "chat-open-success") {
 							userJoinToast(data);
 							checkOnline(data);
-							// 입장 시 con time 갱신
-							updateContime();
 						} else if (data.cmd === "chat-message") {
+							updateContime();
 							replaceFormatTime(data.chat);
 							if (data.user.no === LOGIN_USERNO) {
 								const div = appearSubmittedMyChat(data.chat);
@@ -258,8 +256,6 @@
 						} else if (data.cmd === "chat-close-success") {
 							userJoinToast(data);
 							checkOnline(data);
-							// 퇴장 시 con time 갱신
-							updateContime();
 						} else if (data.cmd === "chat-enter-success") {
 							// 참여자 목록에 추가
 							addNewUserInParticipantList(data.users);
@@ -309,8 +305,6 @@
 
 				// 채팅 소켓으로 전송
 				function chat() {
-					// 채팅 전송하고 con time 업데이트
-					updateContime();
 					let inputMessage = $('input[name=content]').val();
 					if (inputMessage) {
 						let message = {
@@ -376,13 +370,6 @@
 			$.ajax({
 				url: '/ajax/chatroom/' + chatroomNo,
 				method: 'PUT',
-				success: function (response) {
-					if(response.ok) {
-						console.log('연결시간 업데이트 완료');
-					} else {
-						console.log('연결시간 업데이트 실패');
-					}
-				},
 				error: function (error) {
 					console.log('연결시간 업데이트 에러 발생', error);
 				}
@@ -732,7 +719,9 @@
 		// 채팅방 제목과 참여중인 유저들을 ajax로 불러온다.
 		async function ajaxTitleAndUsersData(chatroomNo) {
 			try {
-				const response = await fetch('/ajax/chatroom/' + chatroomNo);
+				const response = await fetch('/ajax/chatroom/' + chatroomNo,{
+					method: 'GET'
+				});
 				const result = await response.json();
 				const data = await result.data;
 				if (response.ok) {
