@@ -24,6 +24,7 @@
         set CHATROOM_CON_TIME = CURRENT_TIMESTAMP
         where CHATROOM_NO = #{chatroomNo}
           and USER_NO = #{userNo}
+        and CHATROOM_OUT_TIME is null
     </update>
 
     <select id="getChatroomNoByUserNo" resultType="Long">
@@ -78,7 +79,7 @@
              on
                  H.CHATROOM_NO = R.CHATROOM_NO
         where H.CHATROOM_NO = #{chatroomNo}
-          and H.CHATROOM_OUT_TIME IS NULL
+          and H.CHATROOM_OUT_TIME is null
     </select>
 
     <select id="getNotReadCount" resultType="int">
@@ -91,6 +92,7 @@
         where H.CHATROOM_NO = #{chatroomNo}
           and H.USER_NO = #{userNo}
           and H.CHATROOM_CON_TIME <![CDATA[<]]> C.CHAT_TIME
+        and H.CHATROOM_OUT_TIME is null
     </select>
 
     <select id="getAllUsersByDeptName" resultType="ParticipantInChatroomDto">

@@ -32,12 +32,11 @@ public class RestChatroomController {
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoAndUpdateConTimeByChatroomNo(
             @AuthenticationPrincipal LoginUser loginUser,
             @PathVariable("chatroomNo") Long chatroomNo) {
-        chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfo(chatroomNo)));
     }
 
     @PutMapping("/chatroom/{chatroomNo}")
-    ResponseEntity<RestResponseDto<ChatroomInfoDto>> updateChatroomInfo(
+    ResponseEntity<RestResponseDto<ChatroomInfoDto>> updateContimeByChatroomNo(
             @AuthenticationPrincipal LoginUser loginUser,
             @PathVariable("chatroomNo") Long chatroomNo) {
         chatroomServcie.updateChatroomConTime(loginUser.getNo(), chatroomNo);
