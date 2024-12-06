@@ -65,3 +65,9 @@ html, body {
     text-decoration: underline;
 }
 
+.d-none {
+    display: none; /* 숨김 처리 */
+}
+label {
+    cursor: pointer; /* 클릭 가능한 버튼처럼 보이게 설정 */
+}

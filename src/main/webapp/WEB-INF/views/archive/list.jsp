@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
     <%@ include file="../common/common.jsp" %>
 
     <link rel="stylesheet" type="text/css" href="<c:url value='/resources/css/archive.css' />">
@@ -49,7 +50,7 @@
                                         <col width="*">
                                         <col width="15%">
                                         <col width="15%">
-                                        <col width="15%">
+                                        <col width="20%">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -62,7 +63,7 @@
                                     </thead>
                                     <tbody>
                                     <c:choose>
-                                        <c:when test="${empty boards }">
+                                        <c:when test="${empty archiveList }">
                                             <tr>
                                                 <td colspan="5" class="text-center">
                                                     조회된 파일이 없습니다.
@@ -70,13 +71,30 @@
                                             </tr>
                                         </c:when>
                                         <c:otherwise>
-                                            <c:forEach var="board" items="${boards }">
+                                            <c:forEach var="archive" items="${archiveList}">
                                                 <tr>
-                                                    <td>${board.no }</td>
-                                                    <td><a href="detail?no=${board.no }">${board.title }</a></td>
-                                                    <td>${board.user.nickname }</td>
-                                                    <td><fmt:formatDate value="${board.createdDate }" /></td>
-                                                    <td><fmt:formatDate value="${board.updatedDate }" /></td>
+                                                    <td>${archive.no}</td>
+                                                    <td>${archive.originalName}</td>
+                                                    <td>${archive.userName}</td>
+                                                    <td>
+                                                        <c:set var="size" value="${archive.fileSize}" />
+                                                        <c:set var="unit" value="${ size >= 1024 * 1024 ? 'MB' : 'KB' }" />
+
+                                                        <!-- 파일 크기 계산 -->
+                                                        <c:choose>
+                                                            <c:when test="${size >= 1024 * 1024}">
+                                                                <!-- MB로 변환 후 2자리 소수점으로 표시 -->
+                                                                <c:set var="sizeInMB" value="${size / 1024 / 1024}" />
+                                                                <c:out value="${fn:substring(String.format('%.2f', sizeInMB), 0, 5)} MB" />
+                                                            </c:when>
+                                                            <c:otherwise>
+                                                                <!-- KB로 변환 후 2자리 소수점으로 표시 -->
+                                                                <c:set var="sizeInKB" value="${size / 1024}" />
+                                                                <c:out value="${fn:substring(String.format('%.2f', sizeInKB), 0, 5)} KB" />
+                                                            </c:otherwise>
+                                                        </c:choose>
+                                                    </td>
+                                                    <td><fmt:formatDate value="${archive.uploadTime}" pattern="yyyy-M-dd a hh:mm" /></td>
                                                 </tr>
                                             </c:forEach>
                                         </c:otherwise>
@@ -85,7 +103,12 @@
                                 </table>
                                 <div class="col-12 mt-3">
                                     <div class="text-end">
-                                        <a href="#" class="btn btn-primary btn-sm">파일 업로드</a>
+                                        <form method="post" action="upload" enctype="multipart/form-data" id="archiveForm">
+                                            <!-- 숨겨진 파일 선택 input -->
+                                            <input type="file" id="fileInput" class="d-none" name="upfile" />
+                                            <!-- 파일 선택 버튼 -->
+                                            <label for="fileInput" class="btn btn-primary btn-sm">파일 업로드</label>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
