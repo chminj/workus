@@ -24,8 +24,12 @@ public interface UserMapper {
     void updateSignUpUser(@Param("user") User user); // 사이트 회원가입 진행
 
     int getTotalRows(@Param("condition") Map<String, Object> condition); // 검색필터와 일치하는 회원수 조회
+    
+    int getActivatedTotalRows(@Param("condition") Map<String, Object> condition); // 검색필터와 일치하면서 재직중인 회원수 조회
 
     List<User> getUsersByCondition(@Param("condition") Map<String, Object> condition); // 조건에 맞는 회원 정보 조회
+
+    List<User> getActivatedUsersByCondition(@Param("condition") Map<String, Object> condition); // 조건에 맞는 재직중인 회원 정보 조회
 
     List<DeptDto> getAllDepts();
 

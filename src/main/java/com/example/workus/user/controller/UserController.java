@@ -134,8 +134,8 @@ public class UserController {
         return "redirect:/user/changePhone"; // 연락처 변경 후 원래 페이지로 리다이렉트
     }
 
-    @GetMapping("/address-book/list")
-    public String list(
+    @GetMapping("/address-book/manage/list") // 직원 정보 조회 ( 여기서는 휴직 및 퇴직한 직원까지 다 조회한다. )
+    public String manageList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "dept", required = false) String dept,
             @RequestParam(name = "name", required = false) String name,
@@ -166,7 +166,7 @@ public class UserController {
         // Pagination을 "paging"으로 모델에 저장한다.
         model.addAttribute("paging", dto.getPaging()); // 페이지네이션 객체
 
-        return "addressbook/list";
+        return "addressbook/manage-list";
     }
 
     @GetMapping("/address-book/insert")
@@ -206,8 +206,8 @@ public class UserController {
         return "addressbook/detail-info";
     }
 
-    @GetMapping("/address-book/manage/list")
-    public String manageList(
+    @GetMapping("/address-book/list") // 직원 정보 조회 ( 여기서는 재직중인 직원만 조회한다. )
+    public String list(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "dept", required = false) String dept,
             @RequestParam(name = "name", required = false) String name,
@@ -227,8 +227,8 @@ public class UserController {
         }
 
         System.out.println("---------------------------" + condition);
-        // 검색 조건으로 유저 목록을 조회해야 한다.
-        UserListDto<User> dto = userService.getUserListByCondition(condition);
+        // 검색 조건으로 재직중인 유저 목록을 조회해야 한다.
+        UserListDto<User> dto = userService.getActivatedUserListByCondition(condition);
         System.out.println(dto.toString());
         System.out.println(dto.getData());
         // UserListDto<User>를 "users"로 모델에 저장한다.
@@ -238,6 +238,6 @@ public class UserController {
         // Pagination을 "paging"으로 모델에 저장한다.
         model.addAttribute("paging", dto.getPaging()); // 페이지네이션 객체
 
-        return "addressbook/manage-list";
+        return "addressbook/list";
     }
 }

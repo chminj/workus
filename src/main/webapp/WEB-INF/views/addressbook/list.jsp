@@ -57,6 +57,7 @@
       </div>
       <main>
         <h3 class="title1">직원정보 조회</h3>
+        <p class="description">※ 현재 재직중인 직원을 검색할 수 있습니다.</p>
         <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
         <p class="description">※ 상세 정보를 보고 싶은 사원의 이름을 클릭해주세요.</p>
         <div class="content">
