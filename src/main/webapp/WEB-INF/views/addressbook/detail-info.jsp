@@ -94,7 +94,9 @@
 
             <div class="input__block">
                 <label>이메일</label>
-                <input type="text" placeholder="정보가 없습니다." id="user-email" name="email" style="width: 585px;" value="${user.email}" readonly />
+                <input type="text" placeholder="정보가 없습니다." id="user-email" name="email" value="${user.email}" readonly />
+                <label>재직 상태</label>
+                <input type="text" placeholder="정보가 없습니다." id="user-status" name="status" value="${user.status == 'Y' ? '재직중' : (user.status == 'P' ? '휴직중' : (user.status == 'Q' ? '퇴직' : ''))}" readonly />
             </div>
 
             <div class="input__block">
