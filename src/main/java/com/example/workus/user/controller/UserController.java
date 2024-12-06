@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
@@ -135,6 +136,7 @@ public class UserController {
     }
 
     @GetMapping("/address-book/manage/list") // 직원 정보 조회 ( 여기서는 휴직 및 퇴직한 직원까지 다 조회한다. )
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
     public String manageList(
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "dept", required = false) String dept,
@@ -249,5 +251,36 @@ public class UserController {
         model.addAttribute("paging", dto.getPaging()); // 페이지네이션 객체
 
         return "addressbook/list";
+    }
+
+    @GetMapping("/address-book/modify")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')") // 인사팀 이상의 권한이 있을 때만 접근 가능하도록 한다.
+    public String modifyEmployeeForm(int no, Model model) {
+        User user = userService.getUserByUserNo(no); // 사번으로 해당 유저를 조회한다.
+        model.addAttribute("user", user); // 유저를 view 객체에 전달한다.
+
+        return "addressbook/modify-employee";
+    }
+
+    @PostMapping("/address-book/modify")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER')")
+    public String modifyEmployee(@ModelAttribute("modifyEmployeeForm")ModifyEmployeeForm form, BindingResult errors, RedirectAttributes redirectAttributes) {
+        if (errors.hasErrors()) {
+            System.out.println("바인딩 시 에러가 발생했습니다.");
+        }
+
+        log.info("입력된 프로필 사진은" + form.getImage().getOriginalFilename());
+        log.info("입력된 이름은 : " + form.getName());
+        log.info("입력된 생년월일은 : " + form.getBirthDate());
+        log.info("입력된 입사일은 : " + form.getHireDate());
+        log.info("입력된 부서 번호는 : " + form.getDeptNo());
+        log.info("입력된 직책 번호는 : " + form.getPositionNo());
+        log.info("입력된 권한 번호는 : " + form.getRoleNo());
+        log.info("입력된 미사용 연차일수는 : " + form.getUnusedAnnualLeave());
+
+//        userService.registerNewEmployeee(form); // 신규 유저 등록을 수행한다.
+
+        redirectAttributes.addFlashAttribute("insert", "신규 직원이 성공적으로 등록되었습니다.");
+        return "redirect:/address-book/detail?no="; // + form.getNo(); // 연락처 변경 후 등록한 회원의 상세 페이지로 리다이렉트
     }
 }
