@@ -1,9 +1,7 @@
 package com.example.workus.approval.controller;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.RefListViewDto;
 import com.example.workus.approval.dto.ReqListViewDto;
-import com.example.workus.approval.dto.WaitListViewDto;
 import com.example.workus.approval.service.ApprovalService;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.security.LoginUser;
@@ -14,10 +12,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -80,13 +75,23 @@ public class ApprovalController {
         return "redirect:/approval/form-list";
     }
 
-    @GetMapping("/myReqList")
+    @GetMapping("/my/reqList")
     public String myRequestList(@AuthenticationPrincipal LoginUser loginUser
             , Model model) {
-        List<ReqListViewDto> myReqList = approvalService.getMyReqList(loginUser.getNo());
-        model.addAttribute("myReqList", myReqList);
+        List<ReqListViewDto> reqList = approvalService.getMyReqList(loginUser.getNo());
+        model.addAttribute("reqList", reqList);
 
-        return "approval/myReqList";
+        return "approval/my/reqList";
+    }
+
+    @GetMapping("/my/detail/reqDetail")
+    public String myRequestList(@RequestParam("no") Long no
+            , @RequestParam("categoryNo") int categoryNo
+            , Model model) {
+        ReqListViewDto reqByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("reqByNo", reqByNo);
+
+        return "approval/my/detail/reqDetail";
     }
 
     @GetMapping("/my/waitList")

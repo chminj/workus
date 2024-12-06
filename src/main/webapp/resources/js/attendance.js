@@ -3,6 +3,7 @@ $(function () {
     let atdCalendarEl = document.getElementById('fullCalendarInAtd');
     let roleNo = 0; // 사용자 역할 저장
     let finalEvents = []; // 전체 이벤트 저장
+    let filteredEvents = []; // 전체 이벤트 저장
     let selectedDeptNo; // 선택된 부서 번호
     const selectBox = $('<select id="deptSelect" class="form-select"><option value="">Select a department</option></select>');
 
@@ -44,6 +45,7 @@ $(function () {
             day: '일별',
         },
         aspectRatio: 2,
+        height: "auto",
         displayEventTime: false,
         eventSources: [
             {
@@ -56,9 +58,7 @@ $(function () {
                         url: '/api/attendances/annualLeaveHistory',
                         type: 'POST',
                         success: function (data) {
-                            finalEvents = []; // 초기화
-
-                            const events = data.map(leave => {
+                            finalEvents = data.map(leave => {
                                 const startDate = new Date(leave.fromDate);
                                 const endDate = new Date(leave.toDate);
                                 return {
@@ -74,30 +74,11 @@ $(function () {
                                     }
                                 };
                             });
+                            // 초기 필터링
+                            filterEventsByDepartment(selectedDeptNo);
 
-                            // 최종 이벤트 배열 저장
-                            finalEvents = events; // 전체 이벤트 저장
-
-                            // const eventSourceId = "dataList"; // 이벤트 소스 ID 정의
-                            // // 새로운 이벤트 소스 추가
-                            // atdCalendar.addEventSource({
-                            //     id: eventSourceId,
-                            //     events: finalEvents // 필터링된 이벤트를 새로운 소스로 추가
-                            // });
-                            //
-                            // // 기존 이벤트 소스 확인 및 제거
-                            // if (atdCalendar.getEventSourceById(eventSourceId) != null) {
-                            //     console.log('됨');
-                            //     atdCalendar.getEventSourceById(eventSourceId).remove(); // 기존 이벤트 소스 제거
-                            //     console.log('진짜 됨');
-                            // }
-
-
-                            // 선택된 부서로 필터링된 이벤트 호출
-                            const filteredEvents = filterEventsByDepartment(selectedDeptNo, true);
-                            successCallback(filteredEvents); // 필터링된 이벤트 전달
-
-                            console.log(filteredEvents);
+                            // 필터링된 이벤트 전달
+                            successCallback(filteredEvents);
                         },
                         error: function () {
                             failureCallback();
@@ -132,6 +113,13 @@ $(function () {
     });
     atdCalendar.render();
 
+    // 부서 선택 시 이벤트 필터링
+    selectBox.on('change', function () {
+        selectedDeptNo = $(this).val();
+        filterEventsByDepartment(selectedDeptNo);
+        atdCalendar.refetchEvents();
+    });
+
 // 부서 목록을 가져오는 AJAX 호출
     function loadDepartmentList() {
         $.ajax({
@@ -145,15 +133,12 @@ $(function () {
 
                 // 역할에 따라 부서 선택 옵션 추가
                 if (roleNo === 100) { // 관리자일 경우
-                    selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child')) // 툴바 오른쪽에 추가
-                        .on('change', function () {
-                            selectedDeptNo = $(this).val();
-                            filterEventsByDepartment(selectedDeptNo);
-                        });
+                    selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child'))
                     populateDepartmentSelect(deptSelect); // 부서 선택 옵션 추가
                 } else { // 일반 사용자일 경우
                     selectedDeptNo = deptSelect[0].id; // 자신의 부서 ID 저장
-                    filterEventsByDepartment(selectedDeptNo);
+                    selectBox.append(`<option value="${selectedDeptNo}">${deptSelect[0].name}</option>`); // 일반 사용자의 부서 추가
+                    filterEventsByDepartment(selectedDeptNo); // 초기 필터링
                 }
             },
             error: function () {
@@ -163,8 +148,7 @@ $(function () {
     }
 
 // 부서별 필터링 로직
-    function filterEventsByDepartment(deptNo, returnFiltered = false) {
-        // deptNo를 기준으로 필터링
+    function filterEventsByDepartment(deptNo) {
         const filteredEvents = deptNo ? finalEvents.filter(event => event.extendedProps.deptNo == deptNo) : finalEvents;
 
         atdCalendar.removeAllEvents(); // 기존 이벤트 모두 제거
@@ -172,13 +156,7 @@ $(function () {
         // 필터링된 이벤트 추가
         filteredEvents.forEach(event => {
             atdCalendar.addEvent(event); // addEvent를 사용하여 필터링된 이벤트 추가
-            console.log(event);
         });
-
-        // 필터링된 이벤트를 반환할지 여부에 따라 반환
-        if (returnFiltered) {
-            return filteredEvents; // 필터링된 이벤트 반환
-        }
     }
 
     loadDepartmentList();

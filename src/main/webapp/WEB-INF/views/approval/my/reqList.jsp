@@ -16,7 +16,6 @@
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
-<p>${pageContext.request.contextPath}</p>
 <div id="divWrapper">
     <div id="divContents">
         <c:set var="menu" value="approval"/>
@@ -26,8 +25,10 @@
             <c:set var="lnb" value="myReqList"/>
             <div class="lnb">
                 <ul class="list1">
-                    <li class="${lnb eq 'signOff' ? 'on' : '' }"><a href="/approval/form-list">결재 요청하기</a></li>
-                    <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="/approval/myReqList">요청 내역</a></li>
+                    <li class="${lnb eq 'signOff' ? 'on' : '' }"><a
+                            href="${pageContext.request.contextPath}/approval/form-list">결재 요청하기</a></li>
+                    <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a
+                            href="${pageContext.request.contextPath}/approval/my/reqList">요청 내역</a></li>
                 </ul>
                 <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_LEADER')">
                     <div class="approvalDepth accordion" id="accordionPanelsStayOpenExample">
@@ -44,15 +45,18 @@
                                     <ul class="list2 myAtdList">
                                         <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
                                             <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a
-                                                    href="my/waitList">대기건</a>
+                                                    href="${pageContext.request.contextPath}/approval/my/waitList">대기건</a>
                                             </li>
-                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="my/endList">종결건</a>
+                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
-                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="my/backList">반려건</a>
+                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/backList">반려건</a>
                                             </li>
                                         </sec:authorize>
                                         <sec:authorize access="hasRole('ROLE_LEADER')">
-                                            <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="my/refList">열람건</a>
+                                            <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/refList">열람건</a>
                                             </li>
                                         </sec:authorize>
                                     </ul>
@@ -69,7 +73,7 @@
                 <div id="apvListW" class="containerW">
                     <div class="tableW mgt40">
                         <c:choose>
-                            <c:when test="${empty myReqList}">
+                            <c:when test="${empty reqList}">
                                 <div class="noData">
                                     <img src="/resources/images/noDataImg.png" class="noDataImg"/>
                                     <p class="noDataText">조회된 내역이 없습니다.</p>
@@ -94,12 +98,12 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach var="form" items="${myReqList }" varStatus="loop">
+                                    <c:forEach var="form" items="${reqList }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/attendance/myReqDetail?no=${form.no}"
+                                                <a href="/approval/my/detail/reqDetail?no=${form.no}&categoryNo=${form.categoryNo}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>
