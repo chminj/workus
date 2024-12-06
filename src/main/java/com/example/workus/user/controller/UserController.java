@@ -189,6 +189,7 @@ public class UserController {
         log.info("입력된 입사일은 : " + form.getHireDate());
         log.info("입력된 부서 번호는 : " + form.getDeptNo());
         log.info("입력된 직책 번호는 : " + form.getPositionNo());
+        log.info("입력된 권한 번호는 : " + form.getRoleNo());
         log.info("입력된 미사용 연차일수는 : " + form.getUnusedAnnualLeave());
 
         userService.registerNewEmployeee(form); // 신규 유저 등록을 수행한다.

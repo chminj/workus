@@ -56,7 +56,7 @@
 
       </div>
       <main>
-        <h3 class="title1">직원정보 관리</h3>
+        <h3 class="title1">인사관리 시스템</h3>
         <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
         <p class="description">※ 관리를 원하는 직원의 이름을 클릭해주세요.</p>
         <div class="content">

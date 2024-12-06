@@ -119,6 +119,12 @@
             </div>
 
             <div class="input__block">
+                <label>권한</label>
+                <input type="text" placeholder="권한은 부서/직급에 따라 부여됩니다." id="user-role" name="roleNo" readonly />
+                <button type="button" class="google__btn role_check">권한 부여</button>
+            </div>
+
+            <div class="input__block">
                 <label>연차 일수</label>
                 <input type="text" placeholder="잔여 연차일수는 자동으로 계산됩니다" id="user-annual_leave" name="unusedAnnualLeave" readonly />
                 <button type="button" class="google__btn annual_leave_check">연차 계산</button>
@@ -147,6 +153,7 @@
         const dept = $('#user-department').val();
         const position = $('#user-position').val();
         const annualLeave = $('#user-annual_leave').val();
+        const roleNo = $('#user-role').val();
 
         // 파일이 선택되지 않았다면
         if (fileInput[0].files.length === 0) {
@@ -181,6 +188,12 @@
         // 연차일수를 입력하지 않았으면
         if (annualLeave === null || annualLeave === "") {
             alert("연차 일수는 필수 입력값입니다.");
+            return false;
+        }
+
+        // 권한을 체크하지 않았으면
+        if (roleNo === null || roleNo === "") {
+            alert("권한체크를 통해 권한을 입력해주세요.");
             return false;
         }
 
@@ -224,7 +237,7 @@
             }
         })
     });
-    // 연차 계산 버튼 클릭 시
+    // 기본 연차 개수 체크 시
     $('.annual_leave_check').click(function() {
         let positionNo = $('#user-position').val(); // 사용자가 입력한 직책 번호
         $.ajax({
@@ -244,6 +257,26 @@
 
         })
     });
+    // 권한 부여 클릭 시 ( DB 조회 필요없음 )
+    $('.role_check').click(function(){
+        const dept = $('#user-department').val(); // 부서 번호
+        const position = $('#user-position').val(); // 직책 번호
+
+        if (Number(dept) === 1001 && Number(position) === 12) { // 인사팀이면서 부장이면
+            alert("권한이 부여되었습니다.");
+            $('#user-role').val(100); // role 입력 필드에 100
+        } else if (Number(dept) === 1001 && Number(position) !== 12) { // 인사팀인데 부장이 아니면
+            alert("권한이 부여되었습니다.");
+            $('#user-role').val(200); // role 입력 필드에 200
+        } else if ((Number(dept) !== 1001 && Number(position) === 12) || (Number(position) === 11) ) { // 인사팀은 아니면서 부장이거나 또는 사장이면
+            alert("권한이 부여되었습니다.");
+            $('#user-role').val(300); // role 입력 필드에 300
+        } else {
+            alert("권한이 부여되었습니다.");
+            $('#user-role').val(400); // role 입력 필드에 400
+        }
+    });
+    // 부서랑 직책 선택 시
     flatpickr("#user-birthDate", { // 생년월일에 한글 locale 적용
         locale: "ko"
     });

@@ -20,6 +20,7 @@ public class RegisterNewEmployeeForm { // 신규 직원을 등록하는 입력�
     private Date hireDate; // 입사일
     private Long deptNo; // 부서 번호
     private Long positionNo; // 직책 번호
+    private int roleNo; // 역할 번호
     private double unusedAnnualLeave; // 미사용 연차 개수
     private MultipartFile image; // 이미지 파일
     

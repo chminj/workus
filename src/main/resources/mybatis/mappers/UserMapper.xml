@@ -300,7 +300,8 @@
             USER_HIRE_DATE,
             DEPT_NO,
             POSITION_NO,
-            USER_UNUSED_ANNUAL_LEAVE
+            USER_UNUSED_ANNUAL_LEAVE,
+            ROLE_NO
          )
         VALUES
         (
@@ -311,7 +312,8 @@
             #{user.hireDate},
             #{user.deptNo},
             #{user.positionNo},
-            #{user.unusedAnnualLeave}
+            #{user.unusedAnnualLeave},
+            #{user.roleNo}
         )
     </insert>
 </mapper>
