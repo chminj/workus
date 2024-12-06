@@ -113,6 +113,25 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         String userId = chatMessage.getUser().getId();
         // 채팅방 no
         Long chatroomNo = chatMessage.getChatroomNo();
+
+        // 다른 채팅방에 있다가 이 채팅방에 접속한 경우 다른 채팅방의 세션을 끊는다.
+        for(Long otherChatroomNo : chatrooms.keySet()) {
+            // 내가 방금 접속한 채팅방의 경우는 넘어간다.
+            if (otherChatroomNo.equals(chatroomNo)) {
+                continue;
+            }
+            // 전에 접속했던 채팅방은 삭제한다.
+            Map<String, WebSocketSession> otherChatroom = chatrooms.get(otherChatroomNo);
+            WebSocketSession otherchatroomSession = otherChatroom.remove(userId);
+            if (otherchatroomSession != null) {
+                ChatMessage otherChatMessage = new ChatMessage();
+                otherChatMessage.setChatroomNo(otherChatroomNo);
+                User user = userMapper.getUserById(userId);
+                otherChatMessage.setUser(user);
+                closeChatroom(otherchatroomSession, otherChatMessage);
+            }
+        }
+
         // <식별자, webSocketSession> 형태로 chatrooms에 담을 그릇
         Map<String, WebSocketSession> chatroom = chatrooms.get(chatroomNo);
         if (chatroom == null) {
