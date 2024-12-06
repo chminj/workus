@@ -17,6 +17,9 @@ public interface AttendanceMapper {
     // attendance/list 잔여 연차, 총 연차 조회
     AttendanceDto getAttendanceByUserNo(@Param("userNo") Long userNo);
 
+    // attendance/list 결재 요청 건 중 미완료 건 조회
+    int getAtdApprovalCount(@Param("userNo") Long userNo);
+
     // 신청 가능한 근태 종류 조회
     List<AttendanceCategory> getAllCategories();
 

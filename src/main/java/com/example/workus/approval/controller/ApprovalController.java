@@ -1,6 +1,9 @@
 package com.example.workus.approval.controller;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
+import com.example.workus.approval.dto.RefListViewDto;
+import com.example.workus.approval.dto.ReqListViewDto;
+import com.example.workus.approval.dto.WaitListViewDto;
 import com.example.workus.approval.service.ApprovalService;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.security.LoginUser;
@@ -55,10 +58,7 @@ public class ApprovalController {
         // 로그인한 userNo 설정
         Long userNo = loginUser.getNo();
         apvFormBase.setUserNo(userNo);
-        // 공람자 설정 : 신청자의 팀장 조회
-//        User user = userService.getUserByUserNo(userNo);
-//        Long deptNo = user.getDeptNo();
-//        User viewer = approvalService.getLeader(deptNo);
+
         // 결재자 설정 : 인사팀원 동적 조회
 //        List<User> approvers = approvalService.getUserByRole(Constants.ROLE_NO_MANAGE);
 
@@ -80,11 +80,34 @@ public class ApprovalController {
         return "redirect:/approval/form-list";
     }
 
+    @GetMapping("/myReqList")
+    public String myRequestList(@AuthenticationPrincipal LoginUser loginUser
+            , Model model) {
+        List<ReqListViewDto> myReqList = approvalService.getMyReqList(loginUser.getNo());
+        model.addAttribute("myReqList", myReqList);
+
+        return "approval/myReqList";
+    }
+
     @GetMapping("/my/waitList")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-    public String myApprovalList(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String myApprovalList(Model model) {
+        List<ReqListViewDto> waitList = approvalService.getMyWaitList();
+        model.addAttribute("waitList", waitList);
 
         return "approval/my/waitList";
+    }
+
+    @GetMapping("/my/refList")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LEADER')")
+    public String myReferenceList(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+
+        Long leaderNo = loginUser.getNo();
+        List<ReqListViewDto> refList = approvalService.getMyRefList(leaderNo);
+
+        model.addAttribute("refList", refList);
+
+        return "approval/my/refList";
     }
 
 }

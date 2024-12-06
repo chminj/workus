@@ -12,7 +12,7 @@
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <c:set var="menuTitle" value="대기건"/>
+    <c:set var="menuTitle" value="열람건"/>
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
@@ -23,7 +23,7 @@
         <%@ include file="/WEB-INF/views/common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="/WEB-INF/views/common/nav.jsp" %>
-            <c:set var="lnb" value="myWaitList"/>
+            <c:set var="lnb" value="myRefList"/>
             <div class="lnb">
                 <ul class="list1">
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a href="/approval/form-list">결재 요청하기</a></li>
@@ -69,7 +69,7 @@
                 <div id="reqListW" class="containerW">
                     <div class="tableW mgt40">
                         <c:choose>
-                            <c:when test="${empty waitList}">
+                            <c:when test="${empty refList}">
                                 <div class="noData">
                                     <img src="/resources/images/noDataImg.png" class="noDataImg"/>
                                     <p class="noDataText">조회된 내역이 없습니다.</p>
@@ -94,12 +94,12 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach var="form" items="${waitList }" varStatus="loop">
+                                    <c:forEach var="form" items="${refList }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/attendance/my/waitDetail?no=${form.no}"
+                                                <a href="/attendance/my/refDetail?no=${form.no}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>
@@ -127,7 +127,6 @@
             </main>
         </section>
     </div>
-
 </div>
 </body>
 </html>

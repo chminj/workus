@@ -13,7 +13,8 @@
 https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 "></script>
     <script src="/resources/js/attendance.js"></script>
-    <title>workus ㅣ 근태</title>
+    <c:set var="menuTitle" value="결재 내역"/>
+    <title>workus ㅣ 근태 ${menuTitle}</title>
 </head>
 <body>
 <div id="divWrapper">
@@ -30,13 +31,13 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 <p class="listTitle">근태 내역</p>
                 <ul class="list2 myAtdList">
                     <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="myReqList">내 신청 내역</a></li>
-                    <li class="${lnb eq 'myApvList' ? 'on' : '' }"><a href="myApvList">내 결재 내역</a></li>
+                    <li class="${lnb eq 'myApvList' ? 'on' : '' }"><a href="${lnb}">내 ${menuTitle}</a></li>
                     <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="myRefList">내 참조 내역</a></li>
                 </ul>
             </div>
             <main>
                 <h3 class="title1">
-                    내 결재 내역
+                    내 ${menuTitle}
                 </h3>
                 <div id="apvListW" class="content">
                     <div class="optW d-flex justify-content-between">
