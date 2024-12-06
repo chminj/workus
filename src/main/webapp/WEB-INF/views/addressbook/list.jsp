@@ -65,6 +65,8 @@
             <!-- 검색 바 -->
             <form id="form-search" method="get" action="/address-book/list">
             <input type="hidden" name="page"/>
+            <!-- list는 단순 재직중인 직원만 조회해야 하므로 -->
+            <input type="hidden" name="status" value="Y"/>
             <div class="search-bar-wrapper">
               <div class="search-input-wrapper" style="display: flex; align-items: center;">
                 <i class="fas fa-search icon" style="margin-right: 10px;"></i> <!-- 돋보기 아이콘 -->

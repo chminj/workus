@@ -139,14 +139,19 @@ public class UserController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "dept", required = false) String dept,
             @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "status", required = false) String status,
             Model model) {
 
         log.info("페이지번호: {}", page);
         log.info("부서: {}", dept);
         log.info("직원명: {}", name);
+        log.info("재직상태: {}", status);
 
         Map<String, Object> condition = new HashMap<>(); // 검색 조건을 담을 Map 객체
         condition.put("page", page); // 페이지 번호
+        if (!"all".equals(status)) {
+            condition.put("status", status); // 재직 상태
+        }
         if (!"all".equals(dept)) {
             condition.put("dept", dept); // 부서 선택 옵션
         }
@@ -211,14 +216,19 @@ public class UserController {
             @RequestParam(name = "page", required = false, defaultValue = "1") int page,
             @RequestParam(name = "dept", required = false) String dept,
             @RequestParam(name = "name", required = false) String name,
+            @RequestParam(name = "status", required = false, defaultValue = "Y") String status,
             Model model) {
 
         log.info("페이지번호: {}", page);
         log.info("부서: {}", dept);
         log.info("직원명: {}", name);
+        log.info("재직상태: {}", status);
 
         Map<String, Object> condition = new HashMap<>(); // 검색 조건을 담을 Map 객체
         condition.put("page", page); // 페이지 번호
+        if (!"all".equals(status)) {
+            condition.put("status", status); // 재직 상태
+        }
         if (!"all".equals(dept)) {
             condition.put("dept", dept); // 부서 선택 옵션
         }
@@ -228,7 +238,7 @@ public class UserController {
 
         System.out.println("---------------------------" + condition);
         // 검색 조건으로 재직중인 유저 목록을 조회해야 한다.
-        UserListDto<User> dto = userService.getActivatedUserListByCondition(condition);
+        UserListDto<User> dto = userService.getUserListByCondition(condition);
         System.out.println(dto.toString());
         System.out.println(dto.getData());
         // UserListDto<User>를 "users"로 모델에 저장한다.

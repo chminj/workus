@@ -68,6 +68,12 @@
             <div class="search-bar-wrapper">
               <div class="search-input-wrapper" style="display: flex; align-items: center;">
                 <i class="fas fa-search icon" style="margin-right: 10px;"></i> <!-- 돋보기 아이콘 -->
+                <select class="filter-select" style="margin-right: 10px;" name="status">
+                  <option value="all">모두</option>
+                  <option value="Y" ${param.dept eq 'Y' ? 'selected' : ''}>재직</option>
+                  <option value="P" ${param.dept eq 'P' ? 'selected' : ''}>휴직</option>
+                  <option value="Q" ${param.dept eq 'Q' ? 'selected' : ''}>퇴직</option>
+                </select>
                 <select class="filter-select" style="margin-right: 10px;" name="dept">
                   <option value="all">모두</option>
                   <option value="1001" ${param.dept eq '1001' ? 'selected' : ''}>인사팀</option>

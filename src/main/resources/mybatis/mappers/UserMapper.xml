@@ -11,6 +11,7 @@
             , U.USER_BIRTH_DATE as birthday
             , U.USER_HIRE_DATE as hireDate
             , U.USER_QUIT_DATE as quitDate
+            , U.USER_LEAVE_DATE as leaveDate
             , U.USER_STATUS as status
             , U.USER_PROFILE_SRC as profileSrc
             , U.USER_PR as pr
@@ -49,6 +50,7 @@
             , U.USER_BIRTH_DATE as birthday
             , U.USER_HIRE_DATE as hireDate
             , U.USER_QUIT_DATE as quitDate
+            , U.USER_LEAVE_DATE as leaveDate
             , U.USER_STATUS as status
             , U.USER_PROFILE_SRC as profileSrc
             , U.USER_PR as pr
@@ -88,6 +90,7 @@
             , U.USER_BIRTH_DATE as birthday
             , U.USER_HIRE_DATE as hireDate
             , U.USER_QUIT_DATE as quitDate
+            , U.USER_LEAVE_DATE as leaveDate
             , U.USER_STATUS as status
             , U.USER_PROFILE_SRC as profileSrc
             , U.USER_PR as pr
@@ -127,6 +130,7 @@
             , U.USER_BIRTH_DATE as birthday
             , U.USER_HIRE_DATE as hireDate
             , U.USER_QUIT_DATE as quitDate
+            , U.USER_LEAVE_DATE as leaveDate
             , U.USER_STATUS as status
             , U.USER_PROFILE_SRC as profileSrc
             , U.USER_PR as pr
@@ -171,20 +175,9 @@
         SELECT COUNT(*)
         FROM WORKUS_USERS
         <where>
-            <if test="condition.dept != null">
-                DEPT_NO = #{condition.dept}
+            <if test="condition.status != null">
+                USER_STATUS = #{condition.status}
             </if>
-            <if test="condition.name != null">
-                AND USER_NAME = #{condition.name}
-            </if>
-        </where>
-    </select>
-
-    <select id="getActivatedTotalRows" resultType="int">
-        SELECT COUNT(*)
-        FROM WORKUS_USERS
-        <where>
-            USER_STATUS = 'Y'
             <if test="condition.dept != null">
                  AND DEPT_NO = #{condition.dept}
             </if>
@@ -205,6 +198,7 @@
         , U.USER_BIRTH_DATE as birthday
         , U.USER_HIRE_DATE as hireDate
         , U.USER_QUIT_DATE as quitDate
+        , U.USER_LEAVE_DATE as leaveDate
         , U.USER_STATUS as status
         , U.USER_PROFILE_SRC as profileSrc
         , U.USER_PR as pr
@@ -231,57 +225,11 @@
         on
         U.ROLE_NO = R.ROLE_NO
         <where>
-            <if test="condition.dept != null">
-                U.DEPT_NO = #{condition.dept}
+            <if test="condition.status != null">
+                U.USER_STATUS = #{condition.status}
             </if>
-            <if test="condition.name != null">
-                AND U.USER_NAME = #{condition.name}
-            </if>
-        </where>
-        ORDER BY U.USER_NO
-        LIMIT #{condition.begin}, 10
-    </select>
-
-    <select id="getActivatedUsersByCondition" resultType="User">
-        select
-        U.USER_NO as no
-        , U.USER_ID as id
-        , U.USER_NAME as name
-        , U.USER_PASSWORD as password
-        , U.USER_EMAIL as email
-        , U.USER_ADDRESS as address
-        , U.USER_BIRTH_DATE as birthday
-        , U.USER_HIRE_DATE as hireDate
-        , U.USER_QUIT_DATE as quitDate
-        , U.USER_STATUS as status
-        , U.USER_PROFILE_SRC as profileSrc
-        , U.USER_PR as pr
-        , U.USER_PHONE as phone
-        , U.USER_UNUSED_ANNUAL_LEAVE as unusedAnnualLeave
-        , P.POSITION_NO as positionNo
-        , P.POSITION_NAME as positionName
-        , D.DEPT_NO as deptNo
-        , D.DEPT_NAME as deptName
-        , R.ROLE_NO as roleNo
-        , R.ROLE_NAME as roleName
-        from
-        WORKUS_USERS U
-        inner join
-        WORKUS_POSITION P
-        on
-        U.POSITION_NO = P.POSITION_NO
-        inner join
-        WORKUS_DEPT D
-        on
-        U.DEPT_NO = D.DEPT_NO
-        inner join
-        WORKUS_ATH_ROLE R
-        on
-        U.ROLE_NO = R.ROLE_NO
-        <where>
-            U.USER_STATUS = 'Y'
             <if test="condition.dept != null">
-                U.DEPT_NO = #{condition.dept}
+                AND U.DEPT_NO = #{condition.dept}
             </if>
             <if test="condition.name != null">
                 AND U.USER_NAME = #{condition.name}

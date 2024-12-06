@@ -24,6 +24,7 @@ public class User {
     private Date birthday;
     private Date hireDate;
     private Date quitDate;
+    private Date leaveDate; // 휴직일
     private String status;
     private String profileSrc;
     private String pr;
