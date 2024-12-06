@@ -11,25 +11,6 @@
         </selectKey>
     </insert>
 
-    <select id="getChatByChatNo" resultType="Chat">
-        select
-            C.CHAT_NO as no
-            , C.CHAT_CONTENT as content
-            , C.CHAT_TIME as time
-            , C.CHAT_FILE_SRC
-            , C.CHAT_IS_FIRST
-            , U.USER_NO as "user.no"
-            , U.USER_NAME as "user.name"
-        from
-            WORKUS_CHAT C
-        inner join
-            WORKUS_USERS U
-        on
-            C.USER_NO = U.USER_NO
-        where
-            C.CHAT_NO = #{chatNo}
-    </select>
-
     <select id="getAllChatsByChatroomNo" resultType="Chat">
         select
             C.CHAT_NO as "no"
@@ -39,6 +20,7 @@
             , C.CHAT_IS_FIRST as "isFirst"
             , U.USER_NO as "user.no"
             , U.USER_NAME as "user.name"
+            , U.USER_PROFILE_SRC as "user.profileSrc"
             , C.CHATROOM_NO as "chatroom.no"
         from
             WORKUS_CHAT C

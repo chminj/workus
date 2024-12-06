@@ -77,8 +77,8 @@
 				<div class="modal-body">
 					<div class="row">
 						<!-- 왼쪽 프로필 사진 영역 -->
-						<div class="col-4 text-center">
-							<i class="bi bi-person-circle fs-1"></i>
+						<div class="col-4 text-center profile_image" id="profileImgDiv">
+
 						</div>
 						<!-- 오른쪽 정보 영역 -->
 						<div class="col-8">
@@ -428,7 +428,7 @@
 			let div = `
 			\${users.map((user) => `
 				<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
-					<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+					<img src="/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 					<div class="d-flex align-items-center gap-2">
 						<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
 						<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
@@ -601,6 +601,7 @@
 
 				// 가져온 정보들을 집어넣는다.
 				if (response.ok) {
+					$('#profileImgDiv').html(`<img src="/resources/repository/userprofile/\${data.profileSrc}" alt="프로필" style="width: 160px; height: 160px;"/>`);
 					$('#profileName').text(data.name);
 					$('#profilePosition').text(data.positionName);
 					$('#profileDept').text(data.deptName);
@@ -676,7 +677,7 @@
 				` : ``}
 				<div class="mb-3 w-75">
 					<div class="d-flex align-items-center mb-1">
-						<img src="" alt="프로필" class="rounded-circle me-2"/>
+						<img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
 						<strong>\${chat.user.name}</strong>
 					</div>
 					<div class="d-flex">
@@ -780,7 +781,7 @@
 						   <li id="participantList">
 							  \${data.users.map((user) => `
 							<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
-								<img src="" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+								<img src="/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 								<div class="d-flex align-items-center gap-2">
 									<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
 									<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
@@ -854,7 +855,7 @@
                                     <!-- 상대 메시지 -->
                                     <div class="mb-3 w-75">
                                         <div class="d-flex align-items-center mb-1">
-                                            <img src="" alt="프로필" class="rounded-circle me-2"/>
+                                            <img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
                                             <strong>\${chat.user.name}</strong>
                                         </div>
                                         <div class="d-flex">
@@ -873,6 +874,7 @@
 		}
 
 		function loadPlusChats(data) {
+	console.log('data: ', data);
 			return `
 					<%-- 더 보기 버튼 --%>
 					\${data.paging.last === false ? `
@@ -921,7 +923,7 @@
 							<!-- 상대 메시지 -->
 							<div class="mb-3 w-75">
 								<div class="d-flex align-items-center mb-1">
-									<img src="" alt="프로필" class="rounded-circle me-2"/>
+									<img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
 									<strong>\${chat.user.name}</strong>
 								</div>
 								<div class="d-flex">
