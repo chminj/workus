@@ -242,6 +242,7 @@ public class UserService {
         user.setDeptNo(form.getDeptNo());
         user.setPositionNo(form.getPositionNo());
         user.setUnusedAnnualLeave(form.getUnusedAnnualLeave());
+        user.setRoleNo(form.getRoleNo());
 
         // 프로필 사진 업로드
         if (!form.getImage().isEmpty()) { // 이미지 파일을 입력했을 때만
