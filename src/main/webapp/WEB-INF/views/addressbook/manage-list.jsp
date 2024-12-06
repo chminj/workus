@@ -57,12 +57,13 @@
       </div>
       <main>
         <h3 class="title1">인사관리 시스템</h3>
+        <p class="description">※ 재직/ 휴직/ 퇴직 직원을 관리할 수 있습니다.</p>
         <p class="description">※ 직원명을 입력하지 않을 시, 해당 부서의 모든 직원이 검색됩니다.</p>
         <p class="description">※ 관리를 원하는 직원의 이름을 클릭해주세요.</p>
         <div class="content">
           <section class="member-search-container">
             <!-- 검색 바 -->
-            <form id="form-search" method="get" action="/address-book/list">
+            <form id="form-search" method="get" action="/address-book/manage/list">
             <input type="hidden" name="page"/>
             <div class="search-bar-wrapper">
               <div class="search-input-wrapper" style="display: flex; align-items: center;">
