@@ -100,6 +100,19 @@
             </div>
 
             <div class="input__block">
+                <!-- 휴직 중일 때만 휴직일이 보이도록 -->
+                <c:if test="${user.status == 'P'}">
+                    <label>휴직일</label>
+                    <input type="text" placeholder="정보가 없습니다." id="user-leave-date" name="leaveDate" value="${user.leaveDate}" readonly />
+                </c:if>
+                <!-- 퇴직 상태일 때만 퇴직일이 보이도록 -->
+                <c:if test="${user.status == 'Q'}">
+                    <label>퇴직일</label>
+                    <input type="text" placeholder="정보가 없습니다." id="user-quit-date" name="quitDate" value="${user.quitDate}" readonly />
+                </c:if>
+            </div>
+
+            <div class="input__block">
                 <label>연락처</label>
                 <input type="text" placeholder="정보가 없습니다." id="user-phone" name="phone" value="${user.phone}" readonly />
                 <label>잔여 연차</label>
