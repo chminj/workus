@@ -33,11 +33,13 @@ public class AttendanceController {
         this.userService = userService;
     }
 
-
     @GetMapping("/list")
     public String list(@AuthenticationPrincipal LoginUser loginUser, Model model) {
         AttendanceDto attendanceDto = attendanceService.getAttendance(loginUser.getNo());
         model.addAttribute("attendanceDto", attendanceDto);
+
+        int myApvCount = attendanceService.getTotalRowsMyApv(loginUser.getNo());
+        model.addAttribute("myApvCount", myApvCount);
 
         return "attendance/list";
     }

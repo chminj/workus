@@ -27,27 +27,38 @@
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a href="form-list">결재 요청하기</a></li>
                     <li class="${lnb eq 'myReqList' ? 'on' : '' }"><a href="myReqList">요청 내역</a></li>
                 </ul>
-                <div class="approvalDepth accordion" id="accordionPanelsStayOpenExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header">
-                            <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
-                                    aria-controls="panelsStayOpen-collapseOne">
-                                내 결재함
-                            </button>
-                        </h2>
-                        <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
-                            <div class="accordion-body">
-                                <ul class="list2 myAtdList">
-                                    <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a href="my/waitList">대기건</a></li>
-                                    <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="my/endList">종결건</a></li>
-                                    <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="my/backList">반려건</a></li>
-                                    <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="my/refList">열람건</a></li>
-                                </ul>
+                <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER', 'ROLE_LEADER')">
+                    <div class="approvalDepth accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                                        aria-controls="panelsStayOpen-collapseOne">
+                                    결재함
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show">
+                                <div class="accordion-body">
+                                    <ul class="list2 myAtdList">
+                                        <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+                                            <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a
+                                                    href="my/waitList">대기건</a>
+                                            </li>
+                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a href="my/endList">종결건</a>
+                                            </li>
+                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a href="my/backList">반려건</a>
+                                            </li>
+                                        </sec:authorize>
+                                        <sec:authorize access="hasRole('ROLE_LEADER')">
+                                            <li class="${lnb eq 'myRefList' ? 'on' : '' }"><a href="my/refList">열람건</a>
+                                            </li>
+                                        </sec:authorize>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </sec:authorize>
             </div>
             <main>
                 <h3 class="title1">
@@ -542,5 +553,10 @@
         </section>
     </div>
 </div>
+<script>
+    const quill = new Quill('#editor', {
+        theme: 'snow'
+    });
+</script>
 </body>
 </html>

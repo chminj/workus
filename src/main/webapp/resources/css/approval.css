@@ -195,3 +195,83 @@ form .ql-editor {
     min-width: 10px;
     display: inline-block;
 }
+
+/* my */
+.containerW > div {
+    width: 100%;
+}
+
+.noData {
+    text-align: center;
+    height: calc(100vh - 220px);
+    display: flex;
+    flex-direction: column;
+    align-content: flex-start;
+    align-items: center;
+    justify-content: center;
+}
+
+.noDataImg {
+    opacity: 0.5;
+    filter: grayscale(80%);
+    width: 5%;
+    margin: 50px 0 20px;
+}
+
+.noDataText {
+    font-size: 16px;
+}
+
+table tr th {
+    font-weight: normal;
+    font-size: 16px;
+}
+
+.buttonW button {
+    background-color: #fff;
+    border-radius: 5px;
+    padding: 5px 15px;
+    border: 2px solid #e91e63;
+    color: #e91e63;
+    font-size: 16px;
+    transition: all 0.2s ease-in;
+    font-weight: bold;
+}
+
+.buttonW button:hover {
+    border: 2px solid #1f1f1f;
+    color: #fff;
+    background-color: #1f1f1f;
+}
+
+.tableW table {
+    text-align: center;
+    font-size: 15px;
+    border-collapse: collapse;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.form-switch {
+    font-size: 17px;
+}
+
+.page-item.active .page-link {
+    background-color: #1f1f1f;
+    color: #fff;
+    border: 1px solid #1f1f1f;
+}
+
+table .badge {
+    font-weight: normal;
+    font-size: 15px;
+}
+
+table label {
+    vertical-align: text-top;
+}
+
+table a.link:hover {
+    text-decoration: underline;
+    text-underline-position: under;
+}

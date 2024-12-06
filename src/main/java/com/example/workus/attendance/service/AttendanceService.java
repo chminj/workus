@@ -39,6 +39,16 @@ public class AttendanceService {
     }
 
     /**
+     * 결재 대기 건의 개수를 조회한다.
+     *
+     * @param userNo 로그인한 사용자 번호
+     * @return 결재 필요한 건의 개수
+     */
+    public int getTotalRowsMyApv(Long userNo) {
+        return attendanceMapper.getAtdApprovalCount(userNo);
+    }
+
+    /**
      * 연차 신청 폼에서 선택할 수 있는 연차 이름을 보여준다.
      *
      * @return 연차 종류 이름

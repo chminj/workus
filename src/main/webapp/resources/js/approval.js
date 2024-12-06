@@ -153,38 +153,12 @@ $(function () {
         showForm(formId, categoryName);
     });
 
-    const quill = new Quill('#editor', {
-        theme: 'snow',
-        // "modules": {
-        //     "toolbar": false
-        // }
-    });
-
-    // function saveToDatabase(content) {
-    //     // AJAX 또는 Fetch API를 사용하여 서버로 내용 전송
-    //     fetch('/api/approval/saveEditor', {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify({commonText: content}) // JSON 형식으로 전송
-    //     })
-    //         .then(response => {
-    //             // HTTP 상태 코드가 200일 경우에만 JSON으로 파싱
-    //             if (!response.ok) {
-    //                 return response.text().then(text => {
-    //                     throw new Error(text);
-    //                 });
-    //             }
-    //             return response.json();
-    //         })
-    //         .then(data => {
-    //             console.log('Success:', data);
-    //         })
-    //         .catch((error) => {
-    //             console.error('Error:', error);
-    //         });
-    // }
+    // const quill = new Quill('#editor', {
+    //     theme: 'snow',
+    //     "modules": {
+    //          "toolbar": false
+    //     }
+    // });
 
     // submit
     $('form').on('submit', function () {

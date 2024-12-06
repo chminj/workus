@@ -221,15 +221,16 @@ $(function () {
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 근태 메인 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 승인 모달 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+    let isDataLoaded = false;
 
 // ajax 호출
     async function atdForm() {
-        let responseUser = await fetch("/attendance/atdFormInUser");
-        let resultUser = await responseUser.json();
+        if (!isDataLoaded) {
+            let responseUser = await fetch("/attendance/atdFormInUser");
+            let resultUser = await responseUser.json();
 
-        for (let i = 0; i < resultUser.length; i++) {
-
-            let content = `
+            for (let i = 0; i < resultUser.length; i++) {
+                let content = `
                 <li class="d-flex">
                     <input type="checkbox" id="${resultUser[i].no}" class="mgr5">
                     <label for="${resultUser[i].no}" data-sort="${i}">
@@ -242,37 +243,38 @@ $(function () {
                     </span>
                 </li>
             `;
-            $("#atdFormUser").append(content);
-        }
+                $("#atdFormUser").append(content);
+            }
 
-        let responseCtgr = await fetch("/attendance/atdFormInCtgr");
-        let resultCtgr = await responseCtgr.json();
-        for (let i = 0; i < resultCtgr.length; i++) {
+            let responseCtgr = await fetch("/attendance/atdFormInCtgr");
+            let resultCtgr = await responseCtgr.json();
 
-            // 연차, 반차, 반반차 (radio)
-            if (resultCtgr[i].no < 25) {
-                let content = `
+            // 연차 및 반차 관련 데이터 초기화
+            $(".annualLeaveOnly").empty();
+
+            for (let i = 0; i < resultCtgr.length; i++) {
+                // 연차, 반차, 반반차 (radio)
+                if (resultCtgr[i].no < 25) {
+                    let content = `
                     <label for="day${resultCtgr[i].no}">
                       <input type="radio" name="categoryOpt2" value=${resultCtgr[i].no} id="day${resultCtgr[i].no}">
                       <span class="mgr10 mgl5">${resultCtgr[i].name}</span>
                     </label>
                 `;
+                    $(".annualLeaveOnly").append(content);
+                }
 
-                $(".annualLeaveOnly").append(content);
-            }
-
-            // 연차, 병가 (select)
-            if (resultCtgr[i].count === 1) {
-                let content = `
+                // 연차, 병가 (select)
+                if (resultCtgr[i].count === 1) {
+                    let content = `
                     <option value="${resultCtgr[i].no}">${resultCtgr[i].name}</option>
                 `;
-
-                $("#atdCtgr").append(content);
+                    $("#atdCtgr").append(content);
+                }
             }
+            isDataLoaded = true; // 데이터가 로드되었음을 표시
         }
     }
-
-    atdForm();
 
 // dialog modal
     let atdDialog = document.getElementById('atdRequestForm');
@@ -280,6 +282,7 @@ $(function () {
 
 // dialog open
     openButton.addEventListener('click', () => {
+        atdForm(); // 팝업 열기 전에 데이터를 로드
         atdDialog.showModal();
         $('html, body').css('overflow', 'hidden');
     })
@@ -288,7 +291,11 @@ $(function () {
     $("#atdRequestForm button.closeBtn").on('click', function () {
         atdDialog.close();
         $('html, body').css('overflow', 'auto');
-    })
+        $("#atdFormUser").empty(); // 데이터 초기화
+        $("#atdCtgr").empty(); // 데이터 초기화
+        $(".annualLeaveOnly").empty(); // 연차 관련 데이터 초기화
+        isDataLoaded = false; // 플래그 리셋
+    });
 
 // today default setting in modal
     let todayDate = new Date().toISOString().substring(0, 10);

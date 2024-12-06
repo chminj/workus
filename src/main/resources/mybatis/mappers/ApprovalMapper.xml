@@ -5,7 +5,7 @@
         SELECT APV_CATEGORY_NO as no
             , APV_CATEGORY_NAME as name
         FROM
-            WORKUS_APPROVAL_CATEGORY;
+            WORKUS_APPROVAL_CATEGORY
     </select>
     <insert id="insertApprovalFormBase">
         <selectKey keyProperty="apvFormBase.no" resultType="Long" order="AFTER">
@@ -40,5 +40,91 @@
             , USER_NAME as name
         FROM WORKUS_USERS
         WHERE ROLE_NO = #{roleNo}
+    </select>
+    <resultMap type="reqListViewDto" id="apvResultMap">
+        <id property="no" column="apv_no"/>
+        <result property="commonText" column="apv_text"/>
+        <result property="toDate" column="apv_to_date"/>
+        <result property="fromDate" column="apv_from_date"/>
+        <result property="createdDate" column="apv_created_date"/>
+        <result property="title" column="apv_title"/>
+        <result property="categoryNo" column="apv_category_no"/>
+        <result property="categoryName" column="apv_category_name"/>
+        <result property="reqUserNo" column="user_no"/>
+        <result property="reason" column="apv_reason"/>
+        <result property="status" column="apv_status"/>
+        <result property="apvUserNo" column="apv_approver_no"/>
+        <collection property="optionTexts" ofType="hashmap">
+            <id property="textNo" column="apv_text_no"/>
+            <result property="textName" column="apv_text_name"/>
+            <result property="textValue" column="apv_text_value"/>
+        </collection>
+    </resultMap>
+    <select id="getReqList" resultMap="apvResultMap">
+        SELECT a.apv_no            as apv_no
+             , a.apv_text          as apv_text
+             , a.apv_to_date       as apv_to_date
+             , a.apv_from_date     as apv_from_date
+             , a.apv_created_date  as apv_created_date
+             , a.apv_title         as apv_title
+             , a.apv_category_no   as apv_category_no
+             , c.apv_category_name as apv_category_name
+             , a.user_no           as user_no
+             , a.apv_reason        as apv_reason
+             , a.apv_status        as apv_status
+             , a.apv_approver_no   as apvUserNo
+             , t.apv_text_no       as apv_text_no
+             , t.APV_TEXT_NAME     as apv_text_name
+             , t.APV_TEXT_VALUE    as apv_text_value
+        FROM WORKUS_APPROVAL a
+                 JOIN WORKUS_APPROVAL_CATEGORY c ON c.APV_CATEGORY_NO = a.APV_CATEGORY_NO
+                 LEFT JOIN WORKUS_APPROVAL_TEXT_AREA t ON t.apv_no = a.apv_no
+        WHERE a.USER_NO = #{userNo}
+    </select>
+    <select id="getWaitList" resultMap="apvResultMap">
+        SELECT a.apv_no            as apv_no
+             , a.apv_text          as apv_text
+             , a.apv_to_date       as apv_to_date
+             , a.apv_from_date     as apv_from_date
+             , a.apv_created_date  as apv_created_date
+             , a.apv_title         as apv_title
+             , a.apv_category_no   as apv_category_no
+             , c.apv_category_name as apv_category_name
+             , a.user_no           as user_no
+             , a.apv_reason        as apv_reason
+             , a.apv_status        as apv_status
+             , a.apv_approver_no   as apvUserNo
+             , t.apv_text_no       as apv_text_no
+             , t.APV_TEXT_NAME     as apv_text_name
+             , t.APV_TEXT_VALUE    as apv_text_value
+        FROM WORKUS_APPROVAL a
+                 JOIN WORKUS_APPROVAL_CATEGORY c ON c.APV_CATEGORY_NO = a.APV_CATEGORY_NO
+                 LEFT JOIN WORKUS_APPROVAL_TEXT_AREA t ON t.apv_no = a.apv_no
+        WHERE a.APV_STATUS = 'pending'
+    </select>
+    <select id="getRefListByLeaderNo" resultMap="apvResultMap">
+        SELECT a.apv_no            as apv_no
+             , a.apv_text          as apv_text
+             , a.apv_to_date       as apv_to_date
+             , a.apv_from_date     as apv_from_date
+             , a.apv_created_date  as apv_created_date
+             , a.apv_title         as apv_title
+             , a.apv_category_no   as apv_category_no
+             , c.apv_category_name as apv_category_name
+             , a.user_no           as user_no
+             , a.apv_reason        as apv_reason
+             , a.apv_status        as apv_status
+             , a.apv_approver_no   as apvUserNo
+             , t.apv_text_no       as apv_text_no
+             , t.APV_TEXT_NAME     as apv_text_name
+             , t.APV_TEXT_VALUE    as apv_text_value
+        FROM WORKUS_APPROVAL a
+                 JOIN WORKUS_APPROVAL_CATEGORY c
+                      ON c.APV_CATEGORY_NO = a.APV_CATEGORY_NO
+                 LEFT JOIN WORKUS_APPROVAL_TEXT_AREA t ON t.apv_no = a.apv_no
+        WHERE a.user_no IN (SELECT U.USER_NO
+                            FROM WORKUS_USERS U
+                                     JOIN WORKUS_DEPT D ON D.LEADER_NO = #{leaderNo}
+                                AND U.DEPT_NO = D.DEPT_NO)
     </select>
 </mapper>

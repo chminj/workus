@@ -53,12 +53,12 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
               </span>
                             <i class="bi bi-arrow-right"></i>
                         </button>
-                        <a href="/attendance/my-approval/"
+                        <a href="/attendance/myApvList"
                            class="applyWaitBtn btn btn-lg border border-secondary d-flex justify-content-between align-items-center">
                 <span>
                   결재 대기
                   <span class="flex count">
-                    <span class="data">0</span>건
+                    <span class="data">${myApvCount}</span>건
                   </span>
                 </span>
                             <i class="bi bi-arrow-right"></i>
