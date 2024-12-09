@@ -25,7 +25,8 @@ public class RestAttendanceController {
     private UserService userService;
 
     @PostMapping("/approve")
-    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList) {
+    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList)
+    {
         for (AtdApprovalRequestDto reqDto : requestDtoList) {
             // 각 승인 요청에 대해 서비스 메소드 호출
             attendanceService.approveRequests(reqDto);
@@ -45,7 +46,8 @@ public class RestAttendanceController {
      * @return 연차 이력 목록
      */
     @PostMapping("/annualLeaveHistory")
-    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser)
+    {
         List<AnnualLeaveHistoryDto> events;
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
         // 권한 구분
@@ -65,7 +67,8 @@ public class RestAttendanceController {
      * @return 조회 가능한 부서 목록
      */
     @GetMapping("/departments")
-    public ResponseEntity<List<DeptDto>> getDepartments(@AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<List<DeptDto>> getDepartments(@AuthenticationPrincipal LoginUser loginUser)
+    {
         List<DeptDto> depts;
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
 
@@ -87,7 +90,8 @@ public class RestAttendanceController {
      * @return roleNo
      */
     @GetMapping("/role")
-    public ResponseEntity<Integer> getUserRole(@AuthenticationPrincipal LoginUser loginUser) {
+    public ResponseEntity<Integer> getUserRole(@AuthenticationPrincipal LoginUser loginUser)
+    {
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
         return ResponseEntity.ok(roleNo);
     }

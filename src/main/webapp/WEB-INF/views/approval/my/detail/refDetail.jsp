@@ -12,7 +12,7 @@
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <c:set var="menuTitle" value="요청 내역"/>
+    <c:set var="menuTitle" value="열람건"/>
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
         <%@ include file="/WEB-INF/views/common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="/WEB-INF/views/common/nav.jsp" %>
-            <c:set var="lnb" value="myReqList"/>
+            <c:set var="lnb" value="myRefList"/>
             <div class="lnb">
                 <ul class="list1">
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a
@@ -77,17 +77,17 @@
                                 <tr>
                                     <th class="table-active title">신청 기본 정보</th>
                                     <td colspan="5" class="text-start">
-                                        [${reqByNo.categoryName}] ${reqByNo.title}
+                                        [${refByNo.categoryName}] ${refByNo.title}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="table-active">요청 상태</th>
                                     <td colspan="2" class="text-start">
                                         <c:choose>
-                                            <c:when test="${reqByNo.status == 'pending'}">
+                                            <c:when test="${refByNo.status == 'pending'}">
                                                 <span class="badge text-bg-primary">승인 대기</span>
                                             </c:when>
-                                            <c:when test="${reqByNo.status == 'rejected'}">
+                                            <c:when test="${refByNo.status == 'rejected'}">
                                                 <span class="badge text-bg-danger">반려</span>
                                             </c:when>
                                             <c:otherwise>
@@ -97,27 +97,27 @@
                                     </td>
                                     <th class="table-active">요청일</th>
                                     <td colspan="2" class="text-start">
-                                        <fmt:formatDate value="${reqByNo.createdDate }"/>
+                                        <fmt:formatDate value="${refByNo.createdDate }"/>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                         <table class="table tableStyle">
                             <tbody>
-                            <c:forEach var="option" items="${reqByNo.optionTexts}">
+                            <c:forEach var="option" items="${refByNo.optionTexts}">
                                 <tr>
                                     <th class='table-active title'>${option.textName}</th>
                                     <td colspan='5' class='text-start'>${option.textValue}</td>
                                 </tr>
                             </c:forEach>
-                            <c:if test="${not empty reqByNo.reason}">
+                            <c:if test="${not empty refByNo.reason}">
                                 <tr>
-                                    <th class="table-active title">${reqByNo.reasonTitle}</th>
-                                    <td colspan='5' class='text-start'>${reqByNo.reason}</td>
+                                    <th class="table-active title">${refByNo.reasonTitle}</th>
+                                    <td colspan='5' class='text-start'>${refByNo.reason}</td>
                                 </tr>
                             </c:if>
-                            <c:if test="${not empty reqByNo.commonText}">
-                                <c:if test="${reqByNo.categoryNo == 800}">
+                            <c:if test="${not empty refByNo.commonText}">
+                                <c:if test="${refByNo.categoryNo == 800}">
                                     <tr>
                                         <th colspan='6' class='table-active'>
                                             양식
@@ -125,15 +125,15 @@
                                     </tr>
                                     <tr class="editorArea">
                                         <td colspan='6' class='text-start'>
-                                            <div id="editor${reqByNo.no}">${reqByNo.commonText}</div>
+                                            <div id="editor${refByNo.no}">${refByNo.commonText}</div>
                                             <!-- 스마트 에디터 관련 스크립트 추가 -->
                                         </td>
                                     </tr>
                                 </c:if>
-                                <c:if test="${reqByNo.categoryNo != 800}">
+                                <c:if test="${refByNo.categoryNo != 800}">
                                     <tr>
                                         <th class="table-active title">기타 사항</th>
-                                        <td colspan='5' class='text-start'>${reqByNo.commonText}</td>
+                                        <td colspan='5' class='text-start'>${refByNo.commonText}</td>
                                     </tr>
                                 </c:if>
                             </c:if>
@@ -141,8 +141,8 @@
                         </table>
                     </div>
                     <c:choose>
-                        <c:when test="${reqByNo.status != 'pending'}">
-                            <c:when test="${reqByNo.status == 'completed'}">
+                        <c:when test="${refByNo.status != 'pending'}">
+                            <c:when test="${refByNo.status == 'completed'}">
                                 <div class="additionalW">
                                     <p class="userInfoHeader">결재자 정보
                                     </p>
@@ -152,7 +152,7 @@
                                             <div class="userInfo">
                                                 <p class="name">강태오 <span class="position">부장</span></p>
                             </c:when>
-                            <c:when test="${reqByNo.status == 'rejected'}">
+                            <c:when test="${refByNo.status == 'rejected'}">
                                                 <p class="status">반려</p>
                                                 <p class="status">사유 : </p>
                                             </div>
@@ -168,9 +168,9 @@
     </div>
 </div>
 <script>
-    if(${reqByNo.categoryNo} === 800) {
+    if(${refByNo.categoryNo} === 800) {
         // Quill 에디터 초기화
-        var quill = new Quill('#editor${reqByNo.no}', {
+        var quill = new Quill('#editor${refByNo.no}', {
             theme: 'snow',
             modules: {
                 "toolbar": false
@@ -179,7 +179,7 @@
         // disabled 처리
         quill.enable(false);
         // XSS 방지를 위한 HTML 이스케이프
-        let commonText = "${fn:escapeXml(reqByNo.commonText)}";
+        let commonText = "${fn:escapeXml(refByNo.commonText)}";
         // Quill의 clipboard 모듈을 사용하여 HTML 삽입
         let range = quill.getSelection();
         quill.clipboard.dangerouslyPasteHTML(range.index, commonText);

@@ -1,8 +1,11 @@
 package com.example.workus.approval.service;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.ReqListViewDto;
+import com.example.workus.approval.dto.ApvDetailViewDto;
+import com.example.workus.approval.dto.ApvListViewDto;
 import com.example.workus.approval.mapper.ApprovalMapper;
+import com.example.workus.approval.util.CategoryReasonMapping;
+import com.example.workus.approval.util.OptionTextMapping;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
@@ -98,7 +101,13 @@ public class ApprovalService {
         }
     }
 
-    public List<ReqListViewDto> getMyReqList(Long userNo) {
+    /**
+     * 내 요청 내역을 조회한다.
+     *
+     * @param userNo 로그인한 사용자 번호
+     * @return 결재 요청 리스트
+     */
+    public List<ApvListViewDto> getMyReqList(Long userNo) {
         return approvalMapper.getReqList(userNo);
     }
 
@@ -107,8 +116,10 @@ public class ApprovalService {
      *
      * @return 결재 대기 건 리스트
      */
-    public List<ReqListViewDto> getMyWaitList() {
-        return approvalMapper.getWaitList();
+    public List<ApvListViewDto> getMyWaitList() {
+        List<ApvListViewDto> waitList = approvalMapper.getWaitList();
+        setReqUserNames(waitList); // 요청자 이름 설정
+        return waitList;
     }
 
     /**
@@ -117,8 +128,23 @@ public class ApprovalService {
      * @param leaderNo 팀장 번호
      * @return 팀원들의 결재 요청 리스트
      */
-    public List<ReqListViewDto> getMyRefList(Long leaderNo) {
-        return approvalMapper.getRefListByLeaderNo(leaderNo);
+    public List<ApvListViewDto> getMyRefList(Long leaderNo) {
+        List<ApvListViewDto> refList = approvalMapper.getRefListByLeaderNo(leaderNo);
+        setReqUserNames(refList); // 요청자 이름 설정
+        return refList;
+    }
+
+    /**
+     * 요청자 이름을 설정하는 메서드 (중복 방지하는 함수 역할)
+     *
+     * @param apvListViewDtos 결재 요청 리스트
+     */
+    private void setReqUserNames(List<ApvListViewDto> apvListViewDtos) {
+        for (ApvListViewDto dto : apvListViewDtos) {
+            User reqUser = userMapper.getUserByUserNo(dto.getReqUserNo());
+            dto.setReqUserName(reqUser.getName());
+            dto.setReqUserDeptName(reqUser.getDeptName());
+        }
     }
 
     /**
@@ -127,7 +153,33 @@ public class ApprovalService {
      * @param apvNo 글 번호
      * @return 해당 글 상세 정보
      */
-    public ReqListViewDto getMyReqDetail(Long apvNo) {
-        return approvalMapper.getReqDetailByApvNo(apvNo);
+    public ApvDetailViewDto getMyReqDetail(Long apvNo) {
+        ApvDetailViewDto approvalDetail = approvalMapper.getReqDetailByApvNo(apvNo);
+
+        // 요청자 정보 가져오기
+        User reqUser = userMapper.getUserByUserNo(approvalDetail.getReqUserNo());
+        approvalDetail.setReqUserName(reqUser.getName());
+
+        // 카테고리 별로 상이한 reason name 매핑 처리
+        String reason = CategoryReasonMapping.getReasonByCategory(approvalDetail.getCategoryNo());
+        approvalDetail.setReasonTitle(reason);
+
+        // 카테고리 별 optionText 매핑 처리
+        Map<String, String> options = OptionTextMapping.getOptionsByCategory(approvalDetail.getCategoryNo());
+
+        // optionTexts get
+        List<Map<String, String>> optionTexts = approvalDetail.getOptionTexts();
+
+        // 각 optionText의 textName을 새로 매핑된 entry.getValue()로 교체
+        for (Map<String, String> optionMap : optionTexts) {
+            String textName = optionMap.get("textName");
+            // options에서 textName에 해당하는 값 매칭
+            String newValue = options.get(textName);
+            if (newValue != null) {
+                optionMap.put("textName", newValue);
+            }
+        }
+
+        return approvalDetail;
     }
 }

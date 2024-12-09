@@ -269,9 +269,7 @@ $(function () {
     $("#atdRequestForm button.closeBtn").on('click', function () {
         atdDialog.close();
         $('html, body').css('overflow', 'auto');
-        $("#atdFormUser").empty(); // 데이터 초기화
-        $("#atdCtgr").empty(); // 데이터 초기화
-        $(".annualLeaveOnly").empty(); // 연차 관련 데이터 초기화
+        $("#atdFormUser, #atdCtgr, .annualLeaveOnly").empty(); // 데이터 초기화 + 연차 관련 데이터 초기화
         isDataLoaded = false; // 플래그 리셋
     });
 

@@ -1,7 +1,8 @@
 package com.example.workus.approval.mapper;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.ReqListViewDto;
+import com.example.workus.approval.dto.ApvDetailViewDto;
+import com.example.workus.approval.dto.ApvListViewDto;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
@@ -22,11 +23,11 @@ public interface ApprovalMapper {
             , @Param("termValue") String termValue
             , @Param("apvNo") Long apvNo);
 
-    List<ReqListViewDto> getReqList(@Param("userNo") Long userNo);
+    List<ApvListViewDto> getReqList(@Param("userNo") Long userNo);
 
-    List<ReqListViewDto> getWaitList();
+    List<ApvListViewDto> getWaitList();
 
-    List<ReqListViewDto> getRefListByLeaderNo(@Param("leaderNo") Long leaderNo);
+    List<ApvListViewDto> getRefListByLeaderNo(@Param("leaderNo") Long leaderNo);
 
-    ReqListViewDto getReqDetailByApvNo(@Param("apvNo") Long apvNo);
+    ApvDetailViewDto getReqDetailByApvNo(@Param("apvNo") Long apvNo);
 }
