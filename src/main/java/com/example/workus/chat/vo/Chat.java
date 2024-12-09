@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class Chat {
     private Long no;
     private String content;
-    private String file;
+    private String fileSrc;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm")
     private LocalDateTime time;
     private Character isFirst;

@@ -25,9 +25,9 @@ import java.util.*;
 @Transactional
 @Service
 public class ChatSocketHandler extends TextWebSocketHandler {
-    private UserMapper userMapper;
-    private ChatService chatService;
-    private ChatroomMapper chatroomMapper;
+    private final UserMapper userMapper;
+    private final ChatService chatService;
+    private final ChatroomMapper chatroomMapper;
 
     @Autowired
     public ChatSocketHandler(UserMapper userMapper, ChatService chatService, ChatroomMapper chatroomMapper) {
@@ -37,6 +37,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     }
 
     private ObjectMapper objectMapper = new ObjectMapper();
+    private static final String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
 
     // 채팅이 진행중인 채팅방 Map<채팅방 번호, Map<유저 아이디, 세션>> 형태로 저장
     private Map<Long, Map<String, WebSocketSession>> chatrooms = Collections.synchronizedMap(new HashMap<>());
@@ -213,7 +214,12 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         chat.setChatroom(chatroomVo);
         User user = userMapper.getUserByUserNo(userNo);
         chat.setUser(user);
-        chat.setContent(chatMessage.getText());
+        if ("file".equals(chatMessage.getChat().getType())) {
+            chat.setFileSrc(chatMessage.getChat().getFileSrc());
+            chat.setType("file");
+        } else {
+            chat.setContent(chatMessage.getText());
+        }
         chatService.insertChat(chat);
         chatMessage.setChat(chat);
         // jsr301 모듈 등록

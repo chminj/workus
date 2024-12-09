@@ -10,5 +10,5 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString
 public class ChatForm {
     private String content;
-    private MultipartFile file;
+    private MultipartFile upfile;
 }

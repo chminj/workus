@@ -36,8 +36,11 @@
 
     <select id="getChatRoomInMenuByChatroomNo" resultType="ChatroomDto">
         select R.CHATROOM_NO  as chatroomNo
-             , R.CHATROOM_TITLE  chatroomTitle
-             , C.CHAT_CONTENT as lastChat
+             , R.CHATROOM_TITLE as chatroomTitle
+             , CASE
+                WHEN C.CHAT_CONTENT IS NULL THEN SUBSTRING(C.CHAT_FILE_SRC, 14)
+                ELSE C.CHAT_CONTENT
+            END as lastChat
              , C.CHAT_TIME    as lastChatDate
              , U.USER_NAME    as "lastChatAuthor.name"
         from WORKUS_CHAT C
