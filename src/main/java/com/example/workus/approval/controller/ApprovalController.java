@@ -1,7 +1,8 @@
 package com.example.workus.approval.controller;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.ReqListViewDto;
+import com.example.workus.approval.dto.ApvDetailViewDto;
+import com.example.workus.approval.dto.ApvListViewDto;
 import com.example.workus.approval.service.ApprovalService;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.security.LoginUser;
@@ -32,7 +33,9 @@ public class ApprovalController {
     }
 
     @GetMapping("/form-list")
-    public String list(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String list(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model)
+    {
 
         List<ApprovalCategory> categories = approvalService.getCategories();
         model.addAttribute("categories", categories);
@@ -49,7 +52,8 @@ public class ApprovalController {
 
     @PostMapping("/addForm")
     public String addForm(@ModelAttribute ApvApprovalForm apvFormBase
-            , @AuthenticationPrincipal LoginUser loginUser) {
+                            , @AuthenticationPrincipal LoginUser loginUser)
+    {
         // 로그인한 userNo 설정
         Long userNo = loginUser.getNo();
         apvFormBase.setUserNo(userNo);
@@ -77,27 +81,19 @@ public class ApprovalController {
 
     @GetMapping("/my/reqList")
     public String myRequestList(@AuthenticationPrincipal LoginUser loginUser
-            , Model model) {
-        List<ReqListViewDto> reqList = approvalService.getMyReqList(loginUser.getNo());
+                                , Model model)
+    {
+        List<ApvListViewDto> reqList = approvalService.getMyReqList(loginUser.getNo());
         model.addAttribute("reqList", reqList);
 
         return "approval/my/reqList";
     }
 
-    @GetMapping("/my/detail/reqDetail")
-    public String myRequestList(@RequestParam("no") Long no
-            , @RequestParam("categoryNo") int categoryNo
-            , Model model) {
-        ReqListViewDto reqByNo = approvalService.getMyReqDetail(no);
-        model.addAttribute("reqByNo", reqByNo);
-
-        return "approval/my/detail/reqDetail";
-    }
-
     @GetMapping("/my/waitList")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
-    public String myApprovalList(Model model) {
-        List<ReqListViewDto> waitList = approvalService.getMyWaitList();
+    public String myApprovalList(Model model)
+    {
+        List<ApvListViewDto> waitList = approvalService.getMyWaitList();
         model.addAttribute("waitList", waitList);
 
         return "approval/my/waitList";
@@ -105,14 +101,45 @@ public class ApprovalController {
 
     @GetMapping("/my/refList")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LEADER')")
-    public String myReferenceList(@AuthenticationPrincipal LoginUser loginUser, Model model) {
-
+    public String myReferenceList(@AuthenticationPrincipal LoginUser loginUser
+                                    , Model model)
+    {
         Long leaderNo = loginUser.getNo();
-        List<ReqListViewDto> refList = approvalService.getMyRefList(leaderNo);
+        List<ApvListViewDto> refList = approvalService.getMyRefList(leaderNo);
 
         model.addAttribute("refList", refList);
 
         return "approval/my/refList";
     }
 
+//        @GetMapping("/my/detail/{apvNo}")
+    @GetMapping("/my/detail/reqDetail")
+    public String myRequestDetail(@RequestParam("no") Long no
+                                , Model model)
+    {
+        ApvDetailViewDto reqByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("reqByNo", reqByNo);
+
+        return "approval/my/detail/reqDetail";
+    }
+
+    @GetMapping("/my/detail/waitDetail")
+    public String myWaitDetail(@RequestParam("no") Long no
+                                , Model model)
+    {
+        ApvDetailViewDto waitByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("waitByNo", waitByNo);
+
+        return "approval/my/detail/waitDetail";
+    }
+
+    @GetMapping("/my/detail/refDetail")
+    public String myRefDetail(@RequestParam("no") Long no
+                                , Model model)
+    {
+        ApvDetailViewDto refByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("refByNo", refByNo);
+
+        return "approval/my/detail/refDetail";
+    }
 }

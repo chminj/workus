@@ -103,7 +103,7 @@
                                             <td>${loop.count }</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/approval/my/detail/reqDetail?no=${form.no}&categoryNo=${form.categoryNo}"
+                                                <a href="/approval/my/detail/reqDetail?no=${form.no}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>

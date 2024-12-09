@@ -34,7 +34,9 @@ public class AttendanceController {
     }
 
     @GetMapping("/list")
-    public String list(@AuthenticationPrincipal LoginUser loginUser, Model model) {
+    public String list(@AuthenticationPrincipal LoginUser loginUser
+                        , Model model)
+    {
         AttendanceDto attendanceDto = attendanceService.getAttendance(loginUser.getNo());
         model.addAttribute("attendanceDto", attendanceDto);
 
@@ -58,8 +60,9 @@ public class AttendanceController {
 
     @PostMapping("/getApproval")
     public String getApproval(AtdApprovalForm form
-            , @AuthenticationPrincipal LoginUser loginUser
-            , @RequestParam(required = false) int dayTotal) {
+                            , @AuthenticationPrincipal LoginUser loginUser
+                            , @RequestParam(required = false) int dayTotal)
+    {
         AtdApprovalForm apvForm = new AtdApprovalForm();
         apvForm.setNo(form.getNo());
         apvForm.setReason(form.getReason());
@@ -109,10 +112,11 @@ public class AttendanceController {
 
     @GetMapping("/myReqList")
     public String myApvList(@AuthenticationPrincipal LoginUser loginUser
-            , Model model
-            , @RequestParam(required = false, defaultValue = "1") int page
-            , @RequestParam(required = false, defaultValue = "10") int rows
-            , @RequestParam(required = false) String status) {
+                            , Model model
+                            , @RequestParam(required = false, defaultValue = "1") int page
+                            , @RequestParam(required = false, defaultValue = "10") int rows
+                            , @RequestParam(required = false) String status)
+    {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
@@ -131,11 +135,12 @@ public class AttendanceController {
 
     @GetMapping("/myApvList")
     public String myReqList(@AuthenticationPrincipal LoginUser loginUser
-            , Model model
-            , @RequestParam(required = false, defaultValue = "1") int page
-            , @RequestParam(required = false, defaultValue = "10") int rows
-            , @RequestParam(required = false) String opt
-            , @RequestParam(required = false) String keyword) {
+                            , Model model
+                            , @RequestParam(required = false, defaultValue = "1") int page
+                            , @RequestParam(required = false, defaultValue = "10") int rows
+                            , @RequestParam(required = false) String opt
+                            , @RequestParam(required = false) String keyword)
+    {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
@@ -154,12 +159,12 @@ public class AttendanceController {
 
     @GetMapping("/myRefList")
     public String myRefList(@AuthenticationPrincipal LoginUser loginUser
-            , Model model
-            , @RequestParam(required = false, defaultValue = "1") int page
-            , @RequestParam(required = false, defaultValue = "10") int rows
-            , @RequestParam(required = false) String opt
-            , @RequestParam(required = false) String keyword) {
-
+                            , Model model
+                            , @RequestParam(required = false, defaultValue = "1") int page
+                            , @RequestParam(required = false, defaultValue = "10") int rows
+                            , @RequestParam(required = false) String opt
+                            , @RequestParam(required = false) String keyword)
+    {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
@@ -179,6 +184,4 @@ public class AttendanceController {
 
         return "attendance/myRefList";
     }
-
-
 }

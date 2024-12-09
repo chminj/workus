@@ -117,7 +117,7 @@
     margin: 20px 0 36px;
 }
 
-.form table {
+.form table, .tableStyle {
     font-size: 17px;
     border: 1px solid #ddd;
     width: 100%;
@@ -133,7 +133,7 @@
     vertical-align: middle;
 }
 
-.form .table > :not(caption) > * > * {
+.form .table > :not(caption) > * > * , .tableStyle > :not(caption) > * > *{
     padding: 15px 12px;
     vertical-align: middle;
 }
@@ -320,3 +320,6 @@ table a.link:hover {
 #rejectedReason {
     height: 120px;
 }
+
+.editorArea, .editorArea .ql-container.ql-snow {border:none;}
+.editorArea td {border:none; padding:0; box-shadow:none}

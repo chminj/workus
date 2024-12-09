@@ -83,6 +83,7 @@
                                 <table class="table">
                                     <colgroup>
                                         <col style="width:5%"/>
+                                        <col style="width:10%"/>
                                         <col style="width:15%"/>
                                         <col style="width:auto"/>
                                         <col style="width:15%"/>
@@ -91,6 +92,7 @@
                                     <thead>
                                     <tr>
                                         <th>No.</th>
+                                        <th>요청자</th>
                                         <th>신청 유형</th>
                                         <th>제목</th>
                                         <th>신청일</th>
@@ -101,9 +103,10 @@
                                     <c:forEach var="form" items="${refList }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
+                                            <td>${form.reqUserName}</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/attendance/my/refDetail?no=${form.no}"
+                                                <a href="/approval/my/detail/refDetail?no=${form.no}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>

@@ -153,13 +153,6 @@ $(function () {
         showForm(formId, categoryName);
     });
 
-    // const quill = new Quill('#editor', {
-    //     theme: 'snow',
-    //     "modules": {
-    //          "toolbar": false
-    //     }
-    // });
-
     // submit
     $('form').on('submit', function () {
         let activeCategoryNo = $(this).parent('.form').attr('id');
