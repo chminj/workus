@@ -206,6 +206,17 @@
 			chatroomNo = $(this).data("chatroomNo");
 			updateContime();
 
+			// 파일과 채팅 동시에 전송 막기
+			$('#chat').on('change', '#fileInput', function() {
+				$('input[name=content]').prop('disabled', false);
+				const files = $(this)[0].files;
+
+				if(files.length > 0) {
+					$('input[name=content]').val('');
+					$('input[name=content]').prop('disabled', true);
+				}
+			});
+
 			// 읽지 않은 메시지 수 화면에서 삭제
 			$(`.not-read-count\${chatroomNo}`).text("");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
@@ -297,15 +308,17 @@
 						user: {
 							no: LOGIN_USERNO,
 							name: LOGIN_USERNAME
-						},
+						}
 					}
 					send(message);
 					window.location.replace('/chatroom/list');
 				})
 
 				// 채팅 소켓으로 전송
-				function chat() {
+				async function chat() {
 					let inputMessage = $('input[name=content]').val();
+					let fileInput = $('#fileInput')[0].files[0];
+
 					if (inputMessage) {
 						let message = {
 							cmd: 'chat-message',
@@ -317,8 +330,38 @@
 							text: inputMessage
 						}
 						send(message);
-						$('input[name=content]').val('');
 					}
+
+					if (fileInput) {
+						const formData = new FormData();
+						formData.append('upfile', fileInput);
+						const response = await fetch('/ajax/chat/upload/', {
+							method: 'POST',
+							body: formData
+						});
+						const result = await response.json();
+						const data = result.data;
+						if (response.ok) {
+							let message = {
+								cmd: 'chat-message',
+								chatroomNo: chatroomNo,
+								user: {
+									no: LOGIN_USERNO,
+									id: LOGIN_USERID
+								},
+								chat: {
+									type: 'file',
+									fileSrc: data.fileSrc
+								}
+							}
+							send(message);
+						} else {
+							console.log('파일 업로드에 실패했습니다.');
+						}
+					}
+
+					$('input[name=content]').val('');
+					$('#fileInput').val('');
 				}
 
 				// 다른 페이지로 이동하거나 창이 꺼지기 직전
@@ -352,6 +395,7 @@
 			})
 		})
 
+		// 입장 퇴장 구분선
 		function appearEnterAndOutDiv(text) {
 			let div = `
 			<div class="d-flex align-items-center my-4">
@@ -428,7 +472,7 @@
 			let div = `
 			\${users.map((user) => `
 				<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
-					<img src="/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+					<img src="${s3}/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 					<div class="d-flex align-items-center gap-2">
 						<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
 						<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
@@ -601,7 +645,7 @@
 
 				// 가져온 정보들을 집어넣는다.
 				if (response.ok) {
-					$('#profileImgDiv').html(`<img src="/resources/repository/userprofile/\${data.profileSrc}" alt="프로필" style="width: 160px; height: 160px;"/>`);
+					$('#profileImgDiv').html(`<img src="${s3}/resources/repository/userprofile/${data.profileSrc}" alt="프로필" style="width: 160px; height: 160px;"/>`);
 					$('#profileName').text(data.name);
 					$('#profilePosition').text(data.positionName);
 					$('#profileDept').text(data.deptName);
@@ -653,9 +697,21 @@
 						<strong>나</strong>
 					</div>
 					<div class="d-flex justify-content-end">
-						<div class="bg-primary text-white rounded p-2 mb-1">
+					\${chat.type === 'file' ? `
+						<div class="bg-light rounded p-2 mb-1">
+							<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+							<i class="bi bi-file-earmark me-2 fs-5"></i>
+							<div class="flex-grow-1">
+								<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+							</div>
+							<i class="bi bi-download ms-2"></i>
+							</a>
+						</div>
+					` : `
+						<div class="bg-light rounded p-2 mb-1">
 							\${chat.content}
 						</div>
+			`}
 					</div>
 					<div class="text-end">
 						<small class="text-muted">\${chat.time.time}</small>
@@ -677,13 +733,25 @@
 				` : ``}
 				<div class="mb-3 w-75">
 					<div class="d-flex align-items-center mb-1">
-						<img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
+						<img src="${s3}/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
 						<strong>\${chat.user.name}</strong>
 					</div>
 					<div class="d-flex">
-						<div class="bg-light rounded p-2 mb-1">
-							\${chat.content}
-						</div>
+					\${chat.type === 'file' ? `
+					<div class="bg-light rounded p-2 mb-1">
+						<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+						<i class="bi bi-file-earmark me-2 fs-5"></i>
+							<div class="flex-grow-1">
+								<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+							</div>
+						<i class="bi bi-download ms-2"></i>
+						</a>
+					</div>
+						` : `
+					<div class="bg-light rounded p-2 mb-1">
+						\${chat.content}
+					</div>
+			`}
 					</div>
 					<small class="text-muted">\${chat.time.time}</small>
 				</div>
@@ -781,7 +849,7 @@
 						   <li id="participantList">
 							  \${data.users.map((user) => `
 							<div class="d-flex align-items-center my-2 participant-name-div" data-user-no="\${user.no}">
-								<img src="/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
+								<img src="${s3}/resources/repository/userprofile/\${user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;">
 								<div class="d-flex align-items-center gap-2">
 									<span role="button" class="participant-name" data-user-no="\${user.no}" data-user-id="\${user.id}">\${user.name}</span>
 									<span class="badge rounded-pill bg-success span-online" id="span-online\${user.id}" style="font-size: 0.7em;"></span>
@@ -842,9 +910,40 @@
                                             <strong>나</strong>
                                         </div>
                                         <div class="d-flex justify-content-end">
-                                            <div class="bg-primary text-white rounded p-2 mb-1">
-                                                \${chat.content}
-                                            </div>
+											\${chat.type === 'file'
+												? `
+												<div class="bg-light rounded p-2 mb-1">
+													<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+														<i class="bi bi-file-earmark me-2 fs-5"></i>
+														<div class="flex-grow-1">
+															<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+														</div>
+														<i class="bi bi-download ms-2"></i>
+													</a>
+												</div>
+													`
+												: chat.type === 'image'
+														? `
+												<div class="bg-light rounded p-2 mb-1">
+													<div class="image-container">
+														<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+															alt="첨부 이미지"
+															class="img-fluid rounded cursor-pointer mb-2"
+															style="max-height: 200px;"/>
+															<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+																<div class="flex-grow-1">
+																	<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+																</div>
+																<i class="bi bi-download ms-2"></i>
+															</a>
+														</div>
+													</div>
+															`
+														: `
+													<div class="bg-light rounded p-2 mb-1">
+														\${chat.content}
+													</div>
+															`}
                                         </div>
                                         <div class="text-end">
                                             <small class="text-muted">\${chat.time.time}</small>
@@ -855,12 +954,45 @@
                                     <!-- 상대 메시지 -->
                                     <div class="mb-3 w-75">
                                         <div class="d-flex align-items-center mb-1">
-                                            <img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
+                                            <img src="${s3}/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
                                             <strong>\${chat.user.name}</strong>
                                         </div>
                                         <div class="d-flex">
                                             <div class="bg-light rounded p-2 mb-1">
-                                                \${chat.content}
+												\${chat.type === 'file'
+													? `
+												<div class="bg-light rounded p-2 mb-1">
+													<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+														<i class="bi bi-file-earmark me-2 fs-5"></i>
+														<div class="flex-grow-1">
+															<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+														</div>
+														<i class="bi bi-download ms-2"></i>
+													</a>
+												</div>
+													`
+													: chat.type === 'image'
+															? `
+												<div class="bg-light rounded p-2 mb-1">
+													<div class="image-container">
+														<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+															alt="첨부 이미지"
+															class="img-fluid rounded cursor-pointer mb-2"
+															style="max-height: 200px;"/>
+															<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+																<div class="flex-grow-1">
+																	<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+																</div>
+																<i class="bi bi-download ms-2"></i>
+															</a>
+														</div>
+													</div>
+															`
+															: `
+													<div class="bg-light rounded p-2 mb-1">
+														\${chat.content}
+													</div>
+															`}
                                             </div>
                                         </div>
                                         <small class="text-muted">\${chat.time.time}</small>
@@ -874,27 +1006,26 @@
 		}
 
 		function loadPlusChats(data) {
-	console.log('data: ', data);
 			return `
-					<%-- 더 보기 버튼 --%>
-					\${data.paging.last === false ? `
-					<div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
-						<button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
-							<i class="bi bi-chevron-up me-1"></i>더 보기
-						</button>
-					</div>
-			        `:``}
-						\${data.data.map((chat) => `
-							\${chat.isFirst === 'Y' ? `
-								<!-- 날짜 구분선 -->
-								<div class="d-flex align-items-center my-4">
-									<div class="border-bottom flex-grow-1"></div>
-									<span class="mx-3 text-muted">\${chat.time.date}</span>
-									<div class="border-bottom flex-grow-1"></div>
-								</div>
-							` : ``}
-							\${chat.type === 'message'
-							? `
+				<%-- 더 보기 버튼 --%>
+				\${data.paging.last === false ? `
+				<div class="d-flex justify-content-center mb-3" id="loadMoreBtnDiv">
+					<button type="button" class="btn btn-light btn-sm rounded-pill px-4" id="loadMoreBtn">
+						<i class="bi bi-chevron-up me-1"></i>더 보기
+					</button>
+				</div>
+			`:``}
+                \${data.data.map((chat) => `
+                    \${chat.isFirst === 'Y' ? `
+                            <!-- 날짜 구분선 -->
+                            <div class="d-flex align-items-center my-4">
+                                <div class="border-bottom flex-grow-1"></div>
+                                <span class="mx-3 text-muted">\${chat.time.date}</span>
+                                <div class="border-bottom flex-grow-1"></div>
+                            </div>
+                        ` : ``}
+
+                    \${chat.type === 'message' ? `
                             <!-- 입장/퇴장 구분선 -->
                             <div class="d-flex align-items-center my-4">
                                 <div class="border-bottom flex-grow-1"></div>
@@ -903,41 +1034,96 @@
                                 </div>
                                 <div class="border-bottom flex-grow-1"></div>
                             </div>
-                        	`
-							: `
-							\${LOGIN_USERNO === chat.user.no ? `
-								<div class="mb-3 w-75 ms-auto">
-									<div class="text-end mb-1">
-										<strong>나</strong>
+                        ` : ` \${LOGIN_USERNO === chat.user.no ? `
+					<div class="mb-3 w-75 ms-auto">
+						<div class="text-end mb-1">
+							<strong>나</strong>
+						</div>
+					<div class="d-flex justify-content-end">
+					\${chat.type === 'file' ? `
+					<div class="bg-light rounded p-2 mb-1">
+						<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+							<i class="bi bi-file-earmark me-2 fs-5"></i>
+							<div class="flex-grow-1">
+								<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+							</div>
+							<i class="bi bi-download ms-2"></i>
+						</a>
+					</div>
+							` : chat.type === 'image' ? `
+					<div class="bg-light rounded p-2 mb-1">
+						<div class="image-container">
+							<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+								alt="첨부 이미지"
+								class="img-fluid rounded cursor-pointer mb-2"
+								style="max-height: 200px;"/>
+								<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+									<div class="flex-grow-1">
+										<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
 									</div>
-									<div class="d-flex justify-content-end">
-										<div class="bg-primary text-white rounded p-2 mb-1">
-											\${chat.content}
+									<i class="bi bi-download ms-2"></i>
+								</a>
+							</div>
+						</div>
+						` : `
+						<div class="bg-light rounded p-2 mb-1">
+							\${chat.content}
+						</div>
+															`}
+				</div>
+				<div class="text-end">
+					<small class="text-muted">\${chat.time.time}</small>
+				</div>
+			</div>
+				` : `
+				<!-- 상대 메시지 -->
+				<div class="mb-3 w-75">
+					<div class="d-flex align-items-center mb-1">
+						<img src="${s3}/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
+						<strong>\${chat.user.name}</strong>
+					</div>
+				<div class="d-flex">
+					<div class="bg-light rounded p-2 mb-1">
+						\${chat.type === 'file' ? `
+						<div class="bg-light rounded p-2 mb-1">
+							<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+								<i class="bi bi-file-earmark me-2 fs-5"></i>
+								<div class="flex-grow-1">
+									<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+								</div>
+								<i class="bi bi-download ms-2"></i>
+							</a>
+						</div>
+						` : chat.type === 'image' ? `
+						<div class="bg-light rounded p-2 mb-1">
+							<div class="image-container">
+								<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+									alt="첨부 이미지"
+									class="img-fluid rounded cursor-pointer mb-2"
+									style="max-height: 200px;"/>
+									<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+										<div class="flex-grow-1">
+											<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
 										</div>
-									</div>
-									<div class="text-end">
-										<small class="text-muted">\${chat.time.time}</small>
-									</div>
+										<i class="bi bi-download ms-2"></i>
+									</a>
 								</div>
-							` : `
-							<!-- 상대 메시지 -->
-							<div class="mb-3 w-75">
-								<div class="d-flex align-items-center mb-1">
-									<img src="/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
-									<strong>\${chat.user.name}</strong>
-								</div>
-								<div class="d-flex">
-									<div class="bg-light rounded p-2 mb-1">
-										\${chat.content}
-									</div>
-								</div>
-								<small class="text-muted">\${chat.time.time}</small>
+							</div>
+							`
+							: `
+							<div class="bg-light rounded p-2 mb-1">
+								\${chat.content}
 							</div>
 							`}
-                        `}
-			`).join('')}
 					</div>
-				`;
+				</div>
+				<small class="text-muted">\${chat.time.time}</small>
+			</div>
+					`}
+            	`}
+			`).join('')}
+		</div>
+	`;
 		}
 
 		// 메시지 입력 폼 영역 불러오기

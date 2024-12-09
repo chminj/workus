@@ -18,13 +18,14 @@ import java.util.List;
 @Transactional
 @Service
 public class ChatService {
-
     private final ChatMapper chatMapper;
 
     @Autowired
     public ChatService(ChatMapper chatMapper) {
         this.chatMapper = chatMapper;
     }
+
+    private static final String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
 
     public ListDto<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo, int page) {
         int totalRows = chatMapper.getTotalRows(userNo, chatroomNo);
@@ -34,6 +35,17 @@ public class ChatService {
         if(pagination.getBegin() != 0) {
             // 가장 첫 페이지일 때 -> 더보기 때 10개씩 하기 위해 첫 페이지인 경우는 11개를 보여준다.
             dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
+            // 확장자에 따라 file이나 image로 type을 설정한다.
+            for (Chat chat : dto.getData()) {
+                if (chat.getFileSrc() != null) {
+                    String extension = chat.getFileSrc().toLowerCase();
+                    if (extension.endsWith("." + imageExtensions)) {
+                        chat.setType("image");
+                    } else {
+                        chat.setType("file");
+                    }
+                }
+            }
             Collections.sort(dto.getData(), (data1, data2) ->
                     data1.getTime().compareTo(data2.getTime()));
             LocalDateTime firstChatTime = dto.getData().getFirst().getTime();
@@ -80,7 +92,6 @@ public class ChatService {
             // 입장 퇴장 메시지를 넣고 다시 정렬
             Collections.sort(dto.getData(), (data1, data2) ->
                     data1.getTime().compareTo(data2.getTime()));
-            
             // 채팅방이 생성되고 친 채팅이 없을 때
         } else {
             dto = new ListDto<>(Collections.emptyList(), pagination);
