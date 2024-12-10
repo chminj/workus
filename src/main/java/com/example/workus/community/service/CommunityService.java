@@ -1,12 +1,11 @@
 package com.example.workus.community.service;
 
 import com.example.workus.common.util.WebContentFileUtils;
-import com.example.workus.community.dto.CommentForm;
-import com.example.workus.community.dto.FeedForm;
-import com.example.workus.community.dto.ModifyFrom;
+import com.example.workus.community.dto.*;
 import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
+import com.example.workus.community.vo.Like;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.user.vo.User;
 import com.example.workus.common.util.FileUtils;
@@ -52,7 +51,12 @@ public class CommunityService {
             feed.setHashTags(hashTags);
             Reply reply = communityMapper.getReplyByFeedNo(feed.getNo());
             feed.setReply(reply);
+
+            List<Like> likes = communityMapper.getLikesByFeedNo(feed.getNo());
+            feed.setLikes(likes);
         }
+
+
         return feeds;
     }
 
@@ -138,9 +142,10 @@ public class CommunityService {
 
     public void deleteFeed(Long feedNo, Long userNo) {
         Feed feed = communityMapper.getFeedByNo(feedNo); // 번호에 맞는 피드찾기
+        communityMapper.deleteLikeByFeedNo(feedNo);// 게시글 삭제 맨 마지막에 삭제 되어야함
         communityMapper.deleteReplysByFeedNo(feedNo);         // 게시글에 맞는 댓글 삭제
         communityMapper.deleteHashTagsByFeedNo(feedNo);      // 게시글에 맞는 해쉬태그 삭제
-        communityMapper.deleteFeedsByFeedNo(feedNo,userNo); // 게시글 삭제 맨 마지막에 삭제 되어야함
+        communityMapper.deleteFeedsByFeedNo(feedNo,userNo);
     }
 
     public Feed getFeedByFeedNo(long feedNo){
@@ -196,7 +201,34 @@ public class CommunityService {
         }
     }
 
+    public LikeCountDto LikeByFeedNo(long feedNo, long userNo) {
+        // 중복여부를 확인한다.
+        boolean isliked = communityMapper.isLiked(feedNo, userNo);
+        // 중복이라면 좋아요 제거
+        if (isliked) {
+            communityMapper.cancelLikeByFeedNo(feedNo, userNo);
+        } else {
+            // 좋아요를 안 눌렀다면 , 새로운 좋아요 추가
+            Like like = new Like();
 
+            Feed feed = new Feed();
+            feed.setNo(feedNo);
+            like.setFeed(feed);
+
+            User user = new User();
+            user.setNo(userNo);
+            like.setUser(user);
+
+            // 좋아요 디비 저장
+            communityMapper.insertLike(like);
+        }
+        int LikeCount = communityMapper.getlikeCountByFeedNo(feedNo);
+        String LikeUserName = communityMapper.getLikeUsersByFeedNo(feedNo);
+        LikeCountDto likeCountDto = new LikeCountDto();
+        likeCountDto.setLikeCount(LikeCount);
+        likeCountDto.setUserName(LikeUserName);
+        return likeCountDto;
+    }
 
 
 }

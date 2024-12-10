@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-   <link href="../../../resources/css/communitymain.css" rel="stylesheet"/>\
+   <link href="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/css/communitymain.css" rel="stylesheet"/>\
   <title>workus template</title>
 </head>
 <body>
@@ -87,11 +87,7 @@
   </div>
 </div>
 </body>
-
-
-<%-- 스크립트 시작 --%>
 <script>
-<%--  무한스크롤 js --%>
   let currentPage = 1;
   let canRequest = true;
 
@@ -108,55 +104,55 @@
     }
   });
 
-$(document).ready(function() {
-  // 댓글 입력 폼에서 엔터키 눌렀을 때 처리
-  $(document).on("keydown", "#feedinsertReply", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
+  $(document).ready(function() {
+    // 댓글 입력 폼에서 엔터키 눌렀을 때 처리
+    $(document).on("keydown", "#feedinsertReply", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
 
-      var feedNo = $(this).closest("article").attr("id").replace('feed-', '');
+        var feedNo = $(this).closest("article").attr("id").replace('feed-', '');
 
 
-      inserReply(feedNo);
-    }
+        inserReply(feedNo);
+      }
+    });
   });
-});
 
-$(document).ready(function() {
-  $("#postComment").on("keydown", function(event) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      inserReplyPopup();
-    }
+  $(document).ready(function() {
+    $("#postComment").on("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        inserReplyPopup();
+      }
+    });
   });
-});
 
- // 댓글 추가
- function inserReply(feedNo){
-   $.ajax({
-     type: "post",
-     url: "insertReply",
-     data:{
-       feedNo:feedNo,
-       name:$(`#feed-\${feedNo} input[name=name]`).val(),
-       comment:$(`#feed-\${feedNo} input[name=comment]`).val()
-     },
-     dataType: "json",
-     success:function (reply){
-       $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
-       $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
-     }
-   })
- }
-function inserReplyPopup(){
-  $.ajax({
-    type: "post",
-    url: "insertReply",
-    data:{feedNo:$("#postFeedNo").val(),
-          comment:$("#postComment").val()},
-          name:$("#postReplyUsername").val(),
-    dataType: "json",
-    success:function (reply){
+  // 댓글 추가
+  function inserReply(feedNo){
+    $.ajax({
+      type: "post",
+      url: "insertReply",
+      data:{
+        feedNo:feedNo,
+        name:$(`#feed-\${feedNo} input[name=name]`).val(),
+        comment:$(`#feed-\${feedNo} input[name=comment]`).val()
+      },
+      dataType: "json",
+      success:function (reply){
+        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
+      }
+    })
+  }
+  function inserReplyPopup(){
+    $.ajax({
+      type: "post",
+      url: "insertReply",
+      data:{feedNo:$("#postFeedNo").val(),
+        comment:$("#postComment").val()},
+      name:$("#postReplyUsername").val(),
+      dataType: "json",
+      success:function (reply){
         let content = `
          <div class="popup-reply">
            <p>
@@ -166,31 +162,31 @@ function inserReplyPopup(){
          <div>
         `;
 
-      $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
-      $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
-      $("#postReplys").prepend(content);
-    }
-  })
-}
+        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
+        $("#postReplys").prepend(content);
+      }
+    })
+  }
 
- function openPopup(feedNo) {
-   $.ajax({
-     type: "get",
-     url: `feed/\${feedNo}`,
-     dataType: "json",
-     success: function (feed) {
-       $("#postImage").attr("src", "../../../resources/repository/communityfeedfile/"+feed.mediaUrl);
-       $("#postProfile").attr("src", "../../../resources/repository/communityfeedfile/"+feed.mediaUrl);
-       $("#postUsername").text(feed.user.name);
-       $("#postTitle").text(feed.title);
-       $("#postContent").text(feed.content);
-       $("#postFeedNo").val(feed.no);
+  function openPopup(feedNo) {
+    $.ajax({
+      type: "get",
+      url: `feed/\${feedNo}`,
+      dataType: "json",
+      success: function (feed) {
+        $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
+        $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
+        $("#postUsername").text(feed.user.name);
+        $("#postTitle").text(feed.title);
+        $("#postContent").text(feed.content);
+        $("#postFeedNo").val(feed.no);
 
 
-       let replys = feed.replys;
-       let content = "";
-       for (let reply of replys) {3
-         content += `
+        let replys = feed.replys;
+        let content = "";
+        for (let reply of replys) {3
+          content += `
          <div class="popup-reply">
            <p>
               <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
@@ -198,16 +194,16 @@ function inserReplyPopup(){
            </p>
          <div>
         `;
-       }
-       $("#postReplys").html(content);
+        }
+        $("#postReplys").html(content);
 
-       document.getElementById("popupOverlay").style.display = "flex";
-     }
-   })
- }
+        document.getElementById("popupOverlay").style.display = "flex";
+      }
+    })
+  }
 
   function closePopup() {
-  document.getElementById("popupOverlay").style.display = "none";
+    document.getElementById("popupOverlay").style.display = "none";
   }
 
   getFeeds(currentPage);
@@ -238,6 +234,7 @@ function inserReplyPopup(){
     })
   }
 
+
   function  searchKeyword(event){
     event.preventDefault();
     currentPage = 1;
@@ -259,6 +256,38 @@ function inserReplyPopup(){
       }
     })
   }
+
+  function updateLike(feedNo) {
+    let no = feedNo;
+    $.ajax({
+      type: "POST",
+      url: "like",
+      data: {
+        feedNo: feedNo
+      },
+      dataType: "json",
+      success:
+        function(likeFeed) {
+          if (likeFeed.likeCount == 0) {
+            $(`#like-user-\${feedNo}`).html("");
+
+          } else if (likeFeed.likeCount == 1){
+            $(`#like-user-\${feedNo}`).html("");
+            let content = `
+                <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
+                외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${likeFeed.likeCount}</span>명이 좋아합니다.
+            `;
+            $(`#like-user-\${feedNo}`).html(content);
+
+          } else {
+            $("#likeFeedUserName"+feedNo).text(likeFeed.userName);
+            $("#likeFeedCount"+feedNo).text(likeFeed.likeCount);
+          }
+
+      }
+    });
+  }
+
   function appendFeeds(items) {
     for (let feed of items) {
 
@@ -268,9 +297,9 @@ function inserReplyPopup(){
         <!--top-->
         <div class="new_poster">
           <div class="poster_img">
-            <img alt="follower profile image" class="round_img" src="../../../resources/repository/communityfeedfile/\${feed.mediaUrl}" />
+            <img alt="follower profile image" class="round_img" src="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
           </div>
-          <a href="#n" class="poster_id txt_id">\${feed.user.name}</a>
+          <p  class="poster_id txt_id">\${feed.user.name}</p>
           <div class="dropdown-container">
             <svg class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24" id="dropdownToggle" data-bs-toggle="dropdown">
               <circle cx="12" cy="12" r="1.5"></circle>
@@ -297,35 +326,23 @@ function inserReplyPopup(){
 
         <!--content-->
         <section class="feed_imgs">
-          <img alt="지정된 media가 없습니다" src="../../../resources/repository/communityfeedfile/\${feed.mediaUrl}" />
-          <div class="interactions">
-            <div class="my_emotion">
-              <!-- 피드 내 하트 버튼 -->
-              <span class="like-btn" id="likeBtn" onclick="toggleLike()">
-                          <i class="bi bi-heart large-heart"></i> <!-- 기본 빈 하트 아이콘 -->
-                      </span>
-              </button></span>
-              <button class="open-popup-btn" onclick="openPopup(\${feed.no})">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
-                  <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8
-                  8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-
-                  .2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.2fffffffffffffffffff48-.
-                  72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.
-                  52.263-1.639.742-3.468 1.105"/>
-                </svg>
-              </button>
-            </div>
+          <img alt="지정된 media가 없습니다" src="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
+            <div class="interactions">
+              <div class="my_emotion">
+            <!-- 피드 내 하트 버튼 -->
+            <span class="like-btn" id="likeBtn" onclick="updateLike(\${feed.no})">
+                <i class="bi bi-heart large-heart" id="he"></i> <!-- 기본 빈 하트 아이콘 -->
+            </span>
 
-            <p>
-              <a href="#n" class="like_user">
-                <img alt="like user image" class="round_img" src="../../../resources/images/\${feed.mediaUrl}" />
-                <span class="txt_id">좋아요누른 유저이름</span>
-              </a>
-              님
-              <a href="#n" class="like_num txt_id">외 [게시글 좋아요 수]명</a>
-              이 좋아합니다
-            </p>
-          </div>
+            <button class="open-popup-btn" onclick="openPopup(\${feed.no})">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
+                    <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.5-1.05 1.548-.524 2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
+                </svg>
+            </button>
+              </div>
+
+              <div class="like_user" id="like-user-\${feed.no}"></div>
+            </div>
         </section>
 
         <!--feed text-->
@@ -364,27 +381,42 @@ function inserReplyPopup(){
         `
       }
 
+      if (feed.likeCount > 0) {
+        let content = `
+            <span class="like-userName" name="userName" id="likeFeedUserName\${feed.no}">\${feed.userName}</span>님
+            외<span class="like-count" name="likeCount" id="likeFeedCount\${feed.no}">\${feed.likeCount}</span>명이 좋아합니다.
+        `;
+
+        $(`#like-user-\${feed.no}`).html(content);
+      }
+
+
+
+
+
       $("#tags-" + feed.no).append(tags);
       $("#tags-popup" + feed.no).append(tags);
+
+
+
+
     }
   }
 
+  //  @@@@@@@@@@@@@@@@@@@@ 드롭 다운 js @@@@@@@@@@@@@@@@@@@@
+  const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+  const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
 
-//  @@@@@@@@@@@@@@@@@@@@ 드롭 다운 js @@@@@@@@@@@@@@@@@@@@
-const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
-const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
-
-// 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
-function toggleDropdown() {
-  menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
-}
-
-// 클릭 외부 시 드롭다운 닫기
-window.addEventListener('click', (event) => {
-  if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
-    menu.classList.remove('show'); // 드롭다운 숨기기
+  // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
+  function toggleDropdown() {
+    menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
   }
-});
 
+  // 클릭 외부 시 드롭다운 닫기
+  window.addEventListener('click', (event) => {
+    if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
+      menu.classList.remove('show'); // 드롭다운 숨기기
+    }
+  });
 </script>
 </html>
