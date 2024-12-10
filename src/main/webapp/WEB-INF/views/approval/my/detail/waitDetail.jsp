@@ -7,8 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/approval.css">
-    <script src="/resources/js/approval.js"></script>
+    <link rel="stylesheet" href="/resources/css/approval.css">
+    <script src="${s3}/resources/js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
@@ -72,79 +72,83 @@
                 </h3>
                 <div id="apvListW" class="containerW">
                     <div class="tableW mgt40">
-                        <div class="btn-group mgb30" role="group" aria-label="Basic example">
-                            <button type="button" class="btn btn-secondary">승인</button>
-                            <button type="button" class="btn btn-warning btn-custom2" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal" data-bs-whatever="@mdo">반려
-                            </button>
-                        </div>
-                        <table class="table tableStyle">
-                            <tbody>
-                                <tr>
-                                    <th class="table-active title">신청 기본 정보</th>
-                                    <td colspan="5" class="text-start">
-                                        [${waitByNo.categoryName}] ${waitByNo.title}
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th class="table-active">요청 상태</th>
-                                    <td colspan="2" class="text-start">
-                                        <c:choose>
-                                            <c:when test="${waitByNo.status == 'pending'}">
-                                                <span class="badge text-bg-primary">승인 대기</span>
-                                            </c:when>
-                                            <c:when test="${waitByNo.status == 'rejected'}">
-                                                <span class="badge text-bg-danger">반려</span>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <span class="badge border bg-secondary">처리 완료</span>
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </td>
-                                    <th class="table-active">요청일</th>
-                                    <td colspan="2" class="text-start">
-                                        <fmt:formatDate value="${waitByNo.createdDate }"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="table tableStyle">
-                            <tbody>
-                            <c:forEach var="option" items="${waitByNo.optionTexts}">
-                                <tr>
-                                    <th class='table-active title'>${option.textName}</th>
-                                    <td colspan='5' class='text-start'>${option.textValue}</td>
-                                </tr>
-                            </c:forEach>
-                            <c:if test="${not empty waitByNo.reason}">
-                                <tr>
-                                    <th class="table-active title">${waitByNo.reasonTitle}</th>
-                                    <td colspan='5' class='text-start'>${waitByNo.reason}</td>
-                                </tr>
-                            </c:if>
-                            <c:if test="${not empty waitByNo.commonText}">
-                                <c:if test="${waitByNo.categoryNo == 800}">
+                        <form id="approvalForm" action="${pageContext.request.contextPath}/approval/approve" method="post">
+                            <input type="hidden" name="no" value="${waitByNo.no}">
+                            <input type="hidden" name="status" value="${waitByNo.status}">
+                            <div class="btn-group mgb30" role="group" aria-label="Basic example">
+                                <button type="submit" class="btn btn-secondary">승인</button>
+                                <button type="button" class="btn btn-warning btn-custom2" data-bs-toggle="modal"
+                                        data-bs-target="#exampleModal" data-bs-whatever="@mdo">반려
+                                </button>
+                            </div>
+                            <table class="table tableStyle">
+                                <tbody>
                                     <tr>
-                                        <th colspan='6' class='table-active'>
-                                            양식
-                                        </th>
-                                    </tr>
-                                    <tr class="editorArea">
-                                        <td colspan='6' class='text-start'>
-                                            <div id="editor${waitByNo.no}">${waitByNo.commonText}</div>
-                                            <!-- 스마트 에디터 관련 스크립트 추가 -->
+                                        <th class="table-active title">신청 기본 정보</th>
+                                        <td colspan="5" class="text-start">
+                                            [${waitByNo.categoryName}] ${waitByNo.title}
                                         </td>
                                     </tr>
-                                </c:if>
-                                <c:if test="${waitByNo.categoryNo != 800}">
                                     <tr>
-                                        <th class="table-active title">기타 사항</th>
-                                        <td colspan='5' class='text-start'>${waitByNo.commonText}</td>
+                                        <th class="table-active">요청 상태</th>
+                                        <td colspan="2" class="text-start">
+                                            <c:choose>
+                                                <c:when test="${waitByNo.status == 'pending'}">
+                                                    <span class="badge text-bg-primary">승인 대기</span>
+                                                </c:when>
+                                                <c:when test="${waitByNo.status == 'rejected'}">
+                                                    <span class="badge text-bg-danger">반려</span>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <span class="badge border bg-secondary">처리 완료</span>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </td>
+                                        <th class="table-active">요청일</th>
+                                        <td colspan="2" class="text-start">
+                                            <fmt:formatDate value="${waitByNo.createdDate }"/>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table tableStyle">
+                                <tbody>
+                                <c:forEach var="option" items="${waitByNo.optionTexts}">
+                                    <tr>
+                                        <th class='table-active title'>${option.textName}</th>
+                                        <td colspan='5' class='text-start'>${option.textValue}</td>
+                                    </tr>
+                                </c:forEach>
+                                <c:if test="${not empty waitByNo.reason}">
+                                    <tr>
+                                        <th class="table-active title">${waitByNo.reasonTitle}</th>
+                                        <td colspan='5' class='text-start'>${waitByNo.reason}</td>
                                     </tr>
                                 </c:if>
-                            </c:if>
-                            </tbody>
-                        </table>
+                                <c:if test="${not empty waitByNo.commonText}">
+                                    <c:if test="${waitByNo.categoryNo == 800}">
+                                        <tr>
+                                            <th colspan='6' class='table-active'>
+                                                양식
+                                            </th>
+                                        </tr>
+                                        <tr class="editorArea">
+                                            <td colspan='6' class='text-start'>
+                                                <div id="editor${waitByNo.no}">${waitByNo.commonText}</div>
+                                                <!-- 스마트 에디터 관련 스크립트 추가 -->
+                                            </td>
+                                        </tr>
+                                    </c:if>
+                                    <c:if test="${waitByNo.categoryNo != 800}">
+                                        <tr>
+                                            <th class="table-active title">기타 사항</th>
+                                            <td colspan='5' class='text-start'>${waitByNo.commonText}</td>
+                                        </tr>
+                                    </c:if>
+                                </c:if>
+                                </tbody>
+                            </table>
+                        </form>
                     </div>
                     <c:choose>
                         <c:when test="${waitByNo.status != 'pending'}">
@@ -154,7 +158,7 @@
                                     </p>
                                     <ul class="userInfoW">
                                         <li class="d-flex align-items-center">
-                                            <img src="/resources/images/userIcon.png" alt="결재자 이미지"/>
+                                            <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
                                             <div class="userInfo">
                                                 <p class="name">강태오 <span class="position">부장</span></p>
                             </c:when>
@@ -213,6 +217,11 @@
         let range = quill.getSelection();
         quill.clipboard.dangerouslyPasteHTML(range.index, commonText);
     }
+    $(function() {
+        $("#approvalForm").on("submit", function() {
+            // return confirm('정말로 승인하시겠습니까?');
+        })
+    })
 </script>
 </body>
 </html>

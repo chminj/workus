@@ -33,13 +33,6 @@
                , #{termValue}
                , #{apvNo})
     </insert>
-    <select id="getUsersByRoleNo" resultType="User">
-        SELECT USER_NO as no
-            , ROLE_NO as roleNo
-            , USER_NAME as name
-        FROM WORKUS_USERS
-        WHERE ROLE_NO = #{roleNo}
-    </select>
     <sql id="apvListCommonSelect">
         SELECT a.apv_no            as apv_no
              , a.apv_created_date  as apv_created_date
@@ -70,6 +63,10 @@
     <select id="getWaitList" resultMap="apvListResultMap">
        <include refid="apvListCommonSelect"/>
         WHERE a.APV_STATUS = 'pending'
+    </select>
+    <select id="getEndList" resultMap="apvListResultMap">
+       <include refid="apvListCommonSelect"/>
+        WHERE a.APV_STATUS = 'completed'
     </select>
     <select id="getRefListByLeaderNo" resultMap="apvListResultMap">
        <include refid="apvListCommonSelect"/>
@@ -119,4 +116,22 @@
         LEFT JOIN WORKUS_APPROVAL_TEXT_AREA t ON t.apv_no = a.apv_no
         WHERE a.apv_no = #{apvNo}
     </select>
+    <update id="updateApprovalStatusCompleted">
+        UPDATE
+            WORKUS_APPROVAL
+        SET
+            APV_STATUS = 'completed'
+          , APV_APPROVER_NO = #{reqDto.reqUserNo}
+        WHERE
+            APV_NO = #{reqDto.no}
+    </update>
+<!--    <update id="updateApprovalStatusRejected">-->
+<!--        UPDATE-->
+<!--            WORKUS_APPROVAL-->
+<!--        SET-->
+<!--            APV_STATUS = 'rejected'-->
+<!--          , APV_REJECTION_REASON = #{reqDto.rejectionReason}-->
+<!--        WHERE-->
+<!--            APV_NO = #{reqDto.no}-->
+<!--    </update>-->
 </mapper>

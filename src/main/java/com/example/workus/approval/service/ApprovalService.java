@@ -1,6 +1,7 @@
 package com.example.workus.approval.service;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
+import com.example.workus.approval.dto.ApvApprovalRequestDto;
 import com.example.workus.approval.dto.ApvDetailViewDto;
 import com.example.workus.approval.dto.ApvListViewDto;
 import com.example.workus.approval.mapper.ApprovalMapper;
@@ -46,16 +47,6 @@ public class ApprovalService {
      */
     public User getLeader(Long deptNo) {
         return userMapper.getLeaderByDeptNo(deptNo);
-    }
-
-    /**
-     * 권한 번호로 해당 권한이 있는 유저들을 조회한다.
-     *
-     * @param roleNo 권한 번호
-     * @return 권한을 갖고 있는 유저들
-     */
-    public List<User> getUserByRole(int roleNo) {
-        return approvalMapper.getUsersByRoleNo(roleNo);
     }
 
     /**
@@ -123,6 +114,17 @@ public class ApprovalService {
     }
 
     /**
+     * 결재 완료 건을 조회한다.
+     *
+     * @return 결재 완료 건 리스트
+     */
+    public List<ApvListViewDto> getMyEndList() {
+        List<ApvListViewDto> endList = approvalMapper.getEndList();
+        setReqUserNames(endList); // 요청자 이름 설정
+        return endList;
+    }
+
+    /**
      * 팀장은 팀원들의 결재 요청들을 내 공람 내역에서 조회한다.
      *
      * @param leaderNo 팀장 번호
@@ -181,5 +183,14 @@ public class ApprovalService {
         }
 
         return approvalDetail;
+    }
+
+    /**
+     * 결재 요청이 온 건을 승인한다.
+     *
+     * @param requestDto 승인시 필요한 정보
+     */
+    public void approveRequest(ApvApprovalRequestDto requestDto) {
+        approvalMapper.updateApprovalStatusCompleted(requestDto);
     }
 }

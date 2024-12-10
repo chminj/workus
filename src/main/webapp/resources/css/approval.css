@@ -245,12 +245,14 @@ table tr th {
 }
 
 .tableW table {
-    text-align: center;
     font-size: 15px;
     border-collapse: collapse;
     width: 100%;
     table-layout: fixed;
+    border:1px solid #ddd;
 }
+
+.tableStyle>:not(caption)>*>* {padding: 0.7rem 0.6rem;}
 
 .form-switch {
     font-size: 17px;
