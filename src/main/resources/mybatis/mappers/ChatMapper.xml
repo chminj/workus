@@ -134,4 +134,19 @@
             H.CHATROOM_OUT_TIME
         between #{firstChatTime} and #{lastChatTime}
     </select>
+
+    <select id="getChatByChatNo" resultType="Chat">
+        select
+            CHAT_NO as no
+            , CHAT_CONTENT as content
+            , CHAT_TIME as time
+            , CHAT_FILE_SRC as fileSrc
+            , CHAT_IS_FIRST as isFirst
+            , USER_NO as "user.no"
+            , CHATROOM_NO as "chatroom.no"
+        from
+            WORKUS_CHAT
+        where
+            CHAT_NO = #{chatNo}
+    </select>
 </mapper>
