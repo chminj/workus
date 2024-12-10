@@ -1,13 +1,19 @@
 package com.example.workus.chat.service;
 
+import com.example.workus.chat.dto.ChatForm;
 import com.example.workus.chat.mapper.ChatMapper;
 import com.example.workus.chat.vo.Chat;
+import com.example.workus.common.dto.DownloadFileData;
 import com.example.workus.common.dto.ListDto;
+import com.example.workus.common.s3.S3Service;
 import com.example.workus.common.util.Pagination;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -19,11 +25,21 @@ import java.util.List;
 @Service
 public class ChatService {
     private final ChatMapper chatMapper;
+    private final S3Service s3Service;
 
     @Autowired
-    public ChatService(ChatMapper chatMapper) {
+    public ChatService(ChatMapper chatMapper, S3Service s3Service) {
         this.chatMapper = chatMapper;
+        this.s3Service = s3Service;
     }
+
+    private static final String CHAT_DIR = "/chat";
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("${cloud.aws.s3.folder}")
+    private String folder;
 
     private static final String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
 
@@ -125,5 +141,21 @@ public class ChatService {
         }
         sb.append(enterUserNames.getLast() + "님이 입장하셨습니다.");
         return sb.toString();
+    }
+
+    public Chat uploadFile(ChatForm chatForm) {
+        MultipartFile file = chatForm.getUpfile();
+        String originalFilename = file.getOriginalFilename();
+        String filename = System.currentTimeMillis() + originalFilename;
+        s3Service.uploadFile(file, bucketName, folder + CHAT_DIR, filename);
+        Chat chat = new Chat();
+        chat.setFileSrc(filename);
+        return chat;
+    }
+
+    public DownloadFileData downloadFile(Long chatNo) {
+        Chat chat = chatMapper.getChatByChatNo(chatNo);
+        ByteArrayResource resource = s3Service.downloadFile(bucketName, folder + CHAT_DIR, chat.getFileSrc());
+        return new DownloadFileData(chat.getFileSrc(), resource);
     }
 }

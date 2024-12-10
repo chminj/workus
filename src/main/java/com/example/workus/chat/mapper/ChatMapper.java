@@ -60,4 +60,11 @@ public interface ChatMapper {
      * @return 첫 번재 채팅과 마지막 채팅 사이에 퇴장한 유저 이름
      */
     List<Chat> getAllOutUserNameByChatroomNoAndChatTime(@Param("chatroomNo") Long chatroomNo, @Param("firstChatTime") LocalDateTime firstChatTime, @Param("lastChatTime") LocalDateTime lastChatTime);
+
+    /**
+     * 채팅 번호로 채팅 객체를 가져온다.
+     * @param chatNo 채팅 번호
+     * @return 채팅 객체
+     */
+    Chat getChatByChatNo(@Param("chatNo") Long chatNo);
 }
