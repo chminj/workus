@@ -142,6 +142,16 @@ public class ApprovalController {
         return "approval/my/detail/waitDetail";
     }
 
+     @GetMapping("/my/detail/endDetail")
+    public String myEndDetail(@RequestParam("no") Long no
+                                , Model model)
+    {
+        ApvDetailViewDto endByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("endByNo", endByNo);
+
+        return "approval/my/detail/endDetail";
+    }
+
     @GetMapping("/my/detail/refDetail")
     public String myRefDetail(@RequestParam("no") Long no
                                 , Model model)

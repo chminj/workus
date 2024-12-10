@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <link rel="stylesheet" href="${s3}/resources/css/approval.css">
+    <link rel="stylesheet" href="/resources/css/approval.css">
     <script src="${s3}/resources/js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
@@ -81,6 +81,10 @@
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th class="table-active">요청일</th>
+                                    <td colspan="2" class="text-start">
+                                        <fmt:formatDate value="${refByNo.createdDate }"/>
+                                    </td>
                                     <th class="table-active">요청 상태</th>
                                     <td colspan="2" class="text-start">
                                         <c:choose>
@@ -94,10 +98,6 @@
                                                 <span class="badge border bg-secondary">처리 완료</span>
                                             </c:otherwise>
                                         </c:choose>
-                                    </td>
-                                    <th class="table-active">요청일</th>
-                                    <td colspan="2" class="text-start">
-                                        <fmt:formatDate value="${refByNo.createdDate }"/>
                                     </td>
                                 </tr>
                             </tbody>
@@ -142,24 +142,27 @@
                     </div>
                     <c:choose>
                         <c:when test="${refByNo.status != 'pending'}">
+                            <c:choose>
                             <c:when test="${refByNo.status == 'completed'}">
-                                <div class="additionalW">
+                                <div class="additionalW mgt40">
                                     <p class="userInfoHeader">결재자 정보
                                     </p>
                                     <ul class="userInfoW">
                                         <li class="d-flex align-items-center">
                                             <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
                                             <div class="userInfo">
-                                                <p class="name">강태오 <span class="position">부장</span></p>
-                            </c:when>
-                            <c:when test="${refByNo.status == 'rejected'}">
-                                                <p class="status">반려</p>
-                                                <p class="status">사유 : </p>
+                                                <p class="name">${refByNo.apvUserName} <span class="position mgl5">${refByNo.apvUserPositionName}</span></p>
                                             </div>
                                         </li>
                                     </ul>
-                                </div>
                             </c:when>
+                            </c:choose>
+                            <c:choose>
+                                <c:when test="${refByNo.status == 'rejected'}">
+                                    <p class="rejectionStatus">반려 사유 : ${refByNo.rejectionReason}</p>
+                                </div>
+                                </c:when>
+                            </c:choose>
                         </c:when>
                     </c:choose>
                 </div>

@@ -107,7 +107,7 @@
              , a.user_no           as user_no
              , a.apv_reason        as apv_reason
              , a.apv_status        as apv_status
-             , a.apv_approver_no   as apvUserNo
+             , a.apv_approver_no   as apv_approver_no
              , t.apv_text_no       as apv_text_no
              , t.APV_TEXT_NAME     as apv_text_name
              , t.APV_TEXT_VALUE    as apv_text_value

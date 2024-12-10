@@ -162,6 +162,19 @@ public class ApprovalService {
         User reqUser = userMapper.getUserByUserNo(approvalDetail.getReqUserNo());
         approvalDetail.setReqUserName(reqUser.getName());
 
+        // 결재자 정보 가져오기
+        if (approvalDetail.getApvUserNo() != null) {
+            User apvUser = userMapper.getUserByUserNo(approvalDetail.getApvUserNo());
+            if (apvUser != null) {
+                approvalDetail.setApvUserName(apvUser.getName());
+                approvalDetail.setApvUserPositionName(apvUser.getPositionName());
+            } else {
+                approvalDetail.setApvUserName("");
+            }
+        } else {
+            approvalDetail.setApvUserName("");
+        }
+
         // 카테고리 별로 상이한 reason name 매핑 처리
         String reason = CategoryReasonMapping.getReasonByCategory(approvalDetail.getCategoryNo());
         approvalDetail.setReasonTitle(reason);
