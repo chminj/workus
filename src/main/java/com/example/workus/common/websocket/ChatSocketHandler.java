@@ -216,7 +216,14 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         chat.setUser(user);
         if (chatMessage.getChat() != null) {
             chat.setFileSrc(chatMessage.getChat().getFileSrc());
+            String extension = chat.getFileSrc().toLowerCase();
             chat.setType("file");
+            for (String imageExtension : imageExtensions) {
+                if (extension.endsWith("." + imageExtension)) {
+                    chat.setType("image");
+                    break;
+                }
+            }
         } else {
             chat.setContent(chatMessage.getText());
         }

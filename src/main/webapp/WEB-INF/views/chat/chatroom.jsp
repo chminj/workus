@@ -645,7 +645,7 @@
 
 				// 가져온 정보들을 집어넣는다.
 				if (response.ok) {
-					$('#profileImgDiv').html(`<img src="${s3}/resources/repository/userprofile/${data.profileSrc}" alt="프로필" style="width: 160px; height: 160px;"/>`);
+					$('#profileImgDiv').html(`<img src="${s3}/resources/repository/userprofile/\${data.profileSrc}" alt="프로필" style="width: 160px; height: 160px;"/>`);
 					$('#profileName').text(data.name);
 					$('#profilePosition').text(data.positionName);
 					$('#profileDept').text(data.deptName);
@@ -700,18 +700,33 @@
 					\${chat.type === 'file' ? `
 						<div class="bg-light rounded p-2 mb-1">
 							<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
-							<i class="bi bi-file-earmark me-2 fs-5"></i>
-							<div class="flex-grow-1">
-								<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
-							</div>
-							<i class="bi bi-download ms-2"></i>
+								<i class="bi bi-file-earmark me-2 fs-5"></i>
+								<div class="flex-grow-1">
+									<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+								</div>
+								<i class="bi bi-download ms-2"></i>
 							</a>
 						</div>
-					` : `
+						` : chat.type === 'image' ? `
 						<div class="bg-light rounded p-2 mb-1">
-							\${chat.content}
+							<div class="image-container">
+								<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+								alt="첨부 이미지"
+								class="img-fluid rounded cursor-pointer mb-2"
+								style="max-height: 200px;"/>
+								<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+									<div class="flex-grow-1">
+										<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+									</div>
+									<i class="bi bi-download ms-2"></i>
+								</a>
+							</div>
 						</div>
-			`}
+					` : `
+					<div class="bg-light rounded p-2 mb-1">
+						\${chat.content}
+					</div>
+					`}
 					</div>
 					<div class="text-end">
 						<small class="text-muted">\${chat.time.time}</small>
@@ -740,18 +755,33 @@
 					\${chat.type === 'file' ? `
 					<div class="bg-light rounded p-2 mb-1">
 						<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
-						<i class="bi bi-file-earmark me-2 fs-5"></i>
+							<i class="bi bi-file-earmark me-2 fs-5"></i>
 							<div class="flex-grow-1">
 								<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
 							</div>
-						<i class="bi bi-download ms-2"></i>
+							<i class="bi bi-download ms-2"></i>
 						</a>
 					</div>
-						` : `
+					` : chat.type === 'image' ? `
+					<div class="bg-light rounded p-2 mb-1">
+						<div class="image-container">
+							<img src="${s3}/resources/repository/chat/\${chat.fileSrc}"
+							alt="첨부 이미지"
+							class="img-fluid rounded cursor-pointer mb-2"
+							style="max-height: 200px;"/>
+							<a href="/chat/download/\${chat.no}" class="d-flex align-items-center text-decoration-none text-dark" download>
+								<div class="flex-grow-1">
+									<div class="fw-medium">\${chat.fileSrc.substring(13)}</div>
+								</div>
+								<i class="bi bi-download ms-2"></i>
+							</a>
+						</div>
+					</div>
+					` : `
 					<div class="bg-light rounded p-2 mb-1">
 						\${chat.content}
 					</div>
-			`}
+						`}
 					</div>
 					<small class="text-muted">\${chat.time.time}</small>
 				</div>
