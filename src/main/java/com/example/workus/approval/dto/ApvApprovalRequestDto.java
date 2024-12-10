@@ -16,6 +16,5 @@ public class ApvApprovalRequestDto {
     private Long no;
     private String status;
     private Long reqUserNo;
-    private String reqUserName;
     private String rejectionReason;
 }

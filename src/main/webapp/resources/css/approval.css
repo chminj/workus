@@ -292,7 +292,7 @@ table a.link:hover {
 
 .userInfoW {
     border: 1px solid #ddd;
-    padding: 20px 12px;
+    padding: 26px 12px;
 }
 
 .userInfoW img {
@@ -325,3 +325,5 @@ table a.link:hover {
 
 .editorArea, .editorArea .ql-container.ql-snow {border:none;}
 .editorArea td {border:none; padding:0; box-shadow:none}
+
+.rejectionStatus {padding:26px; border:1px solid #ddd; border-top:none;}

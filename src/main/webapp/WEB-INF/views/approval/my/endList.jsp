@@ -110,7 +110,7 @@
                                             <td>${form.reqUserName} [${form.reqUserDeptName}]</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/approval/my/detail/waitDetail?no=${form.no}"
+                                                <a href="/approval/my/detail/endDetail?no=${form.no}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>
