@@ -1,26 +1,17 @@
 package com.example.workus.community.controller;
 
-import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.common.util.WebContentFileUtils;
 import com.example.workus.community.dto.*;
-import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
-import com.example.workus.community.vo.HashTag;
-import com.example.workus.community.vo.Like;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashMap;
 import java.util.List;

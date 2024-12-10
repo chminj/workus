@@ -1,5 +1,6 @@
 package com.example.workus.community.service;
 
+import com.example.workus.common.s3.S3Service;
 import com.example.workus.common.util.WebContentFileUtils;
 import com.example.workus.community.dto.*;
 import com.example.workus.community.mapper.CommunityMapper;
@@ -13,6 +14,7 @@ import com.example.workus.common.util.Pagination;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,12 +26,21 @@ import java.util.Map;
 @Service
 public class CommunityService {
 
-    private String path = "resources/repository/communityfeedfile/";
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucketName;
+
+    @Value("${cloud.aws.s3.folder}")
+    private String folder;
+
+    private static final String COMMUNITY_DIR = "/communityfeedfile";
+
 
     @Autowired
     CommunityMapper communityMapper;
     @Autowired
     private WebContentFileUtils webContentFileUtils;
+    @Autowired
+    private S3Service s3Service;
 
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(Map<String,Object> condtion){
@@ -62,11 +73,11 @@ public class CommunityService {
 
     // 게시글 작성 (제목,내용,해쉬태그,파일)
     public void insertFeed(FeedForm form, Long userNo){
-        MultipartFile multipartFile = form.getUpfile();
+        MultipartFile upfile = form.getUpfile();
         // 멀티파트 파일에 진짜 이름을 가져옴
-        String originalFilename = multipartFile.getOriginalFilename();
+        String filename = form.getUpfile().getOriginalFilename();
         // 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
-        webContentFileUtils.saveWebContentFile(multipartFile,path,originalFilename);
+        s3Service.uploadFile(upfile,bucketName,folder+COMMUNITY_DIR,filename);
 
         // 게시글 생성
         Feed feed = new Feed();
@@ -74,7 +85,7 @@ public class CommunityService {
         feed.setTitle(form.getTitle());
         feed.setContent(form.getContent());
         feed.setUser(User.builder().no(userNo).build());
-        feed.setMediaUrl(originalFilename);
+        feed.setMediaUrl(filename);
         feed.setReply(new Reply());
         // feed -> {no:0, title:'xxxx'}
 
@@ -165,12 +176,12 @@ public class CommunityService {
         existingFeed.setContent(form.getContent());
 
         if (!form.getUpfile().isEmpty()) {
-            MultipartFile multipartFile = form.getUpfile();
+            MultipartFile upfile = form.getUpfile();
             // 멀티파트 파일에 진짜 이름을 가져옴
-            String originalFilename = multipartFile.getOriginalFilename();
+            String filename = form.getUpfile().getOriginalFilename();
             // 첨부파일, 디렉토리 경로, 저장할 파일명을 전달받아서 파일을 저장한다.
-            webContentFileUtils.saveWebContentFile(multipartFile,path,originalFilename);
-            existingFeed.setMediaUrl(originalFilename);
+            s3Service.uploadFile(upfile,bucketName,folder,filename);
+            existingFeed.setMediaUrl(filename);
         }
 
         communityMapper.updateFeed(existingFeed);

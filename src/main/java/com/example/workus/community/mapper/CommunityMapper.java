@@ -31,7 +31,6 @@ public interface CommunityMapper {
     List<Feed> getSearchFeeds(@Param("condition")Map<String, Object> condition);
     int getTotalRows2(@Param("condition")Map<String, Object> condition);
 
-
     // 댓글 작성
     void insertReply(@Param("reply") Reply reply);
     // 최신댓글 한개 조회
@@ -65,6 +64,8 @@ public interface CommunityMapper {
     void insertLike(@Param("like") Like like);
     // 좋아요 취소
     void cancelLikeByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
-
+    // 해당 게시글 좋아요 유저닉네임 조회
     List<Like> getLikesByFeedNo(@Param("feedNo") long feedNo);
+
+
 }

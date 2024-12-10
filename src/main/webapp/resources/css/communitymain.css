@@ -53,6 +53,9 @@ button:hover svg {
     width:1500px;
     margin:0 auto;
 }
+.search-controls{
+    left: 100px;
+}
 
 .round_img{
     border-radius:100%;
@@ -966,5 +969,6 @@ input[type="text"], textarea {
     display: block; /* 버튼을 블록 요소로 변경 */
     margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
 }
+
 
 
