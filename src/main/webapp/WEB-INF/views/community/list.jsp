@@ -28,17 +28,16 @@
                     <option value="hashtag" > 해쉬태그</option>
                   </select>
                   <input type="text" name="keyword"  placeholder="검색"/>
-                  <button type="button" onclick="searchKeyword(event)">
+                  <button type="button" id="searchBtn" onclick="searchKeyword(event)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                       <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"/>
                     </svg>
                   </button>
                 </div>
             </form>
-            <div>
+            <div class="search-controls">
               <button type="button" class="btn btn-outline-dark"><a href="form">글 작성</a></button>
             </div>
-
           </div>
           <!---MAIN--->
           <main class="container wrap">
@@ -92,10 +91,13 @@
   let canRequest = true;
 
   $(window).scroll(function() {
+    // 창높이
     let windowHeight = $(window).height();
+    // 게시글 높이
     let documentHeight = $(document).height();
+    // 스크롤 높이
     let scrollHeight = $(window).scrollTop();
-
+    // 창 높이 + 스크롤위치 + 100 > 게시글 높이 일 경우 게시글을 불러온다
     if (windowHeight + scrollHeight + 100 > documentHeight) {
       if (canRequest) {
         canRequest = false;
@@ -103,108 +105,6 @@
       }
     }
   });
-
-  $(document).ready(function() {
-    // 댓글 입력 폼에서 엔터키 눌렀을 때 처리
-    $(document).on("keydown", "#feedinsertReply", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-
-        var feedNo = $(this).closest("article").attr("id").replace('feed-', '');
-
-
-        inserReply(feedNo);
-      }
-    });
-  });
-
-  $(document).ready(function() {
-    $("#postComment").on("keydown", function(event) {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        inserReplyPopup();
-      }
-    });
-  });
-
-  // 댓글 추가
-  function inserReply(feedNo){
-    $.ajax({
-      type: "post",
-      url: "insertReply",
-      data:{
-        feedNo:feedNo,
-        name:$(`#feed-\${feedNo} input[name=name]`).val(),
-        comment:$(`#feed-\${feedNo} input[name=comment]`).val()
-      },
-      dataType: "json",
-      success:function (reply){
-        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
-        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
-      }
-    })
-  }
-  function inserReplyPopup(){
-    $.ajax({
-      type: "post",
-      url: "insertReply",
-      data:{feedNo:$("#postFeedNo").val(),
-        comment:$("#postComment").val()},
-      name:$("#postReplyUsername").val(),
-      dataType: "json",
-      success:function (reply){
-        let content = `
-         <div class="popup-reply">
-           <p>
-              <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
-              <span>\${reply != null ? reply.content : ''}</span>
-           </p>
-         <div>
-        `;
-
-        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
-        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
-        $("#postReplys").prepend(content);
-      }
-    })
-  }
-
-  function openPopup(feedNo) {
-    $.ajax({
-      type: "get",
-      url: `feed/\${feedNo}`,
-      dataType: "json",
-      success: function (feed) {
-        $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
-        $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
-        $("#postUsername").text(feed.user.name);
-        $("#postTitle").text(feed.title);
-        $("#postContent").text(feed.content);
-        $("#postFeedNo").val(feed.no);
-
-
-        let replys = feed.replys;
-        let content = "";
-        for (let reply of replys) {3
-          content += `
-         <div class="popup-reply">
-           <p>
-              <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
-              <span>\${reply != null ? reply.content : ''}</span>
-           </p>
-         <div>
-        `;
-        }
-        $("#postReplys").html(content);
-
-        document.getElementById("popupOverlay").style.display = "flex";
-      }
-    })
-  }
-
-  function closePopup() {
-    document.getElementById("popupOverlay").style.display = "none";
-  }
 
   getFeeds(currentPage);
 
@@ -257,36 +157,30 @@
     })
   }
 
-  function updateLike(feedNo) {
-    let no = feedNo;
+  function searchHashTag(event) {
+    const tagName = $(event.target).text().trim().replace("#","");
+    currentPage = 1;
     $.ajax({
-      type: "POST",
-      url: "like",
+      type: "GET",
+      url: "/community/items",
       data: {
-        feedNo: feedNo
+        page: currentPage,
+        opt: "hashtag",
+        keyword: tagName
       },
       dataType: "json",
-      success:
-        function(likeFeed) {
-          if (likeFeed.likeCount == 0) {
-            $(`#like-user-\${feedNo}`).html("");
+      success: function(feeds) {
+        currentPage++;
+        $("select[name='opt']").val("hashtag");
+        $("input[name='keyword']").val(tagName);
+        $("div.feed_board").empty();
 
-          } else if (likeFeed.likeCount == 1){
-            $(`#like-user-\${feedNo}`).html("");
-            let content = `
-                <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
-                외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${likeFeed.likeCount}</span>명이 좋아합니다.
-            `;
-            $(`#like-user-\${feedNo}`).html(content);
-
-          } else {
-            $("#likeFeedUserName"+feedNo).text(likeFeed.userName);
-            $("#likeFeedCount"+feedNo).text(likeFeed.likeCount);
-          }
-
+        appendFeeds(feeds); // 피드를 다시 그리기
+        $(window).scrollTop(100);
       }
     });
-  }
+  };
+
 
   function appendFeeds(items) {
     for (let feed of items) {
@@ -300,7 +194,7 @@
             <img alt="follower profile image" class="round_img" src="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
           </div>
           <p  class="poster_id txt_id">\${feed.user.name}</p>
-          <div class="dropdown-container">
+          <div class="dropdown-container" id="dropdown-menu">
             <svg class="x1lliihq x1n2onr6 x5n08af" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24" id="dropdownToggle" data-bs-toggle="dropdown">
               <circle cx="12" cy="12" r="1.5"></circle>
               <circle cx="6" cy="12" r="1.5"></circle>
@@ -365,7 +259,7 @@
                 <div class="add-reply">
                 <input type="hidden" name="feedNo" value="">
                 <input type="hidden" name="name">
-                <input type="text" name="comment" id="feedinsertReply" placeholder="댓글 달기...">
+                <input type="text" class="feedInsertReply" name="comment" id="feedinsertReply" placeholder="댓글 달기...">
                 <button  type="button" onclick="inserReply(\${feed.no})">게시</button>
                 </div>
             </form>
@@ -377,8 +271,7 @@
       let tags = "";
       for (let tag of feed.hashTags) {
         tags += `
-         <a href=""><span style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span></a>
-        `
+         <span id="\${tag.no}searchTag" onclick="searchHashTag(event)" style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span>`
       }
 
       if (feed.likeCount > 0) {
@@ -390,20 +283,149 @@
         $(`#like-user-\${feed.no}`).html(content);
       }
 
-
-
-
-
       $("#tags-" + feed.no).append(tags);
       $("#tags-popup" + feed.no).append(tags);
-
-
-
-
     }
   }
+  // 팝업 js
+  function openPopup(feedNo) {
+    $.ajax({
+      type: "get",
+      url: `feed/\${feedNo}`,
+      dataType: "json",
+      success: function (feed) {
+        $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
+        $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
+        $("#postUsername").text(feed.user.name);
+        $("#postTitle").text(feed.title);
+        $("#postContent").text(feed.content);
+        $("#postFeedNo").val(feed.no);
 
-  //  @@@@@@@@@@@@@@@@@@@@ 드롭 다운 js @@@@@@@@@@@@@@@@@@@@
+
+        let replys = feed.replys;
+        let content = "";
+        for (let reply of replys) {3
+          content += `
+         <div class="popup-reply">
+           <p>
+              <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
+              <span>\${reply != null ? reply.content : ''}</span>
+           </p>
+         <div>
+        `;
+        }
+        $("#postReplys").html(content);
+
+        document.getElementById("popupOverlay").style.display = "flex";
+      }
+    })
+  }
+
+  function closePopup() {
+    document.getElementById("popupOverlay").style.display = "none";
+  }
+
+  // 댓글 js
+  function inserReply(feedNo){
+    $.ajax({
+      type: "post",
+      url: "insertReply",
+      data:{
+        feedNo:feedNo,
+        name:$(`#feed-\${feedNo} input[name=name]`).val(),
+        comment:$(`#feed-\${feedNo} input[name=comment]`).val()
+      },
+      dataType: "json",
+      success:function (reply){
+        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
+        $(".feedinsertReply").val("");
+      }
+    })
+  }
+
+
+  function inserReplyPopup(){
+    $.ajax({
+      type: "post",
+      url: "insertReply",
+      data:{feedNo:$("#postFeedNo").val(),
+        comment:$("#postComment").val()},
+      name:$("#postReplyUsername").val(),
+      dataType: "json",
+      success:function (reply){
+        let content = `
+         <div class="popup-reply">
+           <p>
+              <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
+              <span>\${reply != null ? reply.content : ''}</span>
+           </p>
+         <div>
+        `;
+
+        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
+        $("#postReplys").prepend(content);
+      }
+    })
+  }
+
+  $(document).ready(function() {
+    // 댓글 입력 폼에서 엔터키 눌렀을 때 처리
+    $(document).on("keydown", "#feedinsertReply", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+
+        var feedNo = $(this).closest("article").attr("id").replace('feed-', '');
+
+
+        inserReply(feedNo);
+      }
+    });
+  });
+
+  $(document).ready(function() {
+    $("#postComment").on("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        inserReplyPopup();
+      }
+    });
+  });
+
+  // 좋아요 js
+  function updateLike(feedNo) {
+    let no = feedNo;
+    $.ajax({
+      type: "POST",
+      url: "like",
+      data: {
+        feedNo: feedNo
+      },
+      dataType: "json",
+      success:
+              function(likeFeed) {
+                if (likeFeed.likeCount == 0) {
+                  $(`#like-user-\${feedNo}`).html("");
+
+                } else if (likeFeed.likeCount == 1){
+                  $(`#like-user-\${feedNo}`).html("");
+                  let content = `
+                <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
+                외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${likeFeed.likeCount}</span>명이 좋아합니다.
+            `;
+                  $(`#like-user-\${feedNo}`).html(content);
+
+                } else {
+                  $("#likeFeedUserName"+feedNo).text(likeFeed.userName);
+                  $("#likeFeedCount"+feedNo).text(likeFeed.likeCount);
+                }
+
+              }
+    });
+  }
+
+  //  드롭다운 js
   const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
   const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
 
@@ -418,5 +440,8 @@
       menu.classList.remove('show'); // 드롭다운 숨기기
     }
   });
+
+
+
 </script>
 </html>
