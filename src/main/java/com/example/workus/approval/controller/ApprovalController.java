@@ -1,6 +1,7 @@
 package com.example.workus.approval.controller;
 
 import com.example.workus.approval.dto.ApvApprovalForm;
+import com.example.workus.approval.dto.ApvApprovalRequestDto;
 import com.example.workus.approval.dto.ApvDetailViewDto;
 import com.example.workus.approval.dto.ApvListViewDto;
 import com.example.workus.approval.service.ApprovalService;
@@ -14,6 +15,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
 import java.util.List;
@@ -58,9 +60,6 @@ public class ApprovalController {
         Long userNo = loginUser.getNo();
         apvFormBase.setUserNo(userNo);
 
-        // 결재자 설정 : 인사팀원 동적 조회
-//        List<User> approvers = approvalService.getUserByRole(Constants.ROLE_NO_MANAGE);
-
         // categoryNo가 apvApprovalForm에 있어야 함 (가져온 categoryNo 설정)
         int categoryNo = apvFormBase.getCategoryNo();
         apvFormBase.setCategoryNo(categoryNo);
@@ -97,6 +96,16 @@ public class ApprovalController {
         model.addAttribute("waitList", waitList);
 
         return "approval/my/waitList";
+    }
+
+    @GetMapping("/my/endList")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    public String myEndList(Model model)
+    {
+        List<ApvListViewDto> endList = approvalService.getMyEndList();
+        model.addAttribute("endList", endList);
+
+        return "approval/my/endList";
     }
 
     @GetMapping("/my/refList")
@@ -141,5 +150,21 @@ public class ApprovalController {
         model.addAttribute("refByNo", refByNo);
 
         return "approval/my/detail/refDetail";
+    }
+
+    @PostMapping("/approve")
+    public String approveRequest(@ModelAttribute ApvApprovalRequestDto requestDto
+                                , @AuthenticationPrincipal LoginUser loginUser
+                                , RedirectAttributes redirectAttributes)
+    {
+        // 승인 버튼 클릭한 로그인 유저 정보 담기
+        requestDto.setReqUserNo(loginUser.getNo());
+        // 승인 로직 처리
+        approvalService.approveRequest(requestDto);
+
+        // 리다이렉트 시 전달할 메시지 설정
+        redirectAttributes.addFlashAttribute("message", "승인이 완료되었습니다.");
+
+        return "redirect:/approval/my/endList";
     }
 }

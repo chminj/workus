@@ -7,8 +7,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/approval.css">
-    <script src="/resources/js/approval.js"></script>
+    <link rel="stylesheet" href="${s3}/resources/css/approval.css">
+    <script src="${s3}/resources/js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
@@ -148,7 +148,7 @@
                                     </p>
                                     <ul class="userInfoW">
                                         <li class="d-flex align-items-center">
-                                            <img src="/resources/images/userIcon.png" alt="결재자 이미지"/>
+                                            <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
                                             <div class="userInfo">
                                                 <p class="name">강태오 <span class="position">부장</span></p>
                             </c:when>

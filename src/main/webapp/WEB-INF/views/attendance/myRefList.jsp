@@ -7,12 +7,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="../common/common.jsp" %>
-    <link rel="stylesheet" href="/resources/css/attendance.css">
+    <link rel="stylesheet" href="${s3}/resources/css/attendance.css">
     <%-- day.js --%>
     <script src="
 https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 "></script>
-    <script src="/resources/js/attendance.js"></script>
+    <script src="${s3}/resources/js/attendance.js"></script>
     <c:set var="menuTitle" value="참조 내역"/>
     <title>workus ㅣ 근태 ${menuTitle}</title>
 </head>
@@ -76,7 +76,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                         <c:choose>
                             <c:when test="${empty forms}">
                                 <div class="noData">
-                                    <img src="/resources/images/noDataImg.png" class="noDataImg"/>
+                                    <img src="${s3}/resources/images/noDataImg.png" class="noDataImg"/>
                                     <p class="noDataText">조회된 내역이 없습니다.</p>
                                 </div>
                             </c:when>

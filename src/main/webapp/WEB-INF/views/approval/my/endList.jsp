@@ -12,7 +12,7 @@
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <c:set var="menuTitle" value="대기건"/>
+    <c:set var="menuTitle" value="종결건"/>
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
         <%@ include file="/WEB-INF/views/common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="/WEB-INF/views/common/nav.jsp" %>
-            <c:set var="lnb" value="myWaitList"/>
+            <c:set var="lnb" value="myEndList"/>
             <div class="lnb">
                 <ul class="list1">
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a
@@ -70,10 +70,14 @@
                 <h3 class="title1">
                     ${menuTitle}
                 </h3>
+                <%-- 승인 상태 메시지 표시 --%>
+                <c:if test="${not empty message}">
+                    <div class="alert alert-success mgt20">${message}</div>
+                </c:if>
                 <div id="reqListW" class="containerW">
                     <div class="tableW mgt40">
                         <c:choose>
-                            <c:when test="${empty waitList}">
+                            <c:when test="${empty endList}">
                                 <div class="noData">
                                     <img src="${s3}/resources/images/noDataImg.png" class="noDataImg"/>
                                     <p class="noDataText">조회된 내역이 없습니다.</p>
@@ -100,7 +104,7 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach var="form" items="${waitList }" varStatus="loop">
+                                    <c:forEach var="form" items="${endList }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
                                             <td>${form.reqUserName} [${form.reqUserDeptName}]</td>
@@ -134,7 +138,6 @@
             </main>
         </section>
     </div>
-
 </div>
 </body>
 </html>
