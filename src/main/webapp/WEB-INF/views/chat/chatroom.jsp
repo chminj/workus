@@ -335,7 +335,7 @@
 					if (fileInput) {
 						const formData = new FormData();
 						formData.append('upfile', fileInput);
-						const response = await fetch('/ajax/chat/upload/', {
+						const response = await fetch('/ajax/chat/upload', {
 							method: 'POST',
 							body: formData
 						});
@@ -359,7 +359,7 @@
 							console.log('파일 업로드에 실패했습니다.');
 						}
 					}
-
+					$('input[name=content]').prop('disabled', false);
 					$('input[name=content]').val('');
 					$('#fileInput').val('');
 				}

@@ -214,7 +214,7 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         chat.setChatroom(chatroomVo);
         User user = userMapper.getUserByUserNo(userNo);
         chat.setUser(user);
-        if ("file".equals(chatMessage.getChat().getType())) {
+        if (chatMessage.getChat() != null) {
             chat.setFileSrc(chatMessage.getChat().getFileSrc());
             chat.setType("file");
         } else {
