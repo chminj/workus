@@ -54,11 +54,13 @@ public class ChatService {
             // 확장자에 따라 file이나 image로 type을 설정한다.
             for (Chat chat : dto.getData()) {
                 if (chat.getFileSrc() != null) {
+                    chat.setType("file");
                     String extension = chat.getFileSrc().toLowerCase();
-                    if (extension.endsWith("." + imageExtensions)) {
-                        chat.setType("image");
-                    } else {
-                        chat.setType("file");
+                    for (String imageExtension : imageExtensions) {
+                        if (extension.endsWith("." + imageExtension)) {
+                            chat.setType("image");
+                            break;
+                        }
                     }
                 }
             }
