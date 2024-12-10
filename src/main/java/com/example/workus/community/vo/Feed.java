@@ -30,4 +30,14 @@ public class Feed {
     private Reply reply;
     private List<Reply> replys;
 
+    private List<Like> likes;
+
+    public String getUserName() {
+        return likes == null || likes.isEmpty() ? "" : likes.get(0).getUser().getName();
+    }
+
+    public int getLikeCount() {
+        return likes == null ? 0 : likes.size();
+    }
+
 }

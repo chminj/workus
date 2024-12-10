@@ -2,6 +2,7 @@ package com.example.workus.community.mapper;
 
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
+import com.example.workus.community.vo.Like;
 import com.example.workus.community.vo.Reply;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -12,8 +13,7 @@ import java.util.Map;
 @Mapper
 public interface CommunityMapper {
 
-    //게시글 조회
-    List<Feed> getFeeds(@Param("begin") int begin, @Param("end") int end);
+    // 게시글 해쉬태그 조회
     List<HashTag> getHashTagsByFeedNo(@Param("feedNo") long feedNo);
     int getTotalRows();
 
@@ -24,6 +24,7 @@ public interface CommunityMapper {
 
     // 게시글 작성
     void insertFeed(@Param("feed") Feed feed);
+    // 게시글에 해쉬태그 추가
     void insertHashTag(@Param("hashTag") HashTag hashTag);
 
     // 게시글 검색
@@ -40,14 +41,30 @@ public interface CommunityMapper {
     // 게시글 번호로 게시글,댓글,해쉬태그 삭제
     // 게시글 댓글 삭제
     void deleteReplysByFeedNo(@Param("feedNo") long feedNo);
+    // 게시글 좋아요 삭제
+    void deleteLikeByFeedNo(@Param("feedNo") long feedNo);
     // 게시글 해쉬태그 삭제
     void deleteHashTagsByFeedNo(@Param("feedNo") long feedNo);
     // 게시글 삭제
     void deleteFeedsByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
 
+
     // 게시글 수정
     void updateFeed(@Param("feed") Feed feed);
+    // 게시글 해쉬태그 수정
     void updateHashTag(@Param("hashTag") HashTag hashTag);
 
 
+    // 게시글 좋아요 개수 조회
+    int getlikeCountByFeedNo(@Param("feedNo") long feedNo);
+    //
+    String getLikeUsersByFeedNo(@Param("feedNo") long feedNo);
+    // 좋아요 여부확인
+    boolean isLiked(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
+    // 좋아요 추가
+    void insertLike(@Param("like") Like like);
+    // 좋아요 취소
+    void cancelLikeByFeedNo(@Param("feedNo") long feedNo,@Param("userNo") long userNo);
+
+    List<Like> getLikesByFeedNo(@Param("feedNo") long feedNo);
 }

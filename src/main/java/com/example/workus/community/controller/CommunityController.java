@@ -2,13 +2,12 @@ package com.example.workus.community.controller;
 
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.common.util.WebContentFileUtils;
-import com.example.workus.community.dto.CommentForm;
-import com.example.workus.community.dto.FeedForm;
-import com.example.workus.community.dto.ModifyFrom;
+import com.example.workus.community.dto.*;
 import com.example.workus.community.mapper.CommunityMapper;
 import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
+import com.example.workus.community.vo.Like;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,8 +95,12 @@ public class CommunityController {
 
     @GetMapping("modify")
     public String modifyFeed(long feedNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
+        long userNo = loginUser.getNo();
         Feed feed = communityService.getFeedByFeedNo(feedNo);
         feed.setHashTags(communityService.getHashTagByFeedNo(feedNo));
+        if (feed.getUser().getNo() != userNo ) {
+            return "redirect:/community/list";
+        }
         model.addAttribute("feed", feed);
 
         return "community/modify";
@@ -110,6 +113,17 @@ public class CommunityController {
         communityService.updateFeed(form,userNo);
         return "redirect:/community/list";
     }
+
+    @PostMapping("like")
+    @ResponseBody
+    public LikeCountDto feedLike(long feedNo, @AuthenticationPrincipal LoginUser loginUser) {
+        Long userNo = loginUser.getNo();
+        LikeCountDto likeFeed = communityService.LikeByFeedNo(feedNo,userNo);
+
+
+        return likeFeed;
+    }
+
 
 
 
