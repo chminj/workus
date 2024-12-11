@@ -19,8 +19,8 @@ public class Archive {
     private Long no; // ARCHIVE_NO
     private Date uploadTime; // ARCHIVE_UPLOAD_TIME
     private String originalName; // ARCHIVE_ORIGINAL_NAME
-    private String modifiedName; // ARCHIVE_MODIFIED_NAME
-    private Integer fileSize; // ARCHIVE_FILE_SIZE
+    private String savedFileName; // ARCHIVE_MODIFIED_NAME
+    private Long fileSize; // ARCHIVE_FILE_SIZE
     private String fileExtension; // ARCHIVE_FILE_EXTENSION
     private char fileStatus; // ARCHIVE_FILE_STATUS
     private char division; // ARCHIVE_DIVISION

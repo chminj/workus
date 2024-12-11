@@ -38,7 +38,7 @@
                 <div class="container my-3">
                     <div class="row mb-3">
                         <div class="col">
-                            <div class="border p-2 bg-dark text-white fw-bold">게시글 목록</div>
+                            <div class="border p-2 bg-dark text-white fw-bold">파일 목록</div>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -74,7 +74,12 @@
                                             <c:forEach var="archive" items="${archiveList}">
                                                 <tr>
                                                     <td>${archive.no}</td>
-                                                    <td>${archive.originalName}</td>
+                                                    <td>
+                                                        ${archive.originalName}
+                                                        <a href="filedown?no=${archive.no }">
+                                                            <i class="bi bi-file-earmark-arrow-down"></i>
+                                                        </a>
+                                                    </td>
                                                     <td>${archive.userName}</td>
                                                     <td>
                                                         <c:set var="size" value="${archive.fileSize}" />
@@ -103,9 +108,9 @@
                                 </table>
                                 <div class="col-12 mt-3">
                                     <div class="text-end">
-                                        <form method="post" action="upload" enctype="multipart/form-data" id="archiveForm">
+                                        <form method="post" action="save" enctype="multipart/form-data" id="archiveForm">
                                             <!-- 숨겨진 파일 선택 input -->
-                                            <input type="file" id="fileInput" class="d-none" name="upfile" />
+                                            <input type="file" id="fileInput" class="d-none" name="saveFile" />
                                             <!-- 파일 선택 버튼 -->
                                             <label for="fileInput" class="btn btn-primary btn-sm">파일 업로드</label>
                                         </form>

@@ -2,12 +2,28 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.archive.mapper.ArchiveMapper">
 
+    <resultMap type="Archive" id="ArchiveResultMap">
+        <id property="no" column="ARCHIVE_NO" />
+        <result property="uploadTime" column="ARCHIVE_UPLOAD_TIME"/>
+        <result property="originalName" column="ARCHIVE_ORIGINAL_NAME"/>
+        <result property="savedFileName" column="ARCHIVE_SAVEDFILE_NAME"/>
+        <result property="fileSize" column="ARCHIVE_FILE_SIZE"/>
+        <result property="fileExtension" column="ARCHIVE_FILE_EXTENSION"/>
+        <result property="fileStatus" column="ARCHIVE_FILE_STATUS"/>
+        <result property="division" column="ARCHIVE_DIVISION"/>
+        <result property="archiveCol" column="WORKUS_ARCHIVEcol"/>
+        <association property="user" javaType="User">
+            <id property="no" column="USER_NO"/>
+            <result property="userName" column="USER_NAME"/>
+        </association>
+    </resultMap>
+
     <insert id="insertArchive">
         INSERT INTO WORKUS_ARCHIVE
         (
             ARCHIVE_UPLOAD_TIME,
             ARCHIVE_ORIGINAL_NAME,
-            ARCHIVE_MODIFIED_NAME,
+            ARCHIVE_SAVEDFILE_NAME,
             ARCHIVE_FILE_SIZE,
             ARCHIVE_FILE_EXTENSION,
             ARCHIVE_FILE_STATUS,
@@ -19,7 +35,7 @@
         VALUES (
             #{archive.uploadTime},
             #{archive.originalName},
-            #{archive.modifiedName},
+            #{archive.savedFileName},
             #{archive.fileSize},
             #{archive.fileExtension},
             #{archive.fileStatus},
@@ -38,7 +54,7 @@
             A.ARCHIVE_NO AS no,
             A.ARCHIVE_UPLOAD_TIME AS uploadTime,
             A.ARCHIVE_ORIGINAL_NAME AS originalName,
-            A.ARCHIVE_MODIFIED_NAME AS modifiedName,
+            A.ARCHIVE_SAVEDFILE_NAME AS savedFileName,
             A.ARCHIVE_FILE_SIZE AS fileSize,
             A.ARCHIVE_FILE_EXTENSION AS fileExtension,
             A.ARCHIVE_FILE_STATUS AS fileStatus,
@@ -50,5 +66,10 @@
         JOIN
             WORKUS_USERS U ON A.USER_NO = U.USER_NO  <!-- USER 테이블과 조인 -->
     </select>
+
+    <select id="getArchiveByNo ">
+
+    </select>
+
 
 </mapper>
