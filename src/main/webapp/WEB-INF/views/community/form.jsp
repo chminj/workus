@@ -69,6 +69,7 @@
 <script>
   // 파일 미리보기 기능
   document.getElementById('postFiles').addEventListener('change', function(event) {
+    // 이벤트가 발생하는 파일
     const files = event.target.files;
     const previewContainer = document.getElementById('filePreview');
     previewContainer.innerHTML = ''; // 기존 미리보기 내용 초기화

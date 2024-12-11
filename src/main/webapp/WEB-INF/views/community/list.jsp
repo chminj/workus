@@ -181,7 +181,6 @@
     });
   };
 
-
   function appendFeeds(items) {
     for (let feed of items) {
 
@@ -220,21 +219,20 @@
 
         <!--content-->
         <section class="feed_imgs">
-          <img alt="지정된 media가 없습니다" src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
+          <div id="feed-\${feed.no}-insertUrl"></div>
             <div class="interactions">
               <div class="my_emotion">
-            <!-- 피드 내 하트 버튼 -->
-            <span class="like-btn" id="likeBtn" onclick="updateLike(\${feed.no})">
-                <i class="bi bi-heart large-heart" id="he"></i> <!-- 기본 빈 하트 아이콘 -->
-            </span>
+                <!-- 피드 내 하트 버튼 -->
+                <span class="like-btn" id="likeBtn" onclick="updateLike(\${feed.no})">
+                  <i class="bi bi-heart large-heart" id="he"></i> <!-- 기본 빈 하트 아이콘 -->
+                 </span>
 
-            <button class="open-popup-btn" onclick="openPopup(\${feed.no})">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
+                 <button class="open-popup-btn" onclick="openPopup(\${feed.no})">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
                     <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.5-1.05 1.548-.524 2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
-                </svg>
-            </button>
+                  </svg>
+                   </button>
               </div>
-
               <div class="like_user" id="like-user-\${feed.no}"></div>
             </div>
         </section>
@@ -285,8 +283,20 @@
 
       $("#tags-" + feed.no).append(tags);
       $("#tags-popup" + feed.no).append(tags);
+
+      if(feed.mediaUrl.includes('jpg',)) {
+        let insertUrl =
+                `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+        $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
+      } else if(feed.mediaUrl.includes('mp4')) {
+        let insertUrl =
+                `<video controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+        $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
+      }
+
     }
   }
+
   // 팝업 js
   function openPopup(feedNo) {
     $.ajax({
