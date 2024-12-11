@@ -28,10 +28,7 @@
                 <!-- LNB 메뉴 -->
                 <div class="lnb-menu">
                     <p class="listTitle ${lnb eq 'archiveAll' ? 'on' : '' }" id="archiveAll">파일 저장소</p>
-                    <ul class="list2 roomList">
-                        <li class="${lnb eq 'archiveA' ? 'on' : '' }"><a href="#" id="archiveA">내 저장소</a></li>
-                        <li class="${lnb eq 'archiveB' ? 'on' : '' }"><a href="#" id="archiveB">팀 저장소</a></li>
-                    </ul>
+
                 </div>
             </div>
             <main>
@@ -76,7 +73,7 @@
                                                     <td>${archive.no}</td>
                                                     <td>
                                                         ${archive.originalName}
-                                                        <a href="filedown?no=${archive.no }">
+                                                        <a href="download?no=${archive.no }">
                                                             <i class="bi bi-file-earmark-arrow-down"></i>
                                                         </a>
                                                     </td>

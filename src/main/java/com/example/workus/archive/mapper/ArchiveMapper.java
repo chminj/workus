@@ -11,4 +11,5 @@ public interface ArchiveMapper {
 
     void insertArchive(@Param("archive") Archive archive);
     List<Archive> selectArchiveList();
+    Archive selectArchiveByNo(@Param("no") Long no);
 }
