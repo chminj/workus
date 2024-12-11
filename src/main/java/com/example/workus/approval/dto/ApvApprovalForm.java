@@ -15,7 +15,6 @@ import java.util.Map;
 @Setter
 @ToString
 @Builder
-@Alias("apvFormBase")
 public class ApvApprovalForm {
     private Long no;
     private Long userNo;

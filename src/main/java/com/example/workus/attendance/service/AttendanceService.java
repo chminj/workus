@@ -192,7 +192,7 @@ public class AttendanceService {
         // 1) 연차 이력 추가를 위한 데이터 가져오기
         Map<String, Object> annualLeaveData = attendanceMapper.getAnnualLeaveData(atdApprovalRequestDto.getAtdNo());
 
-        // 필요한 값 추출
+        // 잔여연차, 연차 종류별 차감일, (하계휴가일 경우 즉, 2일 이상일 때 사용할) 총 일수 조회
         BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
         BigDecimal categoryCount = (BigDecimal) annualLeaveData.get("category_count");
         Long updatedCount = (Long) annualLeaveData.get("total_day");

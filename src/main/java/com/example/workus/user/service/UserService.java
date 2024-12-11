@@ -44,12 +44,12 @@ public class UserService {
     }
 
     /**
-     * 유저 전체를 조회한다.
+     * (본인 제외, 퇴사한 상태 제외) 유저 전체를 조회한다.
      *
      * @return 유저 정보 전체 리스트
      */
-    public List<User> getAllUsers() {
-        return userMapper.getAllUsers();
+    public List<User> getUsersExceptMe(Long userNo) {
+        return userMapper.getUsersNotMe(userNo);
     }
 
     /**

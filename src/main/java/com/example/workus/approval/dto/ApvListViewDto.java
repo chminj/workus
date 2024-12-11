@@ -24,5 +24,4 @@ public class ApvListViewDto {
     private String reqUserName;
     private String reqUserDeptName;
     private String status;
-    private String rejectionReason;
 }

@@ -12,7 +12,7 @@
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <c:set var="menuTitle" value="종결건"/>
+    <c:set var="menuTitle" value="반려건"/>
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
         <%@ include file="/WEB-INF/views/common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="/WEB-INF/views/common/nav.jsp" %>
-            <c:set var="lnb" value="myEndList"/>
+            <c:set var="lnb" value="myDenyList"/>
             <div class="lnb">
                 <ul class="list1">
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a
@@ -47,8 +47,8 @@
                                             <li class="${lnb eq 'myWaitList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/waitList">대기건</a>
                                             </li>
-                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
-                                                    href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
+                                            <li class="${lnb eq 'mydenyList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/denyList">종결건</a>
                                             </li>
                                             <li class="${lnb eq 'myDenyList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/denyList">반려건</a>
@@ -70,14 +70,14 @@
                 <h3 class="title1">
                     ${menuTitle}
                 </h3>
-                <%-- 승인 상태 메시지 표시 --%>
+                <%-- 반려 상태 메시지 표시 --%>
                 <c:if test="${not empty message}">
                     <div class="alert alert-success mgt20">${message}</div>
                 </c:if>
                 <div id="reqListW" class="containerW">
                     <div class="tableW mgt40">
                         <c:choose>
-                            <c:when test="${empty endList}">
+                            <c:when test="${empty denyList}">
                                 <div class="noData">
                                     <img src="${s3}/resources/images/noDataImg.png" class="noDataImg"/>
                                     <p class="noDataText">조회된 내역이 없습니다.</p>
@@ -104,13 +104,13 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <c:forEach var="form" items="${endList }" varStatus="loop">
+                                    <c:forEach var="form" items="${denyList }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
                                             <td>${form.reqUserName} [${form.reqUserDeptName}]</td>
                                             <td>${form.categoryName }</td>
                                             <td class="text-start">
-                                                <a href="/approval/my/detail/endDetail?no=${form.no}"
+                                                <a href="/approval/my/detail/denyDetail?no=${form.no}"
                                                    class="link">${form.title}</a>
                                             </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>

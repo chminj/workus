@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <link rel="stylesheet" href="/resources/css/approval.css">
+    <link rel="stylesheet" href="${s3}/resources/css/approval.css">
     <script src="${s3}/resources/js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
@@ -50,8 +50,8 @@
                                             <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
-                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a
-                                                    href="${pageContext.request.contextPath}/approval/my/backList">반려건</a>
+                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/endList">반려건</a>
                                             </li>
                                         </sec:authorize>
                                         <sec:authorize access="hasRole('ROLE_LEADER')">
@@ -142,27 +142,23 @@
                     </div>
                     <c:choose>
                         <c:when test="${endByNo.status != 'pending'}">
-                            <c:choose>
-                            <c:when test="${endByNo.status == 'completed'}">
-                                <div class="additionalW mgt40">
-                                    <p class="userInfoHeader">결재자 정보
-                                    </p>
-                                    <ul class="userInfoW">
-                                        <li class="d-flex align-items-center">
-                                            <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
-                                            <div class="userInfo">
-                                                <p class="name">${endByNo.apvUserName} <span class="position mgl5">${endByNo.apvUserPositionName}</span></p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                            </c:when>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${endByNo.status == 'rejected'}">
-                                    <p class="rejectionStatus">반려 사유 : ${endByNo.rejectionReason}</p>
+                    <div class="additionalW mgt40">
+                        <p class="userInfoHeader">결재자 정보
+                        </p>
+                        <ul class="userInfoW">
+                            <li class="d-flex align-items-center">
+                                <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
+                                <div class="userInfo">
+                                    <p class="name">${endByNo.apvUserName} <span class="position mgl5">${endByNo.apvUserPositionName}</span></p>
                                 </div>
-                                </c:when>
-                            </c:choose>
+                            </li>
+                        </ul>
+                    <c:choose>
+                        <c:when test="${endByNo.status == 'rejected'}">
+                        <p class="rejectionStatus">반려 사유 : ${endByNo.rejectionReason}</p>
+                    </div>
+                        </c:when>
+                    </c:choose>
                         </c:when>
                     </c:choose>
                 </div>
@@ -170,31 +166,8 @@
         </section>
     </div>
 </div>
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">결재 요청을 반려하시겠습니까?</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p class="description">사유를 입력해야 성공적으로 처리됩니다.</p>
-                <form method="POST" name="/approval/rejected">
-                    <div class="form-floating mb-3">
-                        <textarea class="form-control" id="rejectedReason" placeholder="사유를 남겨주세요." required></textarea>
-                        <label for="rejectedReason">반려 사유를 입력해주세요.</label>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소하기</button>
-                <button type="button" class="btn btn-primary">처리하기</button>
-            </div>
-        </div>
-    </div>
-</div>
 <script>
-    if(${endByNo.categoryNo} === 800) {
+    if (${endByNo.categoryNo} === 800) {
         // Quill 에디터 초기화
         var quill = new Quill('#editor${endByNo.no}', {
             theme: 'snow',
@@ -210,11 +183,6 @@
         let range = quill.getSelection();
         quill.clipboard.dangerouslyPasteHTML(range.index, commonText);
     }
-    $(function() {
-        $("#approvalForm").on("submit", function() {
-            // return confirm('정말로 승인하시겠습니까?');
-        })
-    })
 </script>
 </body>
 </html>

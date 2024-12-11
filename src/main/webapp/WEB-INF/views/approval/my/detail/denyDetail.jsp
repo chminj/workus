@@ -12,7 +12,7 @@
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-    <c:set var="menuTitle" value="열람건"/>
+    <c:set var="menuTitle" value="반려건"/>
     <title>workus ㅣ 결재 ${menuTitle}</title>
 </head>
 <body>
@@ -22,7 +22,7 @@
         <%@ include file="/WEB-INF/views/common/header.jsp" %>
         <section class="verticalLayoutFixedSection">
             <%@ include file="/WEB-INF/views/common/nav.jsp" %>
-            <c:set var="lnb" value="myRefList"/>
+            <c:set var="lnb" value="myDenyList"/>
             <div class="lnb">
                 <ul class="list1">
                     <li class="${lnb eq 'signOff' ? 'on' : '' }"><a
@@ -70,6 +70,10 @@
                 <h3 class="title1">
                     ${menuTitle}
                 </h3>
+                <%-- 승인 상태 메시지 표시 --%>
+                <c:if test="${not empty message}">
+                    <div class="alert alert-success mgt20">${message}</div>
+                </c:if>
                 <div id="apvListW" class="containerW">
                     <div class="tableW mgt40">
                         <table class="table tableStyle">
@@ -77,21 +81,21 @@
                                 <tr>
                                     <th class="table-active title">신청 기본 정보</th>
                                     <td colspan="5" class="text-start">
-                                        [${refByNo.categoryName}] ${refByNo.title}
+                                        [${denyByNo.categoryName}] ${denyByNo.title}
                                     </td>
                                 </tr>
                                 <tr>
                                     <th class="table-active">요청일</th>
                                     <td colspan="2" class="text-start">
-                                        <fmt:formatDate value="${refByNo.createdDate }"/>
+                                        <fmt:formatDate value="${denyByNo.createdDate }"/>
                                     </td>
                                     <th class="table-active">요청 상태</th>
                                     <td colspan="2" class="text-start">
                                         <c:choose>
-                                            <c:when test="${refByNo.status == 'pending'}">
+                                            <c:when test="${denyByNo.status == 'pending'}">
                                                 <span class="badge text-bg-primary">승인 대기</span>
                                             </c:when>
-                                            <c:when test="${refByNo.status == 'rejected'}">
+                                            <c:when test="${denyByNo.status == 'rejected'}">
                                                 <span class="badge text-bg-danger">반려</span>
                                             </c:when>
                                             <c:otherwise>
@@ -104,20 +108,20 @@
                         </table>
                         <table class="table tableStyle">
                             <tbody>
-                            <c:forEach var="option" items="${refByNo.optionTexts}">
+                            <c:forEach var="option" items="${denyByNo.optionTexts}">
                                 <tr>
                                     <th class='table-active title'>${option.textName}</th>
                                     <td colspan='5' class='text-start'>${option.textValue}</td>
                                 </tr>
                             </c:forEach>
-                            <c:if test="${not empty refByNo.reason}">
+                            <c:if test="${not empty denyByNo.reason}">
                                 <tr>
-                                    <th class="table-active title">${refByNo.reasonTitle}</th>
-                                    <td colspan='5' class='text-start'>${refByNo.reason}</td>
+                                    <th class="table-active title">${denyByNo.reasonTitle}</th>
+                                    <td colspan='5' class='text-start'>${denyByNo.reason}</td>
                                 </tr>
                             </c:if>
-                            <c:if test="${not empty refByNo.commonText}">
-                                <c:if test="${refByNo.categoryNo == 800}">
+                            <c:if test="${not empty denyByNo.commonText}">
+                                <c:if test="${denyByNo.categoryNo == 800}">
                                     <tr>
                                         <th colspan='6' class='table-active'>
                                             양식
@@ -125,15 +129,15 @@
                                     </tr>
                                     <tr class="editorArea">
                                         <td colspan='6' class='text-start'>
-                                            <div id="editor${refByNo.no}">${refByNo.commonText}</div>
+                                            <div id="editor${denyByNo.no}">${denyByNo.commonText}</div>
                                             <!-- 스마트 에디터 관련 스크립트 추가 -->
                                         </td>
                                     </tr>
                                 </c:if>
-                                <c:if test="${refByNo.categoryNo != 800}">
+                                <c:if test="${denyByNo.categoryNo != 800}">
                                     <tr>
                                         <th class="table-active title">기타 사항</th>
-                                        <td colspan='5' class='text-start'>${refByNo.commonText}</td>
+                                        <td colspan='5' class='text-start'>${denyByNo.commonText}</td>
                                     </tr>
                                 </c:if>
                             </c:if>
@@ -141,7 +145,7 @@
                         </table>
                     </div>
                     <c:choose>
-                        <c:when test="${refByNo.status != 'pending'}">
+                        <c:when test="${denyByNo.status != 'pending'}">
                     <div class="additionalW mgt40">
                         <p class="userInfoHeader">결재자 정보
                         </p>
@@ -149,13 +153,13 @@
                             <li class="d-flex align-items-center">
                                 <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
                                 <div class="userInfo">
-                                    <p class="name">${refByNo.apvUserName} <span class="position mgl5">${refByNo.apvUserPositionName}</span></p>
+                                    <p class="name">${denyByNo.apvUserName} <span class="position mgl5">${denyByNo.apvUserPositionName}</span></p>
                                 </div>
                             </li>
                         </ul>
                     <c:choose>
-                        <c:when test="${refByNo.status == 'rejected'}">
-                        <p class="rejectionStatus">반려 사유 : ${refByNo.rejectionReason}</p>
+                        <c:when test="${denyByNo.status == 'rejected'}">
+                        <p class="rejectionStatus">반려 사유 : ${denyByNo.rejectionReason}</p>
                     </div>
                         </c:when>
                     </c:choose>
@@ -167,9 +171,9 @@
     </div>
 </div>
 <script>
-    if (${refByNo.categoryNo} === 800) {
+    if (${denyByNo.categoryNo} === 800) {
         // Quill 에디터 초기화
-        var quill = new Quill('#editor${refByNo.no}', {
+        var quill = new Quill('#editor${denyByNo.no}', {
             theme: 'snow',
             modules: {
                 "toolbar": false
@@ -178,7 +182,7 @@
         // disabled 처리
         quill.enable(false);
         // XSS 방지를 위한 HTML 이스케이프
-        let commonText = "${fn:escapeXml(refByNo.commonText)}";
+        let commonText = "${fn:escapeXml(endByNo.commonText)}";
         // Quill의 clipboard 모듈을 사용하여 HTML 삽입
         let range = quill.getSelection();
         quill.clipboard.dangerouslyPasteHTML(range.index, commonText);

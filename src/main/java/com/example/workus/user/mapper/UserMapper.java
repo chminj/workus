@@ -11,7 +11,7 @@ import java.util.Map;
 @Mapper
 public interface UserMapper {
 
-    List<User> getAllUsers();
+    List<User> getUsersNotMe(@Param("userNo") long userNo);
 
     User getUserByUserNo(@Param("userNo") long userNo);
 

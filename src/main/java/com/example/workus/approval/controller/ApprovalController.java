@@ -1,9 +1,6 @@
 package com.example.workus.approval.controller;
 
-import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.ApvApprovalRequestDto;
-import com.example.workus.approval.dto.ApvDetailViewDto;
-import com.example.workus.approval.dto.ApvListViewDto;
+import com.example.workus.approval.dto.*;
 import com.example.workus.approval.service.ApprovalService;
 import com.example.workus.approval.vo.ApprovalCategory;
 import com.example.workus.security.LoginUser;
@@ -53,27 +50,27 @@ public class ApprovalController {
     }
 
     @PostMapping("/addForm")
-    public String addForm(@ModelAttribute ApvApprovalForm apvFormBase
+    public String addForm(@ModelAttribute ApvApprovalForm apvForm
                             , @AuthenticationPrincipal LoginUser loginUser)
     {
         // 로그인한 userNo 설정
         Long userNo = loginUser.getNo();
-        apvFormBase.setUserNo(userNo);
+        apvForm.setUserNo(userNo);
 
         // categoryNo가 apvApprovalForm에 있어야 함 (가져온 categoryNo 설정)
-        int categoryNo = apvFormBase.getCategoryNo();
-        apvFormBase.setCategoryNo(categoryNo);
+        int categoryNo = apvForm.getCategoryNo();
+        apvForm.setCategoryNo(categoryNo);
 
         // 기본값 담는 form Dto
-        String title = apvFormBase.getTitle();
-        Date fromDate = apvFormBase.getFromDate();
-        String reason = apvFormBase.getReason();
-        String commonText = apvFormBase.getCommonText();
+        String title = apvForm.getTitle();
+        Date fromDate = apvForm.getFromDate();
+        String reason = apvForm.getReason();
+        String commonText = apvForm.getCommonText();
 
         // approvalTextArea에 추가 텍스트(들) 처리
-        Map<String, String> optionTexts = apvFormBase.getOptionTexts();
+        Map<String, String> optionTexts = apvForm.getOptionTexts();
 
-        approvalService.addForm(apvFormBase);
+        approvalService.addForm(apvForm);
 
         return "redirect:/approval/form-list";
     }
@@ -106,6 +103,16 @@ public class ApprovalController {
         model.addAttribute("endList", endList);
 
         return "approval/my/endList";
+    }
+
+    @GetMapping("/my/denyList")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
+    public String myDenyList(Model model)
+    {
+        List<ApvListViewDto> denyList = approvalService.getMyDenyList();
+        model.addAttribute("denyList", denyList);
+
+        return "approval/my/denyList";
     }
 
     @GetMapping("/my/refList")
@@ -142,7 +149,7 @@ public class ApprovalController {
         return "approval/my/detail/waitDetail";
     }
 
-     @GetMapping("/my/detail/endDetail")
+    @GetMapping("/my/detail/endDetail")
     public String myEndDetail(@RequestParam("no") Long no
                                 , Model model)
     {
@@ -150,6 +157,16 @@ public class ApprovalController {
         model.addAttribute("endByNo", endByNo);
 
         return "approval/my/detail/endDetail";
+    }
+
+    @GetMapping("/my/detail/denyDetail")
+    public String myDenyDetail(@RequestParam("no") Long no
+                                , Model model)
+    {
+        ApvDetailViewDto denyByNo = approvalService.getMyReqDetail(no);
+        model.addAttribute("denyByNo", denyByNo);
+
+        return "approval/my/detail/denyDetail";
     }
 
     @GetMapping("/my/detail/refDetail")
@@ -173,8 +190,22 @@ public class ApprovalController {
         approvalService.approveRequest(requestDto);
 
         // 리다이렉트 시 전달할 메시지 설정
-        redirectAttributes.addFlashAttribute("message", "승인이 완료되었습니다.");
+        redirectAttributes.addFlashAttribute("message", "승인 처리가 완료되었습니다.");
 
         return "redirect:/approval/my/endList";
     }
+
+    @PostMapping("/reject")
+    public String rejectRequest(@ModelAttribute ApvRejectionRequestDto requestDto
+                                , @AuthenticationPrincipal LoginUser loginUser
+                                , RedirectAttributes redirectAttributes)
+    {
+        // 로직 = 상단 approveRequest과 동일
+        requestDto.setReqUserNo(loginUser.getNo());
+        approvalService.rejectRequest(requestDto);
+        redirectAttributes.addFlashAttribute("message", "반려 처리가 완료되었습니다.");
+
+        return "redirect:/approval/my/denyList";
+    }
+
 }
