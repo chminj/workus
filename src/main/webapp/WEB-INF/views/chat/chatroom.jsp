@@ -395,10 +395,32 @@
 			})
 		})
 
+		<%-- 이모지 관련 코드 시작 --%>
 		// 이모지 가져오기
-		$('#chat').on('keyup', 'input[name=content]', function() {
-			console.log($('input[name=content]').val());
+		$('#chat').on('keyup', 'input[name=content]', async function() {
+			$('#emojiSuggestionsDiv').addClass('d-none');
+			let tagName = $(this).val();
+			if (tagName < 2 || tagName > 5) return;
+
+			const response = await fetch('/ajax/chat/emoji/' + tagName);
+			const result = await response.json();
+			const data = result.data;
+			if (response.ok) {
+				// 해당하는 이모지가 없을 때
+				if (data.length === 0) return;
+
+				// 해당하는 이모지가 존재할 때
+				$('#addEmojiDiv').html('');
+				$('#emojiSuggestionsDiv').removeClass('d-none');
+
+				data.map(item => {
+					fetch('../../../resources/repository/chat/emoji/' + item.previewFileSrc)
+						.then(emojiResponse => emojiResponse.text())
+						.then(emojiData => $('#addEmojiDiv').append(emojiData));
+				})
+			}
 		})
+		<%-- 이모지 관련 코드 끝 --%>
 
 		// 입장 퇴장 구분선
 		function appearEnterAndOutDiv(text) {
@@ -1164,67 +1186,13 @@
 		// 메시지 입력 폼 영역 불러오기
 		function loadSubmitChatForm(chatroomNo) {
 			return `
-					<!-- 채팅 입력 전체 영역 -->
+					<%-- 채팅 입력 전체 영역 --%>
 					<div class="position-relative">
-						<!-- 이모지 제안 영역 -->
-						<div id="emojiSuggestions" class="position-absolute start-0 w-100 bg-white border rounded-3 p-3" style="bottom: 120px;">
-							<div class="row g-3">
-								<%-- 화남 이모지 --%>
-								<div class="col-3" role="button">
-									<div class="text-center">
-										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
-											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
-											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
-											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
-											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
-										</svg>
-										<p class="small mt-2 mb-0">화남</p>
-									</div>
-								</div>
-								<%-- 화남 이모지 --%>
-								<div class="col-3" role="button">
-									<div class="text-center">
-										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
-											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
-											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
-											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
-											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
-										</svg>
-										<p class="small mt-2 mb-0">화남</p>
-									</div>
-								</div>
-								<%-- 화남 이모지 --%>
-								<div class="col-3" role="button">
-									<div class="text-center">
-										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
-											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
-											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
-											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
-											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
-										</svg>
-										<p class="small mt-2 mb-0">화남</p>
-									</div>
-								</div>
-								<%-- 화남 이모지 --%>
-								<div class="col-3" role="button">
-									<div class="text-center">
-										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
-											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
-											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
-											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
-											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
-											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
-										</svg>
-										<p class="small mt-2 mb-0">화남</p>
-									</div>
-								</div>
+						<%-- 이모지 제안 영역 --%>
+						<div id="emojiSuggestionsDiv" class="position-absolute start-0 w-100 bg-white border rounded-3 p-3" style="bottom: 120px;">
+							<div class="row g-3" id="addEmojiDiv">
+								<%-- 추가될 이모지들 --%>
+
 							</div>
 						</div>
 

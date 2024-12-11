@@ -22,5 +22,6 @@ public class Chat {
     private Character isFirst;
     private User user;
     private Chatroom chatroom;
+    private Emoji emoji;
     private String type;
 }

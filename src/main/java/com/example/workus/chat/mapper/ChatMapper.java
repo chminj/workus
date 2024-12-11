@@ -1,11 +1,13 @@
 package com.example.workus.chat.mapper;
 
 import com.example.workus.chat.vo.Chat;
+import com.example.workus.chat.vo.Emoji;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Mapper
 public interface ChatMapper {
@@ -22,7 +24,6 @@ public interface ChatMapper {
      * @param userNo 로그인한 유저 번호
      * @param chatroomNo 채팅방 번호
      * @param begin 시작
-     * @param end 끝
      * @return 해당하는 채팅들
      */
     List<Chat> getAllChatsByChatroomNo(@Param("userNo") Long userNo,
@@ -67,4 +68,18 @@ public interface ChatMapper {
      * @return 채팅 객체
      */
     Chat getChatByChatNo(@Param("chatNo") Long chatNo);
+
+    /**
+     * 이모지 번호로 이모지 객체를 가져온다.
+     * @param emojiNo 이모지 번호
+     * @return 이모지 객체
+     */
+    Emoji getEmojiByEmojiNo(@Param("emojiNo") Integer emojiNo);
+
+    /**
+     * 채팅창에 친 것을 중복 없이 담는다.
+     * @param tagName 태그 이름
+     * @return 이모지 번호가 담긴 set
+     */
+    Set<Integer> getEmojiNoByTagName(@Param("tagName") String tagName);
 }

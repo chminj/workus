@@ -149,4 +149,28 @@
         where
             CHAT_NO = #{chatNo}
     </select>
+
+    <select id="getEmojiByEmojiNo" resultType="Emoji">
+        select
+            EMOJI_NO as no
+             , EMOJI_FILE_SRC as fileSrc
+             , EMOJI_PREVIEW_FILE_SRC as previewFileSrc
+        from
+            WORKUS_CHAT_EMOJI
+        where
+            EMOJI_NO = #{emojiNo}
+    </select>
+
+    <select id="getEmojiNoByTagName" resultType="integer">
+        select
+            E.EMOJI_NO as no
+        from
+            WORKUS_CHAT_EMOJI_TAG T
+        inner join
+            WORKUS_CHAT_EMOJI E
+        on
+            T.EMOJI_NO = E.EMOJI_NO
+        where
+            T.TAG_NAME like CONCAT('%', #{tagName}, '%')
+    </select>
 </mapper>
