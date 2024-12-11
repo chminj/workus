@@ -395,6 +395,11 @@
 			})
 		})
 
+		// 이모지 가져오기
+		$('#chat').on('keyup', 'input[name=content]', function() {
+			console.log($('input[name=content]').val());
+		})
+
 		// 입장 퇴장 구분선
 		function appearEnterAndOutDiv(text) {
 			let div = `
@@ -1017,7 +1022,7 @@
 			`:``}
                 \${data.data.map((chat) => `
                     \${chat.isFirst === 'Y' ? `
-                            <!-- 날짜 구분선 -->
+                            <%-- 날짜 구분선 --%>
                             <div class="d-flex align-items-center my-4">
                                 <div class="border-bottom flex-grow-1"></div>
                                 <span class="mx-3 text-muted">\${chat.time.date}</span>
@@ -1026,7 +1031,7 @@
                         ` : ``}
 
                     \${chat.type === 'message' ? `
-                            <!-- 입장/퇴장 구분선 -->
+                            <%-- 입장/퇴장 구분선 --%>
                             <div class="d-flex align-items-center my-4">
                                 <div class="border-bottom flex-grow-1"></div>
                                 <div class="message">
@@ -1076,7 +1081,7 @@
 				</div>
 			</div>
 				` : `
-				<!-- 상대 메시지 -->
+				<%-- 상대 메시지 --%>
 				<div class="mb-3 w-75">
 					<div class="d-flex align-items-center mb-1">
 						<img src="${s3}/resources/repository/userprofile/\${chat.user.profileSrc}" alt="프로필" class="rounded-circle me-2" style="width: 40px; height: 40px;"/>
@@ -1129,19 +1134,84 @@
 		// 메시지 입력 폼 영역 불러오기
 		function loadSubmitChatForm(chatroomNo) {
 			return `
-					<!-- 메시지 입력 영역 -->
-					<form action="ajax/chat" method="post" encType="multipart/form-data">
-						<div class="border-top p-3">
-							<div class="input-group mb-3">
-								<input type="file" class="form-control" id="fileInput" name="file" />
-							</div>
-							<div class="input-group chat-text" data-chatroom-no="\${chatroomNo}">
-								<input type="text" class="form-control" name="content" required placeholder="메시지를 입력하세요." />
-								<button type="button" id="submitChat" class="btn btn-primary">전송</button>
+					<!-- 채팅 입력 전체 영역 -->
+					<div class="position-relative">
+						<!-- 이모지 제안 영역 -->
+						<div id="emojiSuggestions" class="position-absolute start-0 w-100 bg-white border rounded-3 p-3" style="bottom: 120px;">
+							<div class="row g-3">
+								<%-- 화남 이모지 --%>
+								<div class="col-3" role="button">
+									<div class="text-center">
+										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
+											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
+											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
+											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
+											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
+										</svg>
+										<p class="small mt-2 mb-0">화남</p>
+									</div>
+								</div>
+								<%-- 화남 이모지 --%>
+								<div class="col-3" role="button">
+									<div class="text-center">
+										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
+											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
+											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
+											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
+											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
+										</svg>
+										<p class="small mt-2 mb-0">화남</p>
+									</div>
+								</div>
+								<%-- 화남 이모지 --%>
+								<div class="col-3" role="button">
+									<div class="text-center">
+										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
+											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
+											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
+											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
+											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
+										</svg>
+										<p class="small mt-2 mb-0">화남</p>
+									</div>
+								</div>
+								<%-- 화남 이모지 --%>
+								<div class="col-3" role="button">
+									<div class="text-center">
+										<svg viewBox="0 0 200 200" style="width: 4rem; height: 4rem;">
+											<circle cx="100" cy="100" r="80" fill="#FFB5B5"/>
+											<path d="M 50,75 L 85,60" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 115,60 L 150,75" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+											<path d="M 60,85 L 80,85" stroke="#000" stroke-width="4"/>
+											<path d="M 120,85 L 140,85" stroke="#000" stroke-width="4"/>
+											<path d="M 75,120 Q 100,130 125,120" fill="none" stroke="#000" stroke-width="4"/>
+										</svg>
+										<p class="small mt-2 mb-0">화남</p>
+									</div>
+								</div>
 							</div>
 						</div>
-					</form>
-			`;
+
+						<%-- 메시지 입력 영역 --%>
+						<form action="ajax/chat" method="post" encType="multipart/form-data">
+							<div class="border-top p-3">
+								<div class="input-group mb-3">
+									<input type="file" class="form-control" id="fileInput" name="file" />
+								</div>
+								<div class="input-group chat-text" data-chatroom-no="${chatroomNo}">
+									<input type="text" class="form-control" name="content" required placeholder="메시지를 입력하세요." />
+									<button type="button" id="submitChat" class="btn btn-primary">전송</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				`;
 		}
 
 		<%-- 채팅 관련 js 끝 --%>
