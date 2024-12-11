@@ -1,4 +1,4 @@
-package com.example.workus.archive.dto;
+package com.example.workus.common.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ArchiveForm {
-    private MultipartFile upfile;
+public class saveFileForm {
+    private String title;
+    private String description;
+    private MultipartFile saveFile;
 }

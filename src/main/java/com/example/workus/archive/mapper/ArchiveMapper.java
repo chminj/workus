@@ -10,6 +10,5 @@ import java.util.List;
 public interface ArchiveMapper {
 
     void insertArchive(@Param("archive") Archive archive);
-
     List<Archive> selectArchiveList();
 }
