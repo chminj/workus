@@ -7,7 +7,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
-    <link rel="stylesheet" href="/resources/css/approval.css">
+    <link rel="stylesheet" href="${s3}/resources/css/approval.css">
     <script src="/${s3}//js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
@@ -50,8 +50,8 @@
                                             <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
-                                            <li class="${lnb eq 'myDelList' ? 'on' : '' }"><a
-                                                    href="${pageContext.request.contextPath}/approval/my/backList">반려건</a>
+                                            <li class="${lnb eq 'myDenyList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/denyList">반려건</a>
                                             </li>
                                         </sec:authorize>
                                         <sec:authorize access="hasRole('ROLE_LEADER')">
@@ -142,27 +142,23 @@
                     </div>
                     <c:choose>
                         <c:when test="${reqByNo.status != 'pending'}">
-                            <c:choose>
-                            <c:when test="${reqByNo.status == 'completed'}">
-                                <div class="additionalW mgt40">
-                                    <p class="userInfoHeader">결재자 정보
-                                    </p>
-                                    <ul class="userInfoW">
-                                        <li class="d-flex align-items-center">
-                                            <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
-                                            <div class="userInfo">
-                                                <p class="name">${reqByNo.apvUserName} <span class="position mgl5">${reqByNo.apvUserPositionName}</span></p>
-                                            </div>
-                                        </li>
-                                    </ul>
-                            </c:when>
-                            </c:choose>
-                            <c:choose>
-                                <c:when test="${reqByNo.status == 'rejected'}">
-                                    <p class="rejectionStatus">반려 사유 : ${reqByNo.rejectionReason}</p>
+                    <div class="additionalW mgt40">
+                        <p class="userInfoHeader">결재자 정보
+                        </p>
+                        <ul class="userInfoW">
+                            <li class="d-flex align-items-center">
+                                <img src="${s3}/resources/images/userIcon.png" alt="결재자 이미지"/>
+                                <div class="userInfo">
+                                    <p class="name">${reqByNo.apvUserName} <span class="position mgl5">${reqByNo.apvUserPositionName}</span></p>
                                 </div>
-                                </c:when>
-                            </c:choose>
+                            </li>
+                        </ul>
+                    <c:choose>
+                        <c:when test="${reqByNo.status == 'rejected'}">
+                        <p class="rejectionStatus">반려 사유 : ${reqByNo.rejectionReason}</p>
+                    </div>
+                        </c:when>
+                    </c:choose>
                         </c:when>
                     </c:choose>
                 </div>
@@ -171,7 +167,7 @@
     </div>
 </div>
 <script>
-    if(${reqByNo.categoryNo} === 800) {
+    if (${reqByNo.categoryNo} === 800) {
         // Quill 에디터 초기화
         var quill = new Quill('#editor${reqByNo.no}', {
             theme: 'snow',

@@ -211,7 +211,7 @@ $(function () {
                 let content = `
                 <li class="d-flex">
                     <input type="checkbox" id="${resultUser[i].no}" class="mgr5">
-                    <label for="${resultUser[i].no}" data-sort="${i}">
+                    <label for="${resultUser[i].no}" data-sort="${i}" class="ellipsis wdp40">
                       <span class="name mgr5">${resultUser[i].name}</span>
                     </label>
                     <span class="gray">

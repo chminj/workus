@@ -48,8 +48,8 @@ public class AttendanceController {
 
     @GetMapping("/atdFormInUser")
     @ResponseBody
-    public List<User> usersInAtdForm() {
-        return (List<User>) userService.getAllUsers();
+    public List<User> usersInAtdForm(@AuthenticationPrincipal LoginUser loginUser) {
+        return (List<User>) userService.getUsersExceptMe(loginUser.getNo());
     }
 
     @GetMapping("/atdFormInCtgr")

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.user.mapper.UserMapper">
-    <select id="getAllUsers" resultType="User">
+    <select id="getUsersNotMe" resultType="User">
         select U.USER_NO as no
             , U.USER_ID as id
             , U.USER_NAME as name
@@ -37,6 +37,8 @@
             WORKUS_ATH_ROLE R
             on
             U.ROLE_NO = R.ROLE_NO
+        where U.USER_STATUS != 'Q'
+        and U.USER_NO != #{userNo}
         order by U.DEPT_NO ASC, U.POSITION_NO ASC
     </select>
     <!--    User getUserByUserNo(@Param("userNo") long userNo);-->

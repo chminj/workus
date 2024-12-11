@@ -1,9 +1,6 @@
 package com.example.workus.approval.service;
 
-import com.example.workus.approval.dto.ApvApprovalForm;
-import com.example.workus.approval.dto.ApvApprovalRequestDto;
-import com.example.workus.approval.dto.ApvDetailViewDto;
-import com.example.workus.approval.dto.ApvListViewDto;
+import com.example.workus.approval.dto.*;
 import com.example.workus.approval.mapper.ApprovalMapper;
 import com.example.workus.approval.util.CategoryReasonMapping;
 import com.example.workus.approval.util.OptionTextMapping;
@@ -125,6 +122,16 @@ public class ApprovalService {
     }
 
     /**
+     * 결재 반려 건을 조회한다.
+     * @return 결재 반려 건 리스트
+     */
+    public List<ApvListViewDto> getMyDenyList() {
+        List<ApvListViewDto> denyList = approvalMapper.getDenyList();
+        setReqUserNames(denyList);
+        return denyList;
+    }
+
+    /**
      * 팀장은 팀원들의 결재 요청들을 내 공람 내역에서 조회한다.
      *
      * @param leaderNo 팀장 번호
@@ -205,5 +212,13 @@ public class ApprovalService {
      */
     public void approveRequest(ApvApprovalRequestDto requestDto) {
         approvalMapper.updateApprovalStatusCompleted(requestDto);
+    }
+
+    /**
+     * 결재 요청이 온 건을 반려한다.
+     * @param rejectDto 반려시 필요한 정보
+     */
+    public void rejectRequest(ApvRejectionRequestDto rejectDto) {
+        approvalMapper.updateApprovalStatusRejected(rejectDto);
     }
 }

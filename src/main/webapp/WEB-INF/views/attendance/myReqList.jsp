@@ -81,7 +81,14 @@
                                     <c:forEach var="form" items="${forms }" varStatus="loop">
                                         <tr>
                                             <td>${loop.count }</td>
-                                            <td>${form.categoryName }</td>
+                                            <td>
+                                                ${form.categoryName }
+                                            <c:choose>
+                                                <c:when test="${form.time != null}">
+                                                    (${form.time})
+                                                </c:when>
+                                            </c:choose>
+                                            </td>
                                             <td class="text-start">${form.reason}</td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>
                                             <td>

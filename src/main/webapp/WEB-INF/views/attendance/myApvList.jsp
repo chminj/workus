@@ -58,7 +58,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                 </div>
                                 <div class="input-group">
                                     <label for="searchText">
-                                        <input type="text" id="searchText" name="text" class="form-control">
+                                        <input type="text" id="searchText" name="keyword" class="form-control">
                                     </label>
                                     <button id="searchButton" class="btn btn-outline-secondary" type="button">검색
                                     </button>
@@ -118,7 +118,14 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                             </td>
                                             <td>${loop.count }</td>
                                             <td>${form.reqUserName}</td>
-                                            <td>${form.categoryName }</td>
+                                            <td>
+                                                ${form.categoryName }
+                                            <c:choose>
+                                                <c:when test="${form.time != null}">
+                                                    (${form.time})
+                                                </c:when>
+                                            </c:choose>
+                                            </td>
                                             <td><fmt:formatDate value="${form.createdDate }"/></td>
                                             <td class="text-start">${form.reason}</td>
                                             <td>
