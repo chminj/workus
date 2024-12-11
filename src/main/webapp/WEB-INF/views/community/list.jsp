@@ -191,7 +191,7 @@
         <!--top-->
         <div class="new_poster">
           <div class="poster_img">
-            <img alt="follower profile image" class="round_img" src="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
+            <img alt="follower profile image" class="round_img" src="${s3}/resources/repository/userprofile/\${feed.user.profileSrc}" />
           </div>
           <p  class="poster_id txt_id">\${feed.user.name}</p>
           <div class="dropdown-container" id="dropdown-menu">
@@ -220,7 +220,7 @@
 
         <!--content-->
         <section class="feed_imgs">
-          <img alt="지정된 media가 없습니다" src="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
+          <img alt="지정된 media가 없습니다" src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}" />
             <div class="interactions">
               <div class="my_emotion">
             <!-- 피드 내 하트 버튼 -->

@@ -44,6 +44,7 @@ public class CommunityController {
             condition.put("keyword", keyword);
         }
         List<Feed> feeds = communityService.getFeeds(condition);
+        System.out.println(feeds);
         return feeds;
     }
 
