@@ -139,10 +139,12 @@ public class CommunityService {
         return reply;
     }
 
-    public Feed getFeed(long feedNo) {
+    public Feed  getFeed(long feedNo) {
         Feed feed = communityMapper.getFeedByNo(feedNo);
+        feed.setLikesCount(communityMapper.getlikeCountByFeedNo(feedNo));
         List<Reply> replys = communityMapper.getReplysByFeedNo(feedNo);
         feed.setReplys(replys);
+        System.out.println(feed);
         return feed;
     }
 
