@@ -35,6 +35,9 @@ button:hover svg {
     z-index: 1; /* z-index 설정 */
     padding: 10px; /* 내부 여백 */
 }
+.search-controls  {
+    margin-left: 1300px; !important; /* 추가된 속성: 버튼을 오른쪽으로 이동시키기 위해 여백을 자동으로 설정 */
+}
 
 .dropdown.show {
     display: block; /* show 클래스가 있을 때 표시 */
@@ -53,10 +56,6 @@ button:hover svg {
     width:1500px;
     margin:0 auto;
 }
-.search-controls{
-    left: 100px;
-}
-
 .round_img{
     border-radius:100%;
 }
@@ -354,10 +353,10 @@ div.feed_board{
 
 /* FEED - content */
 .feed_imgs img,
-.feed_imgs video{
+.feed_imgs video {
     width: 100%;   /* 부모 요소의 너비에 맞추기 */
     height: 100%;  /* 부모 요소의 높이에 맞추기 */
-    object-fit: contain;  /* 이미지 비율을 유지하며 부모 크기에 맞추기 */
+    object-fit: cover;  /* 이미지 비율을 유지하며 부모 크기에 맞추기 */
 }
 
 .interactions{
@@ -366,10 +365,6 @@ div.feed_board{
     height: 50px;
     padding: 0 10px;
 }
-
-
-
-
 .interactions button .far{
     font-size: 20px;
     color: #676767;
@@ -381,21 +376,6 @@ div.feed_board{
 .large-heart {
     font-size: 25px; /* 피드 내 하트 크기 */
 }
-
-.small-heart {
-    font-size: 20px !important; /* 강제로 크기 설정 */
-}
-
-
-.pagnation{
-    flex:25;
-}
-
-.like_user img{
-    width: 25px;
-    height: 25px;
-}
-
 .feed_imgs p{
     display: flex;
     align-items: center;
@@ -432,6 +412,7 @@ div.feed_board{
     left: 0;
     width: 100%;
     height: 100%;
+    margin-top: 20px;
     background-color: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
@@ -468,8 +449,6 @@ div.feed_board{
     padding: 0;
     cursor: pointer;
     margin: 0 10px; /* 상하 0px, 좌우 10px */
-
-
 }
 .open-popup-btn svg {
     width: 24px;

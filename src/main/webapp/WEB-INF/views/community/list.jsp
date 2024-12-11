@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-   <link href="https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/css/communitymain.css" rel="stylesheet"/>\
+   <link href="${s3}/resources/css/communitymain.css" rel="stylesheet"/>\
   <title>workus template</title>
 </head>
 <body>
@@ -53,15 +53,12 @@
   <%--팝업 창 기본 숨김  --%>
   <div class="popup-overlay" id="popupOverlay">
     <div class="popup">
-      <div class="popup-left">
-        <img src="" id="postImage" alt="Post Image">
-      </div>
+      <div class="popup-left" id="popupUrl${feed.no}"></div>
       <div class="popup-right">
         <!-- 버튼 -->
         <div class="popup-header">
           <img src="" id="postProfile" alt="Profile Picture" class="profile">
           <div class="username" id="postUsername"></div>
-
           <div class="popup-close" onclick="closePopup()">×</div>
         </div>
         <div class="popup-content">
@@ -71,7 +68,7 @@
         <div id="tags-popup\${feed.no}" style="margin-left: 30px;"></div>
         <div class="comments-section" id="postReplys"></div>
         <div class="popup-footer">
-          <span class="likes" id="likesCount">좋아요 0개</span>
+          <span class="likes" id="likesCount"></span>
         </div>
         <form method="post" action="insertReply">
           <div class="add-reply">
@@ -152,7 +149,6 @@
         $("div.feed_board").empty();
 
         appendFeeds(feeds);
-
       }
     })
   }
@@ -249,7 +245,7 @@
         <div class="comments">
           <div id="listComment" class="list_comment">
             <div class="txt_comment">
-            <p class="reply-name">\${feed.reply != null ? feed.reply.user.name : ''}</p>
+            <p class="reply-name">\${feed.reply != null ? "🆕  "+feed.reply.user.name : ''}</p>
             <p class="reply-content">\${feed.reply != null ? feed.reply.content : ''}</p>
             </div>
 
@@ -304,12 +300,23 @@
       url: `feed/\${feedNo}`,
       dataType: "json",
       success: function (feed) {
+        if(feed.mediaUrl.includes('jpg',)) {
+          let insertUrl =
+                  `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+          $("#popupUrl${feed.no}").html(insertUrl)
+        } else if(feed.mediaUrl.includes('mp4')) {
+          let insertUrl =
+                  `<video width=100%; height=100%; controls autoplay src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+          $("#popupUrl${feed.no}").html(insertUrl)
+        }
         $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
-        $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
+        $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/userprofile/"+feed.user.profileSrc);
         $("#postUsername").text(feed.user.name);
         $("#postTitle").text(feed.title);
         $("#postContent").text(feed.content);
         $("#postFeedNo").val(feed.no);
+        $("#likesCount").text("좋아요"+feed.likesCount+"개");
+
 
 
         let replys = feed.replys;
@@ -347,7 +354,7 @@
       },
       dataType: "json",
       success:function (reply){
-        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-name`).text("🆕   "+reply.user.name);
         $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
         $(".feedinsertReply").val("");
       }
@@ -373,7 +380,7 @@
          <div>
         `;
 
-        $(`#feed-\${reply.feed.no} .reply-name`).text(reply.user.name);
+        $(`#feed-\${reply.feed.no} .reply-name`).text("🆕  "+reply.user.name);
         $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
         $("#postReplys").prepend(content);
       }

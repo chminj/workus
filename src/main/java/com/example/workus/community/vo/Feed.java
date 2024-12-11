@@ -31,7 +31,7 @@ public class Feed {
     private List<Reply> replys;
 
     private List<Like> likes;
-
+    private int likesCount;
     public String getUserName() {
         return likes == null || likes.isEmpty() ? "" : likes.get(0).getUser().getName();
     }
