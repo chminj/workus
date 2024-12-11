@@ -56,18 +56,14 @@ public class CommunityService {
         condtion.put("end",pagination.getEnd());
 
         List<Feed> feeds = communityMapper.getSearchFeeds(condtion);
-
         for (Feed feed : feeds) {
             List<HashTag> hashTags = communityMapper.getHashTagsByFeedNo(feed.getNo());
             feed.setHashTags(hashTags);
             Reply reply = communityMapper.getReplyByFeedNo(feed.getNo());
             feed.setReply(reply);
-
             List<Like> likes = communityMapper.getLikesByFeedNo(feed.getNo());
             feed.setLikes(likes);
         }
-
-
         return feeds;
     }
 

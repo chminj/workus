@@ -91,6 +91,7 @@
         , B.COMMUNITY_UPDATED_DATE as updateDate
         , B.USER_NO as "user.no"
         , U.USER_NAME as "user.name"
+        , U.USER_PROFILE_SRC as "user.profileSrc"
         from
         WORKUS_COMMUNITY B
         INNER JOIN
