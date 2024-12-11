@@ -3,6 +3,7 @@ package com.example.workus.chat.service;
 import com.example.workus.chat.dto.ChatForm;
 import com.example.workus.chat.mapper.ChatMapper;
 import com.example.workus.chat.vo.Chat;
+import com.example.workus.chat.vo.Emoji;
 import com.example.workus.common.dto.DownloadFileData;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.s3.S3Service;
@@ -16,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 @Transactional
@@ -159,5 +158,21 @@ public class ChatService {
         Chat chat = chatMapper.getChatByChatNo(chatNo);
         ByteArrayResource resource = s3Service.downloadFile(bucketName, folder + CHAT_DIR, chat.getFileSrc());
         return new DownloadFileData(chat.getFileSrc(), resource);
+    }
+
+    /**
+     * 태그 번호를 중복이 존재하면 안되니 set에 담은 후 set에 담긴 no로 이모지 객체를 list에 담는다.
+     * @param tagName 태그 이름
+     * @return 이모지 객체 리스트
+     */
+    public List<Emoji> getEmojiByTagName(String tagName) {
+        List<Emoji> emojiList = new ArrayList<>();
+        Set<Integer> emojiTagNumbers = chatMapper.getEmojiNoByTagName(tagName);
+        Iterator<Integer> iterator = emojiTagNumbers.iterator();
+        while (iterator.hasNext()) {
+            emojiList.add(chatMapper.getEmojiByEmojiNo(iterator.next()));
+            iterator.remove();
+        }
+        return emojiList;
     }
 }

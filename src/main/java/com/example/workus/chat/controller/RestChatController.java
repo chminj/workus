@@ -1,6 +1,7 @@
 package com.example.workus.chat.controller;
 
 import com.example.workus.chat.dto.ChatForm;
+import com.example.workus.chat.vo.Emoji;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.chat.service.ChatService;
@@ -13,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -53,5 +56,10 @@ public class RestChatController {
     @PostMapping("/chat/upload")
     ResponseEntity<RestResponseDto<Chat>> uploadFile(@ModelAttribute ChatForm chatForm) {
         return ResponseEntity.ok(RestResponseDto.success(chatService.uploadFile(chatForm)));
+    }
+
+    @GetMapping("/chat/emoji/{tagName}")
+    ResponseEntity<RestResponseDto<List<Emoji>>> getChatByTagName(@PathVariable("tagName") String tagName) {
+        return ResponseEntity.ok(RestResponseDto.success(chatService.getEmojiByTagName(tagName)));
     }
 }
