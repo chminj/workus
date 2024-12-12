@@ -183,39 +183,93 @@ public class AttendanceService {
         return dtoList;
     }
 
+    /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 승인 로직 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
+    /**
+     * 연차 이력 테이블 내 차감될 연차 컬럼에 사용할 데이터(직급별 총 연차에서 잔여 연차, 연차 종류별 차감될 연차)를 가져온다.
+     *
+     * @param atdNo 연차 신청 글 PK
+     * @return
+     */
+    private Map<String, Object> getAnnualLeaveData(Long atdNo) {
+        return attendanceMapper.getAnnualLeaveData(atdNo);
+    }
+
+    /**
+     * 요청 폼을 INSERT할 때 사용할 값을 조건에 따라 다르게 세팅한다.
+     *
+     * @param dto 연차 신청 폼
+     * @param unusedLeave 잔여 연차
+     * @param categoryCount 연차 종류별 차감될 숫자
+     * @param updatedCount 2일 이상의 총 일수
+     */
+    private void setAnnualLeaveData(AtdApprovalRequestDto dto, BigDecimal unusedLeave, BigDecimal categoryCount, Long updatedCount) {
+        if (updatedCount != null && updatedCount != 0) { // 연차 종류에서 차감될 count를 조회하지 않고 updatedCount를 사용
+            dto.setUsedDate(BigDecimal.valueOf(updatedCount));
+            dto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
+            dto.setTotalDay(updatedCount.intValue());
+        } else { // 연차 종류에서 count를 조회해서 사용
+            dto.setUsedDate(categoryCount);
+            dto.setUnusedDate(unusedLeave.subtract(categoryCount));
+            dto.setTotalDay(categoryCount.intValue());
+        }
+    }
+
+    /**
+     * 결재자가 모두 승인했는지 status를 조회한다.
+     *
+     * @param approvalStatusList 컬럼명(key)과 status 컬럼의 도메인 값(value) 형식의 리스트
+     * @return 모든 결재자가 승인하면 true, 그렇지 않으면 false
+     */
+    private boolean areAllApproved(List<Map<String, Object>> approvalStatusList) {
+        for (Map<String, Object> statusData : approvalStatusList) {
+            String status = (String) statusData.get("status");
+            if (!"C".equals(status)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /**
      * 결재 요청이 온 연차 신청을 승인하여 승인 완료 처리한다.
      *
-     * @param atdApprovalRequestDto 요청 승인
+     * @param requestDtoList 요청 승인 리스트
      */
-    public void approveRequests(AtdApprovalRequestDto atdApprovalRequestDto) {
-        // 1) 연차 이력 추가를 위한 데이터 가져오기
-        Map<String, Object> annualLeaveData = attendanceMapper.getAnnualLeaveData(atdApprovalRequestDto.getAtdNo());
+    public void approveRequests(List<AtdApprovalRequestDto> requestDtoList) {
+        // 일괄 승인 처리 대비해서 List로 받아와서 반복문 돌림
+        for (AtdApprovalRequestDto atdApprovalRequestDto : requestDtoList) {
+            // 필요한 데이터 가져오기
+            Map<String, Object> annualLeaveData = getAnnualLeaveData(atdApprovalRequestDto.getAtdNo());
+            // 잔여연차, 연차 종류별 차감일, (하계휴가일 경우 즉, 2일 이상일 때 사용할) 총 일수 조회
+            BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
+            BigDecimal categoryCount = (BigDecimal) annualLeaveData.get("category_count");
+            Long updatedCount = (Long) annualLeaveData.get("total_day");
+            if (updatedCount == null) {
+                // null check + default 값 설정
+                updatedCount = 0L;
+            }
 
-        // 잔여연차, 연차 종류별 차감일, (하계휴가일 경우 즉, 2일 이상일 때 사용할) 총 일수 조회
-        BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
-        BigDecimal categoryCount = (BigDecimal) annualLeaveData.get("category_count");
-        Long updatedCount = (Long) annualLeaveData.get("total_day");
+            // 1) 연차 이력 추가
+            setAnnualLeaveData(atdApprovalRequestDto, unusedLeave, categoryCount, updatedCount);
 
-        // 2) 연차 이력 추가
-        if (updatedCount != 0) {
-            atdApprovalRequestDto.setUsedDate(BigDecimal.valueOf(updatedCount));
-            atdApprovalRequestDto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
-            atdApprovalRequestDto.setTotalDay(updatedCount.intValue());
+            // 2) 상태 업데이트
+            attendanceMapper.updateStatusByAtdNoAndUserNo(atdApprovalRequestDto.getAtdNo(), atdApprovalRequestDto.getApprovalNo());
 
-        } else {
-            atdApprovalRequestDto.setUsedDate(categoryCount);
-            atdApprovalRequestDto.setUnusedDate(unusedLeave.subtract(categoryCount));
-            atdApprovalRequestDto.setTotalDay(categoryCount.intValue());
+            // 3-1) 각 결재자가 승인했는지 조회
+            List<Map<String, Object>> approvalStatusList = attendanceMapper.getApprovalStatus(atdApprovalRequestDto.getAtdNo());
+
+            // 3-2) 모두 승인한 건일 경우 추가 로직 진행
+            if (areAllApproved(approvalStatusList)) {
+                // 4) 승인된 연차 이력에 추가
+                attendanceMapper.insertAnnualLeaveHistory(atdApprovalRequestDto);
+                // 5) 참조건 상태 변경
+                attendanceMapper.updateStatusByAtdNo(atdApprovalRequestDto.getAtdNo());
+                // 6) 잔여 연차 차감
+                attendanceMapper.updateAnnualLeaveByUnusedDate();
+            }
         }
-        attendanceMapper.insertAnnualLeaveHistory(atdApprovalRequestDto);
-
-        // 3) 상태 업데이트
-        attendanceMapper.updateStatusByAtdNo(atdApprovalRequestDto.getAtdNo());
-
-        // 4) 잔여 연차 차감
-        attendanceMapper.updateAnnualLeaveByUnusedDate();
     }
+    /* // ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 승인 로직 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
 
     /**
      * 근태 이력 팀원 조회

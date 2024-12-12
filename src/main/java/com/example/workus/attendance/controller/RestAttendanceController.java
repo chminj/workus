@@ -25,15 +25,19 @@ public class RestAttendanceController {
     private UserService userService;
 
     @PostMapping("/approve")
-    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList)
+    public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList
+                                                                , @AuthenticationPrincipal LoginUser loginUser)
     {
-        for (AtdApprovalRequestDto reqDto : requestDtoList) {
-            // 각 승인 요청에 대해 서비스 메소드 호출
-            attendanceService.approveRequests(reqDto);
+        // 결재자 정보 각 DTO에 추가
+        Long approvalNo = loginUser.getNo();
+        for (AtdApprovalRequestDto dto : requestDtoList) {
+            dto.setApprovalNo(approvalNo);
         }
-        // RestResponseDto의 success 메서드를 호출하여 기본 메시지로 응답 생성
-        RestResponseDto<String> response = RestResponseDto.success(null); // 데이터는 null 또는 다른 데이터로 설정
 
+        // 수정된 메소드 호출
+        attendanceService.approveRequests(requestDtoList);
+
+        RestResponseDto<String> response = RestResponseDto.success(null);
         response.setMessage("승인이 완료되었습니다.");
 
         return ResponseEntity.ok(response);

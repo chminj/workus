@@ -14,7 +14,8 @@ public class NotificationController {
 
     @GetMapping("/register")
     public SseEmitter register() {
-        SseEmitter emitter = new SseEmitter(120_000L);
+        SseEmitter emitter = new SseEmitter(60_000L);
+//        SseEmitter emitter = new SseEmitter(120_000L);
 
         // 새로운 emitter를 서비스에 추가
         notificationService.addEmitter(emitter);

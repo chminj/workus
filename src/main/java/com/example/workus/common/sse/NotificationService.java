@@ -16,7 +16,20 @@ public class NotificationService {
      * @param emitter 등록할 SseEmitter 인스턴스
      */
     public void addEmitter(SseEmitter emitter) {
-        emitters.add(emitter); // emitter를 리스트에 추가
+        // emitter를 리스트에 추가
+        emitters.add(emitter);
+
+        // 더미 데이터 전송하여 503 에러 방지
+        try {
+            emitter.send(SseEmitter.event()
+                    .name("connect")
+                    .data("connected!")); // 더미 데이터 전송
+        } catch (Exception e) {
+            // 오류가 발생한 emitter는 제거
+            emitters.remove(emitter);
+            // 로그 추가: 어떤 오류가 발생했는지 확인
+            System.err.println("Emitter 오류: " + e.getMessage());
+        }
     }
 
     /**
@@ -27,9 +40,11 @@ public class NotificationService {
     public void sendMessageToAll(String message) {
         for (SseEmitter emitter : emitters) {
             try {
-                emitter.send(message); // 각 emitter에 메시지 전송
+                // 각 emitter에 메시지 전송
+                emitter.send(message);
             } catch (Exception e) {
-                emitters.remove(emitter); // 오류가 발생한 emitter는 제거
+                // 오류가 발생한 emitter는 제거
+                emitters.remove(emitter);
                 // 로그 추가: 어떤 오류가 발생했는지 확인
                 System.err.println("Emitter 오류: " + e.getMessage());
             }

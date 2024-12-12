@@ -235,11 +235,11 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 })
                 .then(data => {
                     alert(data.message);
-                    location.reload(); // 페이지 새로고침
+                    // 페이지 새로고침
+                    location.reload();
                 })
                 .catch(error => {
-                    console.log('Error:', error);
-                    alert('오류가 발생했습니다.'); // 에러 메시지
+                    alert('오류가 발생했습니다.');
                 });
         })
     });

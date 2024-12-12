@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @Alias("apvReqDto")
 public class AtdApprovalRequestDto {
     private Long atdNo;
+    private Long approvalNo; // 결재자 번호(로그인 사용자)
     private String status;
     private BigDecimal dayTotal;
 

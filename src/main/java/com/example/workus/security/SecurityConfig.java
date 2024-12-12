@@ -1,11 +1,14 @@
 package com.example.workus.security;
 
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -35,14 +38,17 @@ public class SecurityConfig {
                         .maximumSessions(1)
                         .expiredUrl("/login?expired")    // 세션 만료시
                 )
-                .sessionManagement(session -> session
-                        .invalidSessionUrl("/login")     // 유효하지 않은 세션
-                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login")
                         .invalidateHttpSession(true) // 세션 무효화
                         .deleteCookies("JSESSIONID") // 쿠키 삭제
+                ).exceptionHandling(exceptionHandler -> exceptionHandler.authenticationEntryPoint(
+                    (request, response, authException) -> {
+                            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            response.sendRedirect(request.getContextPath() + "/login?error=required");
+                        }
+                    )
                 )
         ;
 
