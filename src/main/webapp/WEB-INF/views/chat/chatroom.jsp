@@ -353,8 +353,8 @@
 									id: LOGIN_USERID
 								},
 								payload: {
-									fileSrc: data.fileSrc,
-									type: 'file'
+									type: 'file',
+									fileSrc: data.fileSrc
 								}
 							}
 							send(message);
@@ -366,6 +366,27 @@
 					$('input[name=content]').val('');
 					$('#fileInput').val('');
 				}
+
+				// 이모지 전송
+				$('#chat').on('click', '#emojiDiv', async function() {
+					let emojiNo = $(this).data('emojiNo');
+					$('#emojiSuggestionsDiv').addClass('d-none');
+					$('input[name=content]').val('');
+
+					let message = {
+						cmd: 'chat-message',
+						chatroomNo: chatroomNo,
+						user: {
+							no: LOGIN_USERNO,
+							id: LOGIN_USERID
+						},
+						payload: {
+							type: 'emoji',
+							emojiNo: emojiNo
+						}
+					}
+					send(message);
+				})
 
 				// 다른 페이지로 이동하거나 창이 꺼지기 직전
 				window.addEventListener('beforeunload', function () {
@@ -752,7 +773,19 @@
 								</a>
 							</div>
 						</div>
-					` : `
+						`
+						: chat.type === 'emoji'
+								? `
+						<div class="bg-light rounded p-2 mb-1">
+							<div class="image-container">
+								<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+								alt="이모지"
+								class="emoji-image"
+								style="width: 128px; height: 128px; object-fit: contain;" />
+							</div>
+						</div>
+						`
+						: `
 					<div class="bg-light rounded p-2 mb-1">
 						\${chat.content}
 					</div>
@@ -807,7 +840,19 @@
 							</a>
 						</div>
 					</div>
-					` : `
+						`
+						: chat.type === 'emoji'
+								? `
+					<div class="bg-light rounded p-2 mb-1">
+						<div class="image-container">
+							<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+							alt="이모지"
+							class="emoji-image"
+							style="width: 128px; height: 128px; object-fit: contain;" />
+						</div>
+					</div>
+						`
+						: `
 					<div class="bg-light rounded p-2 mb-1">
 						\${chat.content}
 					</div>
@@ -998,6 +1043,17 @@
 															</a>
 														</div>
 													</div>
+													`
+														: chat.type === 'emoji'
+																? `
+												<div class="bg-light rounded p-2 mb-1">
+													<div class="image-container">
+														<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+														 alt="이모지"
+														 class="emoji-image"
+														 style="width: 128px; height: 128px; object-fit: contain;" />
+														</div>
+													</div>
 															`
 														: `
 													<div class="bg-light rounded p-2 mb-1">
@@ -1045,6 +1101,17 @@
 																</div>
 																<i class="bi bi-download ms-2"></i>
 															</a>
+														</div>
+													</div>
+															`
+															: chat.type === 'emoji'
+																	? `
+												<div class="bg-light rounded p-2 mb-1">
+													<div class="image-container">
+														<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+														 alt="이모지"
+														 class="emoji-image"
+														 style="width: 128px; height: 128px; object-fit: contain;" />
 														</div>
 													</div>
 															`
@@ -1125,7 +1192,19 @@
 								</a>
 							</div>
 						</div>
-						` : `
+						`
+						: chat.type === 'emoji'
+								? `
+						<div class="bg-light rounded p-2 mb-1">
+							<div class="image-container">
+								<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+								 alt="이모지"
+								 class="emoji-image"
+								 style="width: 128px; height: 128px; object-fit: contain;" />
+							</div>
+						</div>
+									`
+									: `
 						<div class="bg-light rounded p-2 mb-1">
 							\${chat.content}
 						</div>
@@ -1170,7 +1249,18 @@
 								</div>
 							</div>
 							`
-							: `
+							: chat.type === 'emoji'
+									? `
+							<div class="bg-light rounded p-2 mb-1">
+								<div class="image-container">
+									<img src="${s3}/resources/repository/emoji/\${chat.emoji.fileSrc}"
+									 alt="이모지"
+									 class="emoji-image"
+									 style="width: 128px; height: 128px; object-fit: contain;" />
+								</div>
+							</div>
+									`
+									: `
 							<div class="bg-light rounded p-2 mb-1">
 								\${chat.content}
 							</div>

@@ -1,11 +1,14 @@
 package com.example.workus.common.websocket;
 
+import com.example.workus.chat.dto.EmojiPayload;
 import com.example.workus.chat.dto.FilePayload;
 import com.example.workus.chat.dto.TextPayload;
+import com.example.workus.chat.mapper.ChatMapper;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;
 import com.example.workus.chat.vo.Chatroom;
+import com.example.workus.chat.vo.Emoji;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -31,15 +34,17 @@ public class ChatSocketHandler extends TextWebSocketHandler {
     private final UserMapper userMapper;
     private final ChatService chatService;
     private final ChatroomMapper chatroomMapper;
+    private final ChatMapper chatMapper;
 
     @Autowired
-    public ChatSocketHandler(UserMapper userMapper, ChatService chatService, ChatroomMapper chatroomMapper) {
+    public ChatSocketHandler(UserMapper userMapper, ChatService chatService, ChatroomMapper chatroomMapper, ChatMapper chatMapper) {
         this.userMapper = userMapper;
         this.chatService = chatService;
         this.chatroomMapper = chatroomMapper;
         this.objectMapper = new ObjectMapper()
                 .registerModule(new JavaTimeModule())
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.chatMapper = chatMapper;
     }
 
     private ObjectMapper objectMapper;
@@ -233,6 +238,11 @@ public class ChatSocketHandler extends TextWebSocketHandler {
             }
         } else if (chatMessage.getPayload() instanceof TextPayload textPayload) {
             chat.setContent(textPayload.getContent());
+        } else if (chatMessage.getPayload() instanceof EmojiPayload emojiPayload) {
+            int emojiNo = emojiPayload.getEmojiNo();
+            Emoji emoji = chatMapper.getEmojiByEmojiNo(emojiNo);
+            chat.setEmoji(emoji);
+            chat.setType("emoji");
         }
         chatService.insertChat(chat);
         chatMessage.setChat(chat);

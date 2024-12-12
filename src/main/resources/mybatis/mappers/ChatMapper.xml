@@ -3,9 +3,9 @@
 <mapper namespace="com.example.workus.chat.mapper.ChatMapper">
     <insert id="insertChat">
         insert into WORKUS_CHAT
-        (CHAT_CONTENT, CHAT_FILE_SRC, CHAT_IS_FIRST, USER_NO, CHATROOM_NO, CHAT_TIME)
+        (CHAT_CONTENT, CHAT_FILE_SRC, CHAT_IS_FIRST, USER_NO, CHATROOM_NO, CHAT_TIME, EMOJI_NO)
         values
-        (#{chat.content}, #{chat.fileSrc}, #{chat.isFirst}, #{chat.user.no}, #{chat.chatroom.no}, #{chat.time})
+        (#{chat.content}, #{chat.fileSrc}, #{chat.isFirst}, #{chat.user.no}, #{chat.chatroom.no}, #{chat.time}, #{chat.emoji.no})
         <selectKey keyProperty="chat.no" resultType="Long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -22,12 +22,18 @@
             , U.USER_NAME as "user.name"
             , U.USER_PROFILE_SRC as "user.profileSrc"
             , C.CHATROOM_NO as "chatroom.no"
+            , C.EMOJI_NO as "emoji.no"
+            , E.EMOJI_FILE_SRC as "emoji.fileSrc"
         from
             WORKUS_CHAT C
-        inner join
+        left join
             WORKUS_USERS U
         on
             C.USER_NO = U.USER_NO
+        left join
+            WORKUS_CHAT_EMOJI E
+        on
+            C.EMOJI_NO = E.EMOJI_NO
         where
             C.CHATROOM_NO = #{chatroomNo}
         and
