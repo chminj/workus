@@ -11,4 +11,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class ChatForm {
     private String content;
     private MultipartFile upfile;
+    private int emojiNo;
 }
