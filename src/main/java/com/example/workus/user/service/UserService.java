@@ -256,4 +256,13 @@ public class UserService {
 
         userMapper.insertNewEmployee(user); // 신규 직원을 등록한다.
     }
+
+    /**
+     * roleNo를 Constants에서 선택해서 해당 권한을 갖고 있는 유저들을 조회한다.
+     * @param roleNos 권한 번호(들)
+     * @return 권한 조건에 해당하는 유저들
+     */
+    public List<User> getUsersByRoleNos(List<Integer> roleNos) {
+        return userMapper.getUsersByRoleNos(roleNos);
+    }
 }

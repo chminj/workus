@@ -1,5 +1,9 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@ include file="tags.jsp" %>
+<%-- SSE --%>
+<sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
+<script src="/resources/js/sse.js"></script>
+</sec:authorize>
 <header class="layout header">
     <a href="/home" class="logo">
         <span>WORKUS</span>
@@ -22,6 +26,15 @@
             </a>
         </li>
     </ul>
+    <div id="notificationToast" class="toast fixed-top align-items-center text-bg-secondary border-0" role="alert"
+     aria-live="assertive" aria-atomic="true">
+      <div class="d-flex">
+        <div class="toast-body">
+          신규 결재 요청이 있습니다.
+        </div>
+        <button type="button" class="btn-close btn-close-white toastClose me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+    </div>
 </header>
 
 

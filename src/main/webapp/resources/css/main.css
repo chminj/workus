@@ -306,3 +306,5 @@ main.noLnb {margin-left:76px;}
 
 .modify {background-color:#e91e63 !important; font-size:13px;}
 .logout {background-color:#0f132a !important; font-size:13px;}
+
+#notificationToast {position:fixed; left:auto; right:20px; top:60px;}
