@@ -22,7 +22,12 @@
             <div class="lnb">
                 <!-- 파일 업로드 버튼 -->
                 <div class="lnb-btn text-center mb-4">
-                    <button type="button" class="btn btn-dark" id="addScheduleBtn">파일 업로드</button>
+                    <form method="post" action="upload" enctype="multipart/form-data" id="uploadForm">
+                        <!-- 숨겨진 파일 선택 input -->
+                        <input type="file" id="fileInput2" class="d-none" name="file" />
+                        <!-- 실제 사용자에게 보이는 버튼 -->
+                        <button type="button" class="btn btn-dark" id="addScheduleBtn">파일 업로드</button>
+                    </form>
                 </div>
 
                 <!-- LNB 메뉴 -->
@@ -48,6 +53,7 @@
                                         <col width="15%">
                                         <col width="15%">
                                         <col width="20%">
+                                        <col width="3%">
                                     </colgroup>
                                     <thead>
                                         <tr>
@@ -56,6 +62,7 @@
                                             <th>업로더</th>
                                             <th>용량</th>
                                             <th>등록일</th>
+                                            <th></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -97,6 +104,11 @@
                                                         </c:choose>
                                                     </td>
                                                     <td><fmt:formatDate value="${archive.uploadTime}" pattern="yyyy-M-dd a hh:mm" /></td>
+                                                    <td>
+                                                        <a href="delete?no=${archive.no }">
+                                                            <i class="bi bi-trash"></i>
+                                                        </a>
+                                                    </td>
                                                 </tr>
                                             </c:forEach>
                                         </c:otherwise>

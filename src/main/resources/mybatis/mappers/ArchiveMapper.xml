@@ -59,7 +59,7 @@
             A.ARCHIVE_FILE_EXTENSION AS fileExtension,
             A.ARCHIVE_FILE_STATUS AS fileStatus,
             A.ARCHIVE_DIVISION AS division,
-            A.USER_NO AS userNo,
+            U.USER_NO AS "user.no",
             U.USER_NAME AS userName  <!-- 유저 이름 가져오기 -->
         FROM
             WORKUS_ARCHIVE A
@@ -77,7 +77,7 @@
             A.ARCHIVE_FILE_EXTENSION AS fileExtension,
             A.ARCHIVE_FILE_STATUS AS fileStatus,
             A.ARCHIVE_DIVISION AS division,
-            A.USER_NO AS userNo,
+            U.USER_NO AS "user.no",
             U.USER_NAME AS userName  <!-- 유저 이름 가져오기 -->
         FROM
             WORKUS_ARCHIVE A
@@ -86,6 +86,11 @@
         WHERE
             A.ARCHIVE_NO = #{no}
     </select>
+
+    <delete id="deleteArchiveByNo" parameterType="long">
+        DELETE FROM WORKUS_ARCHIVE
+        WHERE ARCHIVE_NO = #{no}
+    </delete>
 
 
 </mapper>
