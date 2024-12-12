@@ -239,7 +239,7 @@
 					ws.onopen = function () {
 						let message = {
 							cmd: "chat-open",
-							chatroomNo: $('.chat-text').data('chatroomNo'),
+							chatroomNo: chatroomNo,
 							user: {
 								no: LOGIN_USERNO,
 								id: LOGIN_USERID
@@ -327,7 +327,10 @@
 								no: LOGIN_USERNO,
 								id: LOGIN_USERID
 							},
-							text: inputMessage
+							payload: {
+								type: 'text',
+								content: inputMessage
+							}
 						}
 						send(message);
 					}
@@ -349,9 +352,9 @@
 									no: LOGIN_USERNO,
 									id: LOGIN_USERID
 								},
-								chat: {
-									type: 'file',
-									fileSrc: data.fileSrc
+								payload: {
+									fileSrc: data.fileSrc,
+									type: 'file'
 								}
 							}
 							send(message);
@@ -1189,7 +1192,7 @@
 					<%-- 채팅 입력 전체 영역 --%>
 					<div class="position-relative">
 						<%-- 이모지 제안 영역 --%>
-						<div id="emojiSuggestionsDiv" class="position-absolute start-0 w-100 bg-white border rounded-3 p-3" style="bottom: 120px;">
+						<div id="emojiSuggestionsDiv" class="position-absolute start-0 w-100 bg-white border rounded-3 p-3 d-none" style="bottom: 120px;">
 							<div class="row g-3" id="addEmojiDiv">
 								<%-- 추가될 이모지들 --%>
 

@@ -1,11 +1,14 @@
 package com.example.workus.common.websocket;
 
+import com.example.workus.chat.dto.FilePayload;
+import com.example.workus.chat.dto.TextPayload;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.chat.vo.Chat;
 import com.example.workus.chat.vo.Chatroom;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +37,12 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         this.userMapper = userMapper;
         this.chatService = chatService;
         this.chatroomMapper = chatroomMapper;
+        this.objectMapper = new ObjectMapper()
+                .registerModule(new JavaTimeModule())
+                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper objectMapper;
     private static final String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
 
     // 채팅이 진행중인 채팅방 Map<채팅방 번호, Map<유저 아이디, 세션>> 형태로 저장
@@ -214,9 +220,10 @@ public class ChatSocketHandler extends TextWebSocketHandler {
         chat.setChatroom(chatroomVo);
         User user = userMapper.getUserByUserNo(userNo);
         chat.setUser(user);
-        if (chatMessage.getChat() != null) {
-            chat.setFileSrc(chatMessage.getChat().getFileSrc());
-            String extension = chat.getFileSrc().toLowerCase();
+        if (chatMessage.getPayload() instanceof FilePayload filePayload) {
+            String fileSrc = filePayload.getFileSrc();
+            chat.setFileSrc(fileSrc);
+            String extension = fileSrc.toLowerCase();
             chat.setType("file");
             for (String imageExtension : imageExtensions) {
                 if (extension.endsWith("." + imageExtension)) {
@@ -224,8 +231,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
                     break;
                 }
             }
-        } else {
-            chat.setContent(chatMessage.getText());
+        } else if (chatMessage.getPayload() instanceof TextPayload textPayload) {
+            chat.setContent(textPayload.getContent());
         }
         chatService.insertChat(chat);
         chatMessage.setChat(chat);
