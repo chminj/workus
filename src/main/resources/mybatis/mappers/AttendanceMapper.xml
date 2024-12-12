@@ -252,22 +252,38 @@
         </if>
         )
     </insert>
+    <!-- 결재자 상태 조회 쿼리 -->
+    <select id="getApprovalStatus" resultType="map">
+        SELECT AU.ATD_NO AS NO,
+               AU.ATD_STATUS AS status
+        FROM WORKUS_ATTENDANCE A
+        JOIN WORKUS_ATTENDANCE_USER AU ON AU.ATD_NO = A.ATD_NO
+        WHERE AU.ATD_NO = #{atdNo}
+        AND AU.ATD_APPROVAL_STATUS = 'A'
+    </select>
+    <update id="updateStatusByAtdNoAndUserNo">
+        UPDATE WORKUS_ATTENDANCE_USER
+        SET ATD_STATUS = 'C'
+        WHERE ATD_NO = #{atdNo}
+        AND USER_NO = #{approvalNo}
+    </update>
     <update id="updateStatusByAtdNo">
         UPDATE WORKUS_ATTENDANCE_USER
         SET ATD_STATUS = 'C'
         WHERE ATD_NO = #{atdNo}
+        AND ATD_APPROVAL_STATUS = 'I'
     </update>
     <update id="updateAnnualLeaveByUnusedDate">
         UPDATE WORKUS_USERS U
             JOIN (SELECT DISTINCT A.USER_NO
-                , H.ATD_UNUSED_DATE
-                , A.ATD_NO
-                FROM WORKUS_ATTENDANCE A
-                JOIN WORKUS_ANNUAL_LEAVE_HISTORY H ON A.ATD_NO = H.ATD_NO
-                JOIN WORKUS_ATTENDANCE_USER AU ON A.ATD_NO = AU.ATD_NO
-                WHERE AU.ATD_STATUS = 'C'
-                ORDER BY H.ATD_NO DESC
-                ) AS subquery
+                    , H.ATD_UNUSED_DATE
+                    , A.ATD_NO
+                    FROM WORKUS_ATTENDANCE A
+                    JOIN WORKUS_ANNUAL_LEAVE_HISTORY H ON A.ATD_NO = H.ATD_NO
+                    JOIN WORKUS_ATTENDANCE_USER AU ON A.ATD_NO = AU.ATD_NO
+                    WHERE AU.ATD_STATUS = 'C'
+                    ORDER BY H.ATD_NO DESC
+                    ) AS subquery
             ON U.USER_NO = subquery.USER_NO
         SET U.USER_UNUSED_ANNUAL_LEAVE = subquery.ATD_UNUSED_DATE
         WHERE EXISTS (

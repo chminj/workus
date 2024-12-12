@@ -23,6 +23,7 @@ import java.util.Map;
 
 @Controller
 @RequestMapping("/approval")
+@PreAuthorize("isAuthenticated()")
 public class ApprovalController {
 
     private final ApprovalService approvalService;

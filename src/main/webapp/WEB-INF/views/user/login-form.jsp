@@ -57,16 +57,6 @@
             로그인
         </button>
     </form>
-    <!-- separator -->
-    <div class="separator">
-        <p>OR</p>
-    </div>
-    <!-- google button -->
-    <button class="google__btn">
-        <i class="fa fa-google"></i>
-        Sign in with Google
-    </button>
-    <!-- google button -->
 </div>
 </body>
 <footer>

@@ -10,6 +10,8 @@ import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.MissingServletRequestParameterException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.List;
 import java.util.Map;
@@ -144,7 +146,7 @@ public class ApprovalService {
     }
 
     /**
-     * 요청자 이름을 설정하는 메서드 (중복 방지하는 함수 역할)
+     * 요청자 이름을 설정하는 메서드
      *
      * @param apvListViewDtos 결재 요청 리스트
      */
@@ -175,11 +177,7 @@ public class ApprovalService {
             if (apvUser != null) {
                 approvalDetail.setApvUserName(apvUser.getName());
                 approvalDetail.setApvUserPositionName(apvUser.getPositionName());
-            } else {
-                approvalDetail.setApvUserName("");
             }
-        } else {
-            approvalDetail.setApvUserName("");
         }
 
         // 카테고리 별로 상이한 reason name 매핑 처리
@@ -201,7 +199,6 @@ public class ApprovalService {
                 optionMap.put("textName", newValue);
             }
         }
-
         return approvalDetail;
     }
 

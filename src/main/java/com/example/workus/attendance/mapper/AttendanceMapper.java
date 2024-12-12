@@ -40,9 +40,12 @@ public interface AttendanceMapper {
     // ㅡㅡㅡㅡㅡㅡ 승인 로직 시작
     // 연차 이력 추가에 필요한 데이터 조회(H.잔여 연차, C.카테고리 별 차감 일수)
     Map<String, Object> getAnnualLeaveData(@Param("atdNo") Long atdNo);
+    List<Map<String, Object>> getApprovalStatus(@Param("atdNo") Long atdNo);
     // 승인 이력에 추가
     void insertAnnualLeaveHistory(@Param("apvReqDto") AtdApprovalRequestDto atdApprovalRequestDto);
-    // 승인 상태 변경
+    // 각 결재자마다 승인 상태 변경
+    void updateStatusByAtdNoAndUserNo(@Param("atdNo") Long atdNo, @Param("approvalNo") Long approvalNo);
+    // (전체 승인되면) 승인 상태 일괄 변경
     void updateStatusByAtdNo(@Param("atdNo") Long atdNo);
     // 승인 이후 잔여 연차 수정
     void updateAnnualLeaveByUnusedDate();
