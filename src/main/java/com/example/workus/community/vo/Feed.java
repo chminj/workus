@@ -6,6 +6,7 @@ import org.apache.ibatis.type.Alias;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -38,6 +39,21 @@ public class Feed {
 
     public int getLikeCount() {
         return likes == null ? 0 : likes.size();
+    }
+
+    private static Set<String> images = Set.of("png", "jpg", "jpeg");
+    private static Set<String> videos = Set.of("mp4", "avi", "mpg", "mpeg");
+
+    public String getMediaType() {
+        String extension = mediaUrl.substring(mediaUrl.lastIndexOf(".") + 1).toLowerCase();
+
+        if (images.contains(extension)) {
+            return "image";
+        } else if (videos.contains(extension)) {
+            return "video";
+        }
+
+        return null;
     }
 
 }

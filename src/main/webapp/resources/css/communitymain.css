@@ -1,11 +1,38 @@
 @import url('https://fonts.googleapis.com/css2?family=Lobster&display=swap');
+.form-button {
+    margin-top: 20px;
+    margin-left: 30px;
+    display: inline-block; /* 인라인 블록 요소로 설정 */
+    padding: 10px 20px;   /* 상하, 좌우 여백 설정 */
+    font-size: 16px;      /* 글자 크기 설정 */
+    color: black;         /* 글자 색상: 검정색 */
+    background-color: white; /* 배경 색상: 흰색 */
+    border: 1px solid black; /* 테두리: 검정색 */
+    border-radius: 5px;   /* 모서리 둥글기 설정 */
+    text-align: center;    /* 텍스트 가운데 정렬 */
+    text-decoration: none;  /* 밑줄 없음 */
+    cursor: pointer;       /* 커서를 포인터로 변경 */
+    transition: background-color 0.3s ease, color 0.3s ease; /* 애니메이션 추가 */
+}
 
-h1{
-    color:#262626;
-    font-family:'Lobster', cursive;
-    font-weight:100;
+.form-button:hover {
+    background-color: black; /* 마우스 오버 시 배경 색상: 검정색 */
+    color: white;            /* 마우스 오버 시 글자 색상: 흰색 */
+}
+
+.form-button:active {
+    background-color: #444;  /* 버튼 클릭 시 배경 색상: 진한 검정 */
+    color: white;            /* 버튼 클릭 시 글자 색상: 흰색 */
+}
+
+
+h1 {
+    color: #262626;
+    font-family: 'Lobster', cursive;
+    font-weight: 100;
     line-height: 1;
 }
+
 button {
     background-color: transparent; /* 배경 투명 */
     border: none; /* 테두리 없음 */
@@ -27,6 +54,7 @@ button svg {
 button:hover svg {
     transform: scale(1.1); /* 호버 시 크기 증가 */
 }
+
 .dropdown {
     display: none; /* 기본적으로 숨김 */
     position: absolute; /* 부모 요소에 대해 절대 위치 */
@@ -35,8 +63,9 @@ button:hover svg {
     z-index: 1; /* z-index 설정 */
     padding: 10px; /* 내부 여백 */
 }
-.search-controls  {
-    margin-left: 1300px; !important; /* 추가된 속성: 버튼을 오른쪽으로 이동시키기 위해 여백을 자동으로 설정 */
+
+.search-controls {
+    margin-left: 80%;!important; /* 추가된 속성: 버튼을 오른쪽으로 이동시키기 위해 여백을 자동으로 설정 */
 }
 
 .dropdown.show {
@@ -52,22 +81,23 @@ button:hover svg {
     background-color: #f0f0f0; /* 호버 시 배경색 변경 */
 }
 
-.wrap{
-    width:1500px;
-    margin:0 auto;
-}
-.round_img{
-    border-radius:100%;
+.wrap {
+    width: 1500px;
+    margin: 0 auto;
 }
 
-.txt_id{
-    font-weight:bold;
+.round_img {
+    border-radius: 100%;
+}
+
+.txt_id {
+    font-weight: bold;
 }
 
 /**************************
 HEADER
 **************************/
-header{
+header {
 
     top: 0; /* 상단에 고정 */
     width: 100%;
@@ -75,32 +105,34 @@ header{
     border-bottom: 1px solid #e8e8e8;
 }
 
-header .wrap{
+header .wrap {
     display: flex;
     align-items: center;
 }
 
-header .logo h1{
-    height:100%;
-    margin-left:35px;
-    padding-left:15px;
-    border-left:1px solid #262626;
-    font-size:40px;
-    line-height:15px;
-    font-weight:100;
+header .logo h1 {
+    height: 100%;
+    margin-left: 35px;
+    padding-left: 15px;
+    border-left: 1px solid #262626;
+    font-size: 40px;
+    line-height: 15px;
+    font-weight: 100;
 }
 
-.search{
+.search {
     display: flex;
-    flex: 3.5;
-    padding: 5px;
-    margin: 0 15% 5%;
+    flex: 2;                   /* 비율을 줄임 */
+    padding: 3px;             /* 내부 여백을 줄임 */
+    margin: 0 10%;         /* 외부 여백을 줄임 */
     background: #fafafa;
     border: 1px solid #e8e8e8;
     text-align: center;
+    width: 80%;                /* 너비를 80%로 설정 */
+    height: 40px;              /* 높이를 40px로 설정 */
 }
 
-.search input[type=text]{
+.search input[type=text] {
     position: relative;
     flex: 9;
     height: 25px;
@@ -108,17 +140,19 @@ header .logo h1{
     border: none;
 }
 
-.search button{
+.search button {
     flex: 1;
     color: #999;
 }
-.search button> .fas {
+
+.search button > .fas {
     position: relative;
 }
+
 /**************************
 MAIN LAYOUT
 **************************/
-main.wrap{
+main.wrap {
     display: flex;
     flex-direction: row-reverse;
 
@@ -127,33 +161,34 @@ main.wrap{
 /**************************
 ASIDE
 **************************/
-aside{
+aside {
     flex: 3.5;
 }
 
 /* my profile */
-.my_profile{
+.my_profile {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.my_profile a.profile_img{
-    flex:2;
+.my_profile a.profile_img {
+    flex: 2;
 }
 
-.my_profile a.profile_img img{
+.my_profile a.profile_img img {
     width: 55px;
     height: 55px;
 }
 
-.my_profile .my_id{
+.my_profile .my_id {
     flex: 8;
 }
 
-.my_profile .my_id p{
-    color:  #999;
+.my_profile .my_id p {
+    color: #999;
 }
+
 .my_id > button {
     flex: 2;
     color: #0095f6;
@@ -162,9 +197,8 @@ aside{
 }
 
 
-
 /* WIDGET - common */
-.widget{
+.widget {
     background: #fff;
     border: 1px solid #e8e8e8;
     border-radius: 5px;
@@ -172,7 +206,7 @@ aside{
     margin-bottom: 15px;
 }
 
-.widget_ttl{
+.widget_ttl {
     display: flex;
     /*  justify-content 속성은 플렉스 요소의 수평 방향 정렬 방식을 설정
         1. flex-start : 기본 설정으로, 플렉스 요소는 플렉스 컨테이너의 앞쪽에서부터 배치됩니다.
@@ -185,23 +219,24 @@ aside{
     font-size: 0.8em;
 }
 
-.widget_ttl span{
+.widget_ttl span {
     color: #999;
 }
 
-.widget .txt_id:hover{
+.widget .txt_id:hover {
     text-decoration: underline;
 }
 
 /* WIDGET - story */
-.stories{
+.stories {
     padding-bottom: 0;
 }
 
-.list_story{
+.list_story {
     height: 200px;
     overflow-y: scroll;
 }
+
 /*  스크롤바역할을 한다.
     ::-webkit-scrollbar — 스크롤바 전체.
     ::-webkit-scrollbar-button — 스크롤바의 버튼
@@ -212,62 +247,62 @@ aside{
     ::-webkit-scrollbar-corner — 수평 스크롤바와 수직 스크롤바가 교차하는 곳의 하단 모서리.
                                 주로 브라우저 창의 우측 하단 모서리에 위치한다.
     ::-webkit-resizer — 몇몇 요소들의 하단 모서리에 나타나는, 드래그 할 수 있는 사이즈 변경 손잡이.*/
-.list_story::-webkit-scrollbar{
+.list_story::-webkit-scrollbar {
     width: 0;
 }
 
-.story{
+.story {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.story a.follower_img{
+.story a.follower_img {
     flex: 2;
 }
 
-.story a.follower_img img{
+.story a.follower_img img {
     width: 45px;
     height: 45px;
 }
 
-.story .user_id{
+.story .user_id {
     flex: 8;
 }
 
-.story .user_id p{
+.story .user_id p {
     color: #999;
 }
 
 /* WIDGET - recommend*/
-.recommends{
-    padding-bottom:5px;
+.recommends {
+    padding-bottom: 5px;
 }
 
-.recommend{
+.recommend {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
 }
 
-.recommend a.recommend_img{
+.recommend a.recommend_img {
     flex: 2;
 }
 
-.recommend a.recommend_img img{
+.recommend a.recommend_img img {
     width: 45px;
     height: 45px;
 }
 
-.recommend .user_id{
+.recommend .user_id {
     flex: 6;
 }
 
-.recommend .user_id p{
-    color:  #999;
+.recommend .user_id p {
+    color: #999;
 }
 
-.recommend button{
+.recommend button {
     flex: 2;
     color: #0095f6;
     font-size: 0.8em;
@@ -275,14 +310,14 @@ aside{
 }
 
 /*menu*/
-.menu ul li{
+.menu ul li {
     position: relative;
     display: inline-block;
     line-height: 1.5;
     padding-right: 12px;
 }
 
-.menu ul li:before{
+.menu ul li:before {
     content: "";
     position: absolute;
     top: 50%;
@@ -293,12 +328,12 @@ aside{
     background: #b9b9b9;
 }
 
-.menu ul li a{
+.menu ul li a {
     color: #999;
     font-size: 0.8em;
 }
 
-.copyright{
+.copyright {
     color: #999;
     font-size: 0.8em;
     padding-top: 20px;
@@ -307,46 +342,48 @@ aside{
 /**************************
 FEED BOARD
 **************************/
-div.feed_board{
-    width: 100%;         /* 부모 요소 너비에 맞게 이미지 크기 조정 */
-    height: 100%;        /* 부모 요소 높이에 맞게 이미지 크기 조정 */
+div.feed_board {
+    width: 100%; /* 부모 요소 너비에 맞게 이미지 크기 조정 */
+    height: 100%; /* 부모 요소 높이에 맞게 이미지 크기 조정 */
     margin: 70px;
 }
 
 /* FEED - common */
-.feed{
+.feed {
     background: #fff;
     border: 1px solid #e8e8e8;
+    margin: auto;
+    width: 100%;
 }
 
 /* FEED - top */
-.new_poster{
+.new_poster {
     display: flex;
     align-items: center;
     padding: 10px 20px;
 }
 
-.new_poster .poster_img{
-    flex:1;
+.new_poster .poster_img {
+    flex: 1;
 }
 
-.new_poster .poster_img img{
-    width:45px;
-    height:45px;
+.new_poster .poster_img img {
+    width: 45px;
+    height: 45px;
 }
 
-.new_poster .poster_id{
+.new_poster .poster_id {
     flex: 18;
     margin-left: 10px;
 }
 
-.new_poster button{
+.new_poster button {
     flex: 1;
     font-size: 0;
     text-align: right;
 }
 
-.new_poster button .fas{
+.new_poster button .fas {
     flex: 0.4;
     font-size: 12px;
 }
@@ -354,53 +391,57 @@ div.feed_board{
 /* FEED - content */
 .feed_imgs img,
 .feed_imgs video {
-    width: 100%;   /* 부모 요소의 너비에 맞추기 */
-    height: 100%;  /* 부모 요소의 높이에 맞추기 */
-    object-fit: cover;  /* 이미지 비율을 유지하며 부모 크기에 맞추기 */
+    width: 100%; /* 부모 요소의 너비에 맞추기 */
+    height: 500px; /* 부모 요소의 높이에 맞추기 */
+    object-fit: contain; /* 이미지 비율을 유지하며 부모 크기에 맞추기 */
 }
 
-.interactions{
+.interactions {
     display: flex;
     align-items: center;
     height: 50px;
     padding: 0 10px;
 }
-.interactions button .far{
+
+.interactions button .far {
     font-size: 20px;
     color: #676767;
 }
-.interactions .my_emotion{
+
+.interactions .my_emotion {
     display: flex;
     flex: 2;
 }
+
 .large-heart {
     font-size: 25px; /* 피드 내 하트 크기 */
 }
-.feed_imgs p{
+
+.feed_imgs p {
     display: flex;
     align-items: center;
     padding: 10px 20px;
 }
 
-.feed_imgs p .like_user{
+.feed_imgs p .like_user {
     display: flex;
     align-items: center;
 }
 
-.feed_imgs p .txt_id{
+.feed_imgs p .txt_id {
     margin-left: 10px;
 }
 
 /* FEED - feed text */
-.feed_txt{
+.feed_txt {
     padding: 0 20px;
 }
 
-.feed_txt .txt_id{
+.feed_txt .txt_id {
     margin-right: 5px;
 }
 
-.feed_txt .more{
+.feed_txt .more {
     color: #999;
 }
 
@@ -417,6 +458,7 @@ div.feed_board{
     justify-content: center;
     align-items: center;
 }
+
 .popup {
     background: #fff;
     width: 1500px;
@@ -426,6 +468,7 @@ div.feed_board{
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: flex;
 }
+
 .popup-left {
     flex: 2;
     display: flex;
@@ -433,16 +476,19 @@ div.feed_board{
     justify-content: center;
     background-color: #000;
 }
+
 .popup-left img {
     width: 100%;
     height: 100%;
     object-fit: cover;
 }
+
 .popup-right {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
+
 .open-popup-btn {
     background: none;
     border: none;
@@ -450,11 +496,13 @@ div.feed_board{
     cursor: pointer;
     margin: 0 10px; /* 상하 0px, 좌우 10px */
 }
+
 .open-popup-btn svg {
     width: 24px;
     height: 24px;
     fill: #000000;
 }
+
 .popup-header {
     display: flex;
     align-items: center;
@@ -462,22 +510,26 @@ div.feed_board{
     border-bottom: 1px solid #e6e6e6;
     position: relative;
 }
+
 .popup-header img.profile {
     border-radius: 50%;
     width: 40px;
     height: 40px;
     margin-right: 10px;
 }
+
 .popup-header .username {
     font-weight: bold;
     font-size: 14px;
 }
+
 .popup-header .more-options {
     cursor: pointer;
     font-size: 20px;
     position: absolute;
     right: 50px;
 }
+
 .popup-header .dropdown-menu {
     display: none; /* 기본적으로 숨김 */
     position: absolute; /* 부모 요소에 대해 절대 위치 */
@@ -511,11 +563,13 @@ div.feed_board{
     font-size: 24px;
     cursor: pointer;
 }
-.popup-content {
+
+.popup-detail {
     padding: 15px;
     font-size: 14px;
     line-height: 1.5;
 }
+
 .comments-section {
     flex: 1;
     overflow-y: auto;
@@ -523,15 +577,18 @@ div.feed_board{
     padding: 0 15px;
     border-top: 1px solid #e6e6e6;
 }
+
 .comment {
     padding: 5px 0;
     display: flex;
     align-items: center;
 }
+
 .comment .username {
     font-weight: bold;
     margin-right: 5px;
 }
+
 .popup-footer {
     padding: 10px 15px;
     border-top: 1px solid #e6e6e6;
@@ -541,23 +598,28 @@ div.feed_board{
     align-items: center;
     justify-content: space-between;
 }
+
 .popup-footer .likes {
     font-weight: bold;
     color: #000;
 }
+
 .popup-footer .like-btn {
     cursor: pointer;
     color: #888;
 }
+
 .popup-footer .like-btn.liked {
     color: #e74c3c;
 }
+
 form .add-reply {
     display: flex;
     align-items: center;
     border-top: 1px solid #e6e6e6;
     padding: 10px 15px;
 }
+
 form .add-reply input {
     flex: 1;
     border: none;
@@ -565,6 +627,7 @@ form .add-reply input {
     padding: 5px;
     font-size: 14px;
 }
+
 form .add-reply button {
     border: none;
     background: none;
@@ -572,60 +635,63 @@ form .add-reply button {
     font-weightrr: bold;
     cursor: pointer;
 }
+
 .small-heart {
     font-size: 24px; /* 팝업 내 하트 크기 (예: 24px) */
 }
-.list_comment{
+
+.list_comment {
     margin-bottom: 10px;
 }
 
-div.txt_comment{
-    display:flex;
+div.txt_comment {
+    display: flex;
     margin-bottom: 5px;
 }
 
-div.txt_comment > span{
-    flex:9.8;
+div.txt_comment > span {
+    flex: 9.8;
 }
 
-div.txt_comment > span .txt_id{
+div.txt_comment > span .txt_id {
     margin-right: 10px;
 }
 
-div.txt_comment > span span{
+div.txt_comment > span span {
     width: 100%;
 }
 
-div.txt_comment button{
+div.txt_comment button {
     color: #ddd;
 }
 
-div.txt_comment button:hover{
+div.txt_comment button:hover {
     color: #777;
 }
 
-.post_comment{
+.post_comment {
     display: flex;
     align-content: center;
     padding: 20px 0 10px;
     border-top: 1px solid #e8e8e8;
 }
 
-.post_comment textarea{
+.post_comment textarea {
     flex: 9;
     height: 30px;
     border: none;
     resize: none;
 }
 
-.post_comment textarea::-webkit-scrollbar{
+.post_comment textarea::-webkit-scrollbar {
     width: 0;
 }
 
-.post_comment button{
+.post_comment button {
     flex: 1;
     color: #0095f6;
 }
+
 /* form css */
 .post-container {
     width: 600px;
@@ -634,71 +700,86 @@ div.txt_comment button:hover{
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .post-header, .post-footer {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #dbdbdb;
 }
+
 .post-header img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
+
 .post-header .username {
     font-weight: bold;
 }
+
 .post-media {
     width: 100%;
 }
+
 .post-media img, .post-media video {
     width: 100%;
     max-height: 500px;
     object-fit: cover;
 }
+
 .post-footer {
     display: flex;
     flex-direction: column;
 }
+
 .post-actions {
     display: flex;
     gap: 10px;
 }
+
 .post-actions button {
     background: none;
     border: none;
     font-size: 1.2em;
     cursor: pointer;
 }
+
 .post-comments {
     padding: 10px;
     border: 1px solid #ccc; /* 댓글 섹션 테두리 */
     margin-bottom: 10px; /* 섹션 간 간격 */
 }
+
 .hashtags {
     color: #00376b;
 }
+
 .post-comments {
     padding: 10px;
 }
+
 .post-comments div {
     display: flex;
     align-items: center;
     gap: 5px;
     margin-bottom: 5px;
 }
+
 .post-comments div img {
     width: 24px;
     height: 24px;
     border-radius: 50%;
 }
+
 .comment-input-section {
     display: flex;
     align-items: center;
     padding: 10px;
     border-top: 1px solid #dbdbdb;
 }
+
 .comment-input-section input[type="text"] {
     width: 100%;
     padding: 8px;
@@ -706,6 +787,7 @@ div.txt_comment button:hover{
     border-radius: 4px;
     font-size: 14px;
 }
+
 .comment-input-section button {
     margin-left: 10px;
     padding: 8px 12px;
@@ -725,64 +807,78 @@ div.txt_comment button:hover{
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
+
 .post-header, .post-footer {
     display: flex;
     align-items: center;
     padding: 10px;
     border-bottom: 1px solid #dbdbdb;
 }
+
 .post-header img {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     margin-right: 10px;
 }
+
 .post-header .username {
     font-weight: bold;
 }
+
 .post-media {
     width: 100%;
 }
+
 .post-media img, .post-media video {
     width: 100%;
     max-height: 500px;
     object-fit: cover;
 }
+
 .post-footer {
     display: flex;
     flex-direction: column;
 }
+
 .post-actions {
     display: flex;
     gap: 10px;
 }
+
 .post-actions button {
     background: none;
     border: none;
     font-size: 1.2em;
     cursor: pointer;
 }
+
 .post-content {
     padding: 10px;
     font-size: 14px;
 }
+
 .hashtags {
     color: #00376b;
 }
+
 .post-comments {
     padding: 10px;
 }
+
 .post-comments div {
     display: flex;
     align-items: center;
     gap: 5px;
     margin-bottom: 5px;
 }
+
 .post-comments div img {
     width: 24px;
     height: 24px;
     border-radius: 50%;
 }
+
 /* reply-name에 스타일 적용 */
 .txt_comment .reply-name {
     margin-left: 20px;
@@ -833,7 +929,6 @@ input[type="text"], textarea {
     margin-top: 10px;
     display: flex;
     justify-content: center;
-    align-items: center;
     width: 100%; /* 영역을 채우도록 설정 */
     height: 500px; /* 고정 높이 */
     overflow: hidden; /* 넘치는 부분 숨기지 않고, 비율 맞추기 */
@@ -881,12 +976,12 @@ input[type="text"], textarea {
 }
 
 /* 태그 css */
-.tagify{
+.tagify {
     width: 100%;
     max-width: 700px;
 }
 
-.tags-look .tagify__dropdown__item{
+.tags-look .tagify__dropdown__item {
     display: inline-block;
     border-radius: 3px;
     padding: .3em .5em;
@@ -898,16 +993,16 @@ input[type="text"], textarea {
     transition: 0s;
 }
 
-.tags-look .tagify__dropdown__item--active{
+.tags-look .tagify__dropdown__item--active {
     color: black;
 }
 
-.tags-look .tagify__dropdown__item:hover{
+.tags-look .tagify__dropdown__item:hover {
     background: lightyellow;
     border-color: gold;
 }
 
-.tags-look .tagify__dropdown__item{
+.tags-look .tagify__dropdown__item {
     display: inline-block;
     border-radius: 3px;
     padding: .3em .5em;
@@ -919,15 +1014,16 @@ input[type="text"], textarea {
     transition: 0s;
 }
 
-.tags-look .tagify__dropdown__item--active{
+.tags-look .tagify__dropdown__item--active {
     color: black;
 }
 
-.tags-look .tagify__dropdown__item:hover{
+.tags-look .tagify__dropdown__item:hover {
     background: lightyellow;
     border-color: gold;
 }
-.dropdown-item1{
+
+.dropdown-item1 {
     padding: 10px; /* 항목의 여백 */
     font-size: 14px; /* 글자 크기 */
     cursor: pointer; /* 마우스 커서 포인터로 변경 */
@@ -935,12 +1031,13 @@ input[type="text"], textarea {
 
 }
 
-.dropdown-delete{
+.dropdown-delete {
     padding: 10px; /* 항목의 여백 */
     font-size: 14px; /* 글자 크기 */
     cursor: pointer; /* 마우스 커서 포인터로 변경 */
     text-align: center; /* 텍스트 중앙 정렬 */
 }
+
 .dropdown-delete button {
     font-size: 14px; /* 글자 크기 */
     cursor: pointer; /* 마우스 커서 포인터로 변경 */
@@ -949,5 +1046,38 @@ input[type="text"], textarea {
     margin: 0 auto; /* 좌우 여백을 자동으로 설정하여 가운데 정렬 */
 }
 
+/* 기본 스타일 설정 */
+#scrollToTopBtn {
+    position: fixed; /* 화면에 고정 */
+    bottom: 20px; /* 페이지 하단에서 20픽셀 떨어진 위치 */
+    right: 20px; /* 오른쪽에서 20픽셀 떨어진 위치 */
+    background-color: #ffffff; /* 흰색 배경 */
+    color: #333333; /* 검정색 텍스트 */
+    border: 2px solid #333333; /* 검정색 테두리 */
+    border-radius: 50%; /* 둥근 모양 */
+    width: 50px; /* 버튼 너비 */
+    height: 50px; /* 버튼 높이 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer; /* 클릭 가능한 형태 */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+    transition: background-color 0.3s, box-shadow 0.3s; /* 전환 효과 */
+    z-index: 1000; /* 가장 위쪽에 위치 */
+}
 
+/* 호버 시 스타일 */
+#scrollToTopBtn:hover {
+    background-color: #f0f0f0; /* 배경색 변경 */
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2); /* 더 강한 그림자 효과 */
+}
 
+/* 아이콘 스타일 */
+#scrollToTopBtn svg {
+    width: 24px;
+    height: 24px;
+    fill: #333333; /* 아이콘 색상 */
+}
+.popup-title{
+    font-weight: bold;
+}
