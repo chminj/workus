@@ -46,4 +46,6 @@ public interface UserMapper {
     long getNextUserNoSequence(); // 다음번 유저 사번을 획득한다.
 
     void insertNewEmployee(@Param("user") User user); // 신규 직원을 등록한다.
+
+    List<User> getUsersByRoleNos(@Param("roleNos") List<Integer> roleNos); // 특정 권한으로 유저들을 조회한다.
 }

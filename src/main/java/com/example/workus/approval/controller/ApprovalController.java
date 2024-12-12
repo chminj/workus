@@ -3,6 +3,8 @@ package com.example.workus.approval.controller;
 import com.example.workus.approval.dto.*;
 import com.example.workus.approval.service.ApprovalService;
 import com.example.workus.approval.vo.ApprovalCategory;
+import com.example.workus.common.sse.NotificationService;
+import com.example.workus.common.vo.Constants;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
@@ -14,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -24,11 +27,13 @@ public class ApprovalController {
 
     private final ApprovalService approvalService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     @Autowired
-    public ApprovalController(ApprovalService approvalService, UserService userService) {
+    public ApprovalController(ApprovalService approvalService, UserService userService, NotificationService notificationService) {
         this.approvalService = approvalService;
         this.userService = userService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/form-list")
@@ -71,6 +76,13 @@ public class ApprovalController {
         Map<String, String> optionTexts = apvForm.getOptionTexts();
 
         approvalService.addForm(apvForm);
+
+        // 결재 권한이 있는 사용자에게 알림 전송
+        List<Integer> roleNos = Arrays.asList(Constants.ROLE_NO_MANAGE, Constants.ROLE_NO_ADMIN);
+        List<User> usersWithRoles = userService.getUsersByRoleNos(roleNos);
+        for (User user : usersWithRoles) {
+            notificationService.sendMessageToAll("신규 결재 요청이 있습니다.");
+        }
 
         return "redirect:/approval/form-list";
     }
