@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-   <link href="${s3}/resources/css/communitymain.css" rel="stylesheet"/>\
+   <link href="../../resources/css/communitymain.css" rel="stylesheet"/>\
   <title>workus template</title>
 </head>
 <body>
@@ -18,14 +18,15 @@
       <%@ include file="../common/nav.jsp" %>
       <main class="noLnb">
         <h3 class="title1" ><a href="list">Workus Community</a></h3>
+        <button type="button" class="form-button"><a href="form">글 작성📝</a></button>
         <div class="content">
           <div class="wrap">
             <form id="form-search" onsubmit="searchKeyword(event)">
                 <div class="search">
                   <select name="opt">
-                    <option value="title" > 제목</option>
-                    <option value="content" > 내용</option>
-                    <option value="hashtag" > 해쉬태그</option>
+                    <option value="title" >제목🏷️</option>
+                    <option value="content" >내용 📄</option>
+                    <option value="hashtag" >해쉬태그#️⃣</option>
                   </select>
                   <input type="text" name="keyword"  placeholder="검색"/>
                   <button type="button" id="searchBtn" onclick="searchKeyword(event)">
@@ -35,18 +36,19 @@
                   </button>
                 </div>
             </form>
-            <div class="search-controls">
-              <button type="button" class="btn btn-outline-dark"><a href="form">글 작성</a></button>
-            </div>
+            <button id="scrollToTopBtn" onclick="scrollToTop()">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-arrow-up-short" viewBox="0 0 16 16">
+                <path d="M7.646 4.646a.5.5 0 0 1 .708 0l4.5 4.5a.5.5 0 0 1-.708.708L8 5.707l-3.646 3.647a.5.5 0 0 1-.708-.708l4.5-4.5z"/>
+              </svg>
+            </button>
+          </div>
           </div>
           <!---MAIN--->
           <main class="container wrap">
             <!--FEED BOARD-->
             <div class="feed_board"></div>
-
             <!--//FEED BOARD-->
           </main>
-        </div>
       </main>
     </section>
   </div>
@@ -61,9 +63,9 @@
           <div class="username" id="postUsername"></div>
           <div class="popup-close" onclick="closePopup()">×</div>
         </div>
-        <div class="popup-content">
-          <p id="postTitle"><span class="bold"></span></p>
-          <p id="postContent"></p>
+        <div class="popup-detail">
+          <p class="popup-title" id="postTitle"><span class="bold"></span></p>
+          <p class="popup-content" id="postContent"></p>
         </div>
         <div id="tags-popup\${feed.no}" style="margin-left: 30px;"></div>
         <div class="comments-section" id="postReplys"></div>
@@ -86,6 +88,11 @@
 <script>
   let currentPage = 1;
   let canRequest = true;
+
+  function initPageAndCanRequest() {
+    currentPage = 1;
+    canRequest = true;
+  }
 
   $(window).scroll(function() {
     // 창높이
@@ -127,12 +134,14 @@
         appendFeeds(items);
         currentPage++;
         canRequest = true;
+
       }
     })
   }
 
 
   function  searchKeyword(event){
+    initPageAndCanRequest()
     event.preventDefault();
     currentPage = 1;
     $.ajax({
@@ -149,16 +158,18 @@
         $("div.feed_board").empty();
 
         appendFeeds(feeds);
+
       }
     })
   }
 
   function searchHashTag(event) {
+    initPageAndCanRequest()
     const tagName = $(event.target).text().trim().replace("#","");
     currentPage = 1;
     $.ajax({
       type: "GET",
-      url: "/community/items",
+      url: "items",
       data: {
         page: currentPage,
         opt: "hashtag",
@@ -265,7 +276,7 @@
       let tags = "";
       for (let tag of feed.hashTags) {
         tags += `
-         <span id="\${tag.no}searchTag" onclick="searchHashTag(event)" style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span>`
+         <span type="button"id="\${tag.no}searchTag" onclick="searchHashTag(event)" style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span>`
       }
 
       if (feed.likeCount > 0) {
@@ -280,7 +291,7 @@
       $("#tags-" + feed.no).append(tags);
       $("#tags-popup" + feed.no).append(tags);
 
-      if(feed.mediaUrl.includes('jpg',)) {
+      if(feed.mediaUrl.includes('jpg')) {
         let insertUrl =
                 `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
@@ -306,7 +317,7 @@
           $("#popupUrl${feed.no}").html(insertUrl)
         } else if(feed.mediaUrl.includes('mp4')) {
           let insertUrl =
-                  `<video width=100%; height=100%; controls autoplay src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<video width=100%; height=100%; controls autoplay loop src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         }
         $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
@@ -458,7 +469,9 @@
     }
   });
 
-
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' }); // 맨 위로 부드럽게 이동
+  }
 
 </script>
 </html>

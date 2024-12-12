@@ -152,9 +152,6 @@
     alert("태그가 초기화되었습니다."); // 알림 표시
   });
 
-
-
-
   // 폼 제출 이벤트 처리
   document.getElementById("postForm").addEventListener("submit", function(event) {
     let formValid = true; // 폼이 유효한지 체크하는 변수
@@ -162,7 +159,7 @@
     // 경고 메시지 초기화
     document.getElementById("text").innerHTML = "";
 
-    // 제목, 내용, 해시태그, 파일 첨부 확인w
+    // 제목, 내용, 해시태그, 파일 첨부 확인
     const title = document.getElementById("postTitle").value;
     const content = document.getElementById("postContent").value;
     const tags = document.querySelector('input[name="tags"]').value;
@@ -196,6 +193,9 @@
     if (!formValid) {
       event.preventDefault(); // 폼 제출을 막습니다.
       document.getElementById("text").style.color = "red"; // 경고 메시지 색상을 빨간색으로 설정
+    } else {
+      // 폼이 유효하면 버튼 비활성화
+      document.getElementById("upfile").disabled = true; // 버튼 비활성화
     }
   });
 </script>

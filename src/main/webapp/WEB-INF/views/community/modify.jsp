@@ -25,7 +25,17 @@
                 <!-- 미리보기 영역 -->
                 <div class="left-section">
                     <div class="header">미리보기</div>
-                    <div id="filePreview" class="file-preview"><img src="/resources/repository/communityfeedfile/${feed.mediaUrl}"></div>
+                    <div id="filePreview" class="file-preview">
+                        <c:choose>
+                            <c:when test="${feed.mediaType == 'image'}">
+                                <img src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}">
+                            </c:when>
+                            <c:when test="${feed.mediaType == 'video'}">
+                                <video width=100%; height=100%; controls autoplay loop  src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}">
+                            </c:when>
+                        </c:choose>
+
+                    </div>
                 </div>
 
                 <!-- 게시글 작성 폼 -->
@@ -57,13 +67,12 @@
 
                         <!-- 이미지/동영상 업로드 -->
                         <div class="form-group file-input-wrapper">
-                            <input type="file" name="upfile" id="postFiles" accept="image/*, video/*" multiple value="${feed.mediaUrl}">
+                            <input type="file" name="upfile" id="postFiles" accept="image/*, video/*" multiple value="${feed.mediaUrl}"/>
                         </div>
-
                         <!-- 게시 버튼 -->
                         <button type="submit" class="btn-post" id="upfile">게시하기</button>
                         <button type="button" class="btn-cancel">
-                            <a href="../list">취소</a>
+                            <a href="list">취소</a>
                         </button>
                     </form>
                 </div>
@@ -126,11 +135,11 @@
         // 경고 메시지 초기화
         document.getElementById("text").innerHTML = "";
 
-        // 제목, 내용, 해시태그, 파일 첨부 확인w
+        // 제목, 내용, 해시태그, 파일 첨부 확인
         const title = document.getElementById("postTitle").value;
         const content = document.getElementById("postContent").value;
         const tags = document.querySelector('input[name="tags"]').value;
-
+        const files = document.getElementById("postFiles").files;
 
         // 제목이 비어있으면 경고 메시지 표시
         if (!title.trim()) {
@@ -150,12 +159,13 @@
             document.getElementById("text").innerHTML += "❌ 해시태그를 입력해주세요. <br>";
         }
 
-
-
         // 폼 유효성 검사 실패 시 제출을 막고 경고 메시지 표시
         if (!formValid) {
             event.preventDefault(); // 폼 제출을 막습니다.
             document.getElementById("text").style.color = "red"; // 경고 메시지 색상을 빨간색으로 설정
+        } else {
+            // 폼이 유효하면 버튼 비활성화
+            document.getElementById("upfile").disabled = true; // 버튼 비활성화
         }
     });
 </script>
