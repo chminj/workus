@@ -22,6 +22,11 @@
                 로그인 후 이용가능한 서비스를 요청하였습니다.
             </div>
         </c:when>
+        <c:when test="${param.error eq 'expired' }">
+            <div class="alert alert-danger">
+                세션이 만료되었습니다. 다시 로그인 부탁드립니다.
+            </div>
+        </c:when>
         <c:when test="${param.error eq 'access-denied' }">
             <div class="alert alert-danger">
                 접근권한이 필요한 서비스를 요청하였습니다.
