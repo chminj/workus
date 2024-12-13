@@ -38,4 +38,10 @@ public interface CalendarMapper {
             @Param("division") List<Integer> division
     );
 
+    List<Calendar> selectMyCalendarEvents(
+            @Param("userNo") Long userNo,
+            @Param("start") LocalDateTime startDateTime,
+            @Param("end") LocalDateTime endDateTime,
+            @Param("division") List<Integer> division
+    );
 }
