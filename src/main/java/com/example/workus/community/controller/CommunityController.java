@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.IllformedLocaleException;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,11 @@ public class CommunityController {
             condition.put("opt", opt);
             condition.put("keyword", keyword);
         }
+
         List<Feed> feeds = communityService.getFeeds(condition);
+        if (feeds.isEmpty()) {
+            throw new RuntimeException("검색오류");
+        }
         return feeds;
     }
 
