@@ -11,6 +11,7 @@
   <title>workus template</title>
 </head>
 <body>
+<c:set var="menu" value="community"/>
 <div id="divWrapper">
   <div id="divContents">
     <%@ include file="../common/header.jsp" %>
@@ -76,7 +77,7 @@
           <div class="add-reply">
             <input type="hidden" name="feedNo" id="postFeedNo"/>
             <input type="hidden" name="name" id="postReplyUsername"/>
-            <input type="text" name="comment" id="postComment" placeholder="댓글 달기...">
+            <input class="popup-replycontent" type="text" name="comment" id="postComment" placeholder="댓글 달기...">
             <button type="button" key onclick="inserReplyPopup(${feed.no})">게시</button>
           </div>
         </form>
@@ -135,7 +136,8 @@
         currentPage++;
         canRequest = true;
 
-      }
+      },
+      
     })
   }
 
@@ -158,7 +160,9 @@
         $("div.feed_board").empty();
 
         appendFeeds(feeds);
-
+      },
+      error(){
+        alert("검색된 결과가 없습니다.")
       }
     })
   }
@@ -313,11 +317,11 @@
       url: `feed/\${feedNo}`,
       dataType: "json",
       success: function (feed) {
-        if(feed.mediaUrl.includes('jpg',)) {
+        if(feed.mediaUrl.includes('jpg') || feed.mediaUrl.includes('png')|| feed.mediaUrl.includes('jpeg') || feed.mediaUrl.includes('gif')) {
           let insertUrl =
                   `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
-        } else if(feed.mediaUrl.includes('mp4')) {
+        } else if(feed.mediaUrl.includes('mp4') || feed.mediaUrl.includes('mp4')|| feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
           let insertUrl =
                   `<video width=100%; height=100%; controls autoplay loop src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
@@ -389,7 +393,7 @@
       success:function (reply){
         $(`#feed-\${reply.feed.no} .reply-name`).text("🆕   "+reply.user.name);
         $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
-        $(".feedinsertReply").val("");
+        $(".feedInsertReply").val(""); //
       }
     })
   }
@@ -411,12 +415,13 @@
               <span>\${reply != null ? reply.content : ''}</span>
            </p>
            <button onclick="deleteRely(\${reply.no})">🗑️</button>
-         <div>
+         </div>
         `;
 
         $(`#feed-\${reply.feed.no} .reply-name`).text("🆕  "+reply.user.name);
         $(`#feed-\${reply.feed.no} .reply-content`).text(reply.content);
         $("#postReplys").prepend(content);
+        $(".popup-replycontent").val("")
       }
     })
   }
