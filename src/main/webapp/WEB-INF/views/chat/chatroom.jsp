@@ -56,7 +56,7 @@
 	</div>
 
 	<!-- 토스트 컨테이너 위치 -->
-	<div class="toast-container position-fixed top-0 end-0 p-3">
+	<div class="toast-container position-fixed top-0 end-0 p-3 chatModal">
 		<div id="userJoinToast" class="toast" role="alert">
 			<div class="toast-header">
 				<strong class="me-auto">알림</strong>
@@ -196,6 +196,14 @@
 
 		let chatroomNo = null;
 		let page = null;
+
+		$(document).ready(function() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const prevChtroomNo = urlParams.get('prevChtroomNo');
+			if (prevChtroomNo) {
+				$(`#chatroom\${prevChtroomNo}`).click();
+			}
+		});
 
 		// 채팅방 입장
 		$('.chatroomDiv').on('click', '.chatroom', async function () {

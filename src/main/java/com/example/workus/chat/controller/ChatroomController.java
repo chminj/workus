@@ -7,6 +7,7 @@ import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +31,7 @@ public class ChatroomController {
     }
 
     // 왼쪽 메뉴에 필요한 것들을 가져온다.
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/list")
     public String getAllChatrooms(@AuthenticationPrincipal LoginUser loginUser, Model model) {
         // 1. 채팅방들을 가져온다.
