@@ -1,6 +1,8 @@
 package com.example.workus.security;
 
 import jakarta.servlet.DispatcherType;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -23,9 +26,10 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf
                 .disable())
-            .authorizeHttpRequests(auth -> auth
-                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()     //
-                .requestMatchers("/login", "/signup", "/findpw", "/resources/**", "ajax/user/**", "/ajax/send-sms").permitAll()
+.authorizeHttpRequests(auth -> auth
+                .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                .requestMatchers("/login", "/signup", "/findpw", "/resources/**", "/ajax/user/**", "/ajax/send-sms").permitAll()
+                .requestMatchers("/").permitAll() // 루트 URL에 대한 요청을 허용
                 .anyRequest().authenticated())
             .formLogin(login -> login
                 .loginPage("/login")
@@ -36,23 +40,24 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session
                 .maximumSessions(1)
-                .expiredUrl("/login?error=expired")    // 세션 만료시
+                .expiredUrl("/login?error=expired")
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")
-                .invalidateHttpSession(true) // 세션 무효화
-                .deleteCookies("JSESSIONID") // 쿠키 삭제
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.sendRedirect(request.getContextPath() + "/login?error=required");
+                    response.sendRedirect(request.getContextPath() + "/login");
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    response.sendRedirect(request.getContextPath() + "/login?error=access-denied");
+//                    response.sendRedirect(request.getContextPath() + "/login?error=access-denied");
+                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 })
             );
+
         return http.build();
     }
 
