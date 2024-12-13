@@ -130,4 +130,12 @@ public class ChatroomServcie {
         }
         return users;
     }
+
+    public ChatroomDto getChatroomDtoByUserNo(Long userNo) {
+        ChatroomDto chatroomDto = chatroomMapper.getChatroomDtoByUserNo(userNo);
+        if (chatroomDto != null) {
+            chatroomDto.setNotReadCount(chatroomMapper.getNotReadCount(userNo, chatroomDto.getChatroomNo()));
+        }
+        return chatroomDto;
+    }
 }

@@ -10,6 +10,7 @@ import com.example.workus.security.LoginUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,7 @@ public class RestChatController {
         this.chatService = chatService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/chat/{page}/{chatroomNo}")
     ResponseEntity<RestResponseDto<ListDto<Chat>>> getAllChats(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -35,11 +37,13 @@ public class RestChatController {
         return ResponseEntity.ok(RestResponseDto.success(chatService.getAllChatsByChatroomNo(loginUser.getNo(), chatroomNo, page)));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/chat/upload")
     ResponseEntity<RestResponseDto<Chat>> uploadFile(@ModelAttribute ChatForm chatForm) {
         return ResponseEntity.ok(RestResponseDto.success(chatService.uploadFile(chatForm)));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/chat/emoji/{tagName}")
     ResponseEntity<RestResponseDto<List<Emoji>>> getChatByTagName(@PathVariable("tagName") String tagName) {
         return ResponseEntity.ok(RestResponseDto.success(chatService.getEmojiByTagName(tagName)));

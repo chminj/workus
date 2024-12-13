@@ -90,4 +90,11 @@ public interface ChatroomMapper {
      * @param chatroomNo 채팅방 번호
      */
     void outChatroomByChatroomNo(@Param("userNo") Long userNo, @Param("chatroomNo") Long chatroomNo);
+
+    /**
+     * 메인에 뿌려줄 로그인한 유저가 포함된 가장 최근 채팅의 채팅방 정보를 가져온다.
+     * @param userNo 로그인 유저 번호
+     * @return 채팅방 정보 객체
+     */
+    ChatroomDto getChatroomDtoByUserNo(@Param("userNo") Long userNo);
 }

@@ -11,6 +11,7 @@ import com.example.workus.user.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,7 @@ public class RestChatroomController {
         this.chatroomServcie = chatroomServcie;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/chatroom/{chatroomNo}")
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoAndUpdateConTimeByChatroomNo(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -35,6 +37,7 @@ public class RestChatroomController {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfo(chatroomNo)));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PutMapping("/chatroom/{chatroomNo}")
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> updateContimeByChatroomNo(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -43,6 +46,7 @@ public class RestChatroomController {
         return ResponseEntity.ok(RestResponseDto.success(null));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/chatroom")
     ResponseEntity<RestResponseDto<ChatroomDto>> addChatroom(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -50,6 +54,7 @@ public class RestChatroomController {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.addChatroom(loginUser.getNo(), chatroomForm)));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/chatroom/out/{chatroomNo}")
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> outChatroom(
             @AuthenticationPrincipal LoginUser loginUser,
@@ -58,12 +63,14 @@ public class RestChatroomController {
         return ResponseEntity.ok(RestResponseDto.success(null));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("chatroom/invited/{chatroomNo}")
     ResponseEntity<RestResponseDto<ChatroomInfoDto>> getChatroomInfoByChatroomNo(
             @PathVariable("chatroomNo") Long chatroomNo) {
         return ResponseEntity.ok(RestResponseDto.success(chatroomServcie.getChatroomInfoByChatroomNo(chatroomNo)));
     }
 
+    @PreAuthorize("isAuthenticated()")
     @PostMapping("/chatroom/addNewUser")
     ResponseEntity<RestResponseDto<List<User>>> addNewUserByChatroomNo(
             @RequestBody AddNewUserInChatroomForm addNewUserInChatroomForm) {

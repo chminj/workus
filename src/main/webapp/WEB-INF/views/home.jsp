@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: jhta
+  Date: 2024-11-06
+  Time: 오후 4:21
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ include file="common/tags.jsp" %>
 <html>
@@ -23,14 +30,13 @@
 
         /* 메인 그리드 레이아웃 */
         #main-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2열 그리드 */
-            grid-template-rows: 1fr 2fr;   /* 첫 번째 행(채팅, 회의실)은 두 번째 행(커뮤니티, 일정)의 절반 높이 */
+            display: flex;
+            flex-wrap:wrap;
             gap: 20px; /* 섹션 간 간격 */
             padding: 20px;
-            height: 100vh; /* 화면 전체 높이 */
             margin-left: 220px; /* LNB 너비(200px) + 여백(20px) */
         }
+        #main-grid>div {width:calc(50% - 10px);}
 
         /* 개별 섹션 스타일 */
         .grid-item {
@@ -44,28 +50,28 @@
 
 
         /* 채팅 */
-        #chatting-section {
-            grid-column: 1; /* 첫 번째 열 */
-            grid-row: 1;    /* 첫 번째 행 */
-        }
+        /*#chatting-section {*/
+        /*    grid-column: 1; !* 첫 번째 열 *!*/
+        /*    grid-row: 1;    !* 첫 번째 행 *!*/
+        /*}*/
 
-        /* 회의실 */
-        #meeting-section {
-            grid-column: 2; /* 두 번째 열 */
-            grid-row: 1;    /* 첫 번째 행 */
-        }
+        /*!* 회의실 *!*/
+        /*#meeting-section {*/
+        /*    grid-column: 2; !* 두 번째 열 *!*/
+        /*    grid-row: 1;    !* 첫 번째 행 *!*/
+        /*}*/
 
-        /* 커뮤니티 */
-        #community-section {
-            grid-column: 1; /* 첫 번째 열 */
-            grid-row: 2;    /* 두 번째 행 */
-        }
+        /*!* 커뮤니티 *!*/
+        /*#community-section {*/
+        /*    grid-column: 1; !* 첫 번째 열 *!*/
+        /*    grid-row: 2;    !* 두 번째 행 *!*/
+        /*}*/
 
-        /* 일정 */
-        #calendar-section {
-            grid-column: 2; /* 두 번째 열 */
-            grid-row: 2;    /* 두 번째 행 */
-        }
+        /*!* 일정 *!*/
+        /*#calendar-section {*/
+        /*    grid-column: 2; !* 두 번째 열 *!*/
+        /*    grid-row: 2;    !* 두 번째 행 *!*/
+        /*}*/
     </style>
 </head>
 <body>
@@ -79,8 +85,26 @@
                 <section id="main-grid">
                     <!-- 채팅 -->
                     <div class="grid-item" id="chatting-section">
-                        <h2>채팅</h2>
-                        <div id="chatting-content"></div>
+                        <h2>최근 채팅</h2>
+                        <div>
+                        <c:if test="${not empty chatroomDto}">
+                            <div class="border rounded p-4 mb-3 bg-white" id="chatroom" role="button" data-chatroom-no="${chatroomDto.chatroomNo}">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="mb-2">${chatroomDto.chatroomTitle}</h5>
+                                        <span class="badge bg-light text-dark fs-6 me-2">${chatroomDto.lastChatAuthor.name}</span>
+                                    </div>
+                                    <div class="text-end">
+                                        <small class="text-muted fs-6 d-block"><fmt:formatDate value="${chatroomDto.lastChatDate}" pattern="MM/dd HH:mm" /></small>
+                                        <c:if test="${chatroomDto.notReadCount != 0}">
+                                            <span class="badge bg-danger rounded-pill mt-2 fs-6 not-read-count${chatroomDto.chatroomNo}">${chatroomDto.notReadCount}</span>
+                                        </c:if>
+                                    </div>
+                                </div>
+                                <p class="mb-0 text-muted fs-6 text-truncate">${chatroomDto.lastChat}</p>
+                            </div>
+                            </c:if>
+                        </div>
                     </div>
 
                     <!-- 회의실 -->
@@ -105,10 +129,13 @@
         </section>
     </div>
 </div>
+<script>
+    $('#chatroom').click(function() {
+        let chatroomNo = $(this).data('chatroomNo');
+        window.location.href = "/chatroom/list?prevChtroomNo=" + chatroomNo;
+    })
+</script>
 <script src="/resources/js/meeting.js"></script>
 <script src="/resources/js/calendar.js"></script>
-
-
 </body>
-
 </html>
