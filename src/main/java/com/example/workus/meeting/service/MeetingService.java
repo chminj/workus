@@ -1,6 +1,5 @@
 package com.example.workus.meeting.service;
 
-import com.example.workus.calendar.vo.Calendar;
 import com.example.workus.meeting.dto.MeetingForm;
 import com.example.workus.meeting.mapper.MeetingMapper;
 import com.example.workus.meeting.vo.Meeting;
@@ -60,6 +59,7 @@ public class MeetingService {
 
     public void updateMeeting(Meeting meeting, Long userNo) {
         Meeting existingMeeting = meetingMapper.selectMeetingByNoAndUser(meeting.getNo(), userNo);
+
         if (existingMeeting != null) {
             meetingMapper.updateMeeting(meeting);
         } else {
@@ -69,6 +69,7 @@ public class MeetingService {
 
     public boolean deleteMeeting(Long eventId, Long userNo) {
         Meeting meeting = meetingMapper.selectMeetingByNoAndUser(eventId, userNo);
+
         if (meeting != null) {
             meetingMapper.deleteMeeting(eventId);
             return true;

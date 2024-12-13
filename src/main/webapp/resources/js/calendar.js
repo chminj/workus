@@ -85,7 +85,6 @@
                         filter: filter
                     },
                     success: function(calendars) {
-                        console.log("서버 응답:", calendars);
                         let events = calendars.map(function(calendar) {
                             let event = {
                                 id: calendar.no,
@@ -100,11 +99,10 @@
                             return event;
                         });
 
-                        console.log(events);
                         successCallback(events);
                     },
                     error: function(xhr, status, error) {
-                        console.error("일정 불러오기 실패:", error);
+                        log.error("일정 불러오기 실패:", error);
                         failureCallback(error);
                     }
                 });
@@ -115,10 +113,9 @@
                 info.jsEvent.preventDefault();
 
                 var eventId = info.event.id;
-                console.log(eventId);
 
                 if (!eventId) {
-                    console.error("이벤트 ID가 없습니다.");
+                    log.error("이벤트 ID가 없습니다.");
                     return;
                 }
 
@@ -134,8 +131,6 @@
                         $("#calendarModal #division").val(response.division);
                         $("#calendarModal #content").val(response.content);
 
-                        console.log("User No:", response.userNo);
-
                         $("#calendarModalLabel").text("일정 상세정보");
 
                         $("#save").text("저장");
@@ -146,7 +141,7 @@
 
                     },
                     error: function(xhr, status, error) {
-                        console.error("일정 상세 정보 가져오기 실패:", error);
+                        log.error("일정 상세 정보 가져오기 실패:", error);
                     }
                 });
             },
@@ -169,13 +164,12 @@
                     data: updatedEventData,
 
                     error: function(xhr, status, error) {
-                        console.error("이벤트 업데이트 실패:", error);
+                        log.error("이벤트 업데이트 실패:", error);
                     }
                 });
             },
             dateClick: function (info) {
                 let startDate = info.dateStr;
-                console.log(info);
 
                 let now = new Date();
                 let koreaTimeOffset = 9 * 60 * 60 * 1000; // UTC+9 시간차 (밀리초 단위)
@@ -207,7 +201,6 @@
 
                 let startDate = info.startStr;
                 let endDate = info.endStr;
-                console.log(info);
 
                 let now = new Date();
                 let koreaTimeOffset = 9 * 60 * 60 * 1000; // UTC+9 시간차 (밀리초 단위)
@@ -296,7 +289,7 @@
                         $("#name, #location, #startDate, #endDate, #division, #content").val("");
                     },
                     error: function(xhr, status, error) {
-                        console.error("일정 수정 실패:", error);
+                        log.error("일정 수정 실패:", error);
                     }
                 });
             } else {
@@ -324,15 +317,13 @@
                         $("#calendarModal").modal("hide");
                         $("#name, #location, #startDate, #endDate, #division, #content").val("");
 
-                        console.log("일정이 추가되었습니다.");
+                        log.info("일정이 추가되었습니다.");
                     },
                     error: function (xhr, status, error) {
-                        console.error("일정 추가 실패:", error);
+                        log.error("일정 추가 실패:", error);
                     }
                 });
             }
-
-
         });
 
         $("#delete").on("click", function (){
@@ -363,7 +354,7 @@
                         $("#confirmDeleteModal").modal("hide");
                     },
                     error: function (xhr, status, error) {
-                        console.error("일정 삭제 실패:", error);
+                        log.error("일정 삭제 실패:", error);
                         alert("일정 삭제에 실패했습니다. 다시 시도해주세요.");
                         $("#confirmDeleteModal").modal("hide");
                     }
@@ -373,7 +364,6 @@
             $("#confirmDeleteModal .btn-secondary").off("click").on("click", function() {
                 $("#confirmDeleteModal").modal("hide");
             });
-
         })
 
         function getDate(date, days) {
