@@ -8,6 +8,7 @@ import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.HashTag;
 import com.example.workus.community.vo.Like;
 import com.example.workus.community.vo.Reply;
+import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
 import com.example.workus.common.util.FileUtils;
 import com.example.workus.common.util.Pagination;
@@ -41,6 +42,8 @@ public class CommunityService {
     private WebContentFileUtils webContentFileUtils;
     @Autowired
     private S3Service s3Service;
+    @Autowired
+    private UserMapper userMapper;
 
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(Map<String,Object> condtion){
@@ -144,7 +147,6 @@ public class CommunityService {
         feed.setLikesCount(communityMapper.getlikeCountByFeedNo(feedNo));
         List<Reply> replys = communityMapper.getReplysByFeedNo(feedNo);
         feed.setReplys(replys);
-        System.out.println(feed);
         return feed;
     }
 
@@ -155,6 +157,23 @@ public class CommunityService {
         communityMapper.deleteReplysByFeedNo(feedNo);         // 게시글에 맞는 댓글 삭제
         communityMapper.deleteHashTagsByFeedNo(feedNo);      // 게시글에 맞는 해쉬태그 삭제
         communityMapper.deleteFeedsByFeedNo(feedNo,userNo);
+    }
+
+    public Reply getReply(long feedNo) {
+        Reply reply = communityMapper.getReplyByFeedNo(feedNo);
+        return  reply;
+    }
+
+    public void deleteReply(long replyNo, long userNo){
+        Reply reply = communityMapper.getReplyByReplyNo(replyNo);
+
+
+        if (reply.getUser().getNo() == userNo) {
+            communityMapper.deleteReplyByReplyNo(replyNo);
+        } else {
+            throw new RuntimeException();
+        }
+
     }
 
     public Feed getFeedByFeedNo(long feedNo){
@@ -169,7 +188,6 @@ public class CommunityService {
     public void updateFeed(ModifyFrom form,long userNo) {
         Feed existingFeed = communityMapper.getFeedByNo(form.getFeedNo());
         existingFeed = communityMapper.getFeedByNo(form.getFeedNo());
-        System.out.println(existingFeed);
         existingFeed.setTitle(form.getTitle());
         existingFeed.setContent(form.getContent());
 
@@ -238,6 +256,8 @@ public class CommunityService {
         likeCountDto.setUserName(LikeUserName);
         return likeCountDto;
     }
+
+
 
 
 }

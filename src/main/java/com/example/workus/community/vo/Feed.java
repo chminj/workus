@@ -45,14 +45,15 @@ public class Feed {
     private static Set<String> videos = Set.of("mp4", "avi", "mpg", "mpeg");
 
     public String getMediaType() {
-        String extension = mediaUrl.substring(mediaUrl.lastIndexOf(".") + 1).toLowerCase();
+        if (mediaUrl != null) {
+            String extension = mediaUrl.substring(mediaUrl.lastIndexOf(".") + 1).toLowerCase();
 
-        if (images.contains(extension)) {
-            return "image";
-        } else if (videos.contains(extension)) {
-            return "video";
+            if (images.contains(extension)) {
+                return "image";
+            } else if (videos.contains(extension)) {
+                return "video";
+            }
         }
-
         return null;
     }
 

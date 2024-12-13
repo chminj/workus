@@ -6,6 +6,7 @@ import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.community.vo.Reply;
 import com.example.workus.security.LoginUser;
+import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -84,6 +85,14 @@ public class CommunityController {
         return "redirect:/community/list";
     }
 
+    @PostMapping("deleteReply")
+    @ResponseBody
+    public String deleteReply(long replyNo, @AuthenticationPrincipal LoginUser loginUser) {
+        communityService.deleteReply(replyNo, loginUser.getNo());
+
+        return "redirect:/community/list";
+    }
+
     @GetMapping("modify")
     public String modifyFeed(long feedNo, @AuthenticationPrincipal LoginUser loginUser, Model model) {
         long userNo = loginUser.getNo();
@@ -114,20 +123,4 @@ public class CommunityController {
 
         return likeFeed;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
