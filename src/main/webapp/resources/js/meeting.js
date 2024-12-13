@@ -63,8 +63,6 @@
                 start = info.startStr.split("T")[0];
                 end = info.endStr.split("T")[0];
 
-                console.log(start, end);
-
                 $.ajax({
                     type: 'GET',
                     url: '/meeting/events',
@@ -85,11 +83,10 @@
                             return event;
                         });
 
-                        console.log(events);
                         successCallback(events); // FullCalendar에 이벤트 렌더링
                     },
                     error: function(xhr, status, error) {
-                        console.error("일정 불러오기 실패:", error);
+                        log.error("일정 불러오기 실패:", error);
                         failureCallback(error);
                     }
                 });
@@ -100,10 +97,9 @@
                 info.jsEvent.preventDefault();
 
                 var eventId = info.event.id;
-                console.log(eventId);  // 여기서 확인
 
                 if (!eventId) {
-                    console.error("이벤트 ID가 없습니다.");
+                    log.error("이벤트 ID가 없습니다.");
                     return;
                 }
 
@@ -127,14 +123,13 @@
 
                     },
                     error: function(xhr, status, error) {
-                        console.error("예약 정보 가져오기 실패:", error);
+                        log.error("예약 정보 가져오기 실패:", error);
                     }
                 });
             },
 
             dateClick: function (info){
                 let startDate = info.dateStr;
-                console.log(info);
 
                 let localDate = new Date(startDate);
                 let localDateString = localDate.toISOString().slice(0, 16);
@@ -167,8 +162,6 @@
             select: function (info) {
                 let startDate = info.startStr;
                 let endDate = info.endStr;
-
-                console.log(info);
 
                 $("#meetingModalLabel").text("회의실 예약하기");
 
@@ -214,8 +207,6 @@
 
             var eventId = $("#meetingModal").data("eventId");
 
-            console.log(eventId)
-
             if (eventId) {
                 $.ajax({
                     // 기존 일정을 수정하는 경우
@@ -235,7 +226,7 @@
                         $("#startDate, #endDate, #room, #content").val("");
                     },
                     error: function (xhr, status, error) {
-                        console.error("일정 수정 실패:", error);
+                        log.error("일정 수정 실패:", error);
                     }
                 });
             } else {
@@ -260,10 +251,10 @@
                         $("#meetingModal").modal("hide");
                         $("#name, #location, #startDate, #endDate, #division, #content").val("");
 
-                        console.log("일정이 추가되었습니다.");
+                        log.info("일정이 추가되었습니다.");
                     },
                     error: function (xhr, status, error) {
-                        console.error("일정 추가 실패:", error);
+                        log.error("일정 추가 실패:", error);
                     }
                 });
             }
@@ -297,7 +288,7 @@
                         $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
                     },
                     error: function (xhr, status, error) {
-                        console.error("일정 삭제 실패:", error);
+                        log.error("일정 삭제 실패:", error);
                         alert("일정 삭제에 실패했습니다. 다시 시도해주세요.");
                         $("#confirmDeleteModal").modal("hide");  // 확인 모달 닫기
                     }

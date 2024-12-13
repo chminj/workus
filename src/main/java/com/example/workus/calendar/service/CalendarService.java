@@ -3,7 +3,6 @@ package com.example.workus.calendar.service;
 import com.example.workus.calendar.dto.CalendarForm;
 import com.example.workus.calendar.mapper.CalendarMapper;
 import com.example.workus.calendar.vo.Calendar;
-import com.example.workus.security.LoginUser;
 import com.example.workus.common.util.DateTimeUtil;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
@@ -60,6 +59,7 @@ public class CalendarService {
     public List<Calendar> getAllEventsByDateRange(Date start, Date end, Long userNo, Long deptNo, List<Integer> division) {
         LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
         LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
+
         return calendarMapper.selectTeamAndPersonalEvents(userNo, deptNo, startDateTime, endDateTime, division);
     }
 
@@ -85,6 +85,7 @@ public class CalendarService {
     // 일정 수정
     public void updateCalendar(Calendar calendar, Long userNo) {
         Calendar existingCalendar = calendarMapper.selectCalendarByNoAndUser(calendar.getNo(), userNo);
+
         if (existingCalendar != null) {
             calendarMapper.updateCalendar(calendar);
         } else {
@@ -95,6 +96,7 @@ public class CalendarService {
     // 일정 삭제
     public boolean deleteCalendar(Long eventId, Long userNo) {
         Calendar calendar = calendarMapper.selectCalendarByNoAndUser(eventId, userNo);
+
         if (calendar != null) {
             calendarMapper.deleteCalendar(eventId);
             return true;
