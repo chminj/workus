@@ -94,8 +94,6 @@ public class AttendanceService {
         condition.put("end", end);
         condition.compute("status", (k, status) -> status);
 
-        System.out.println("condition: " + condition);
-
         // 조회범위에 맞는 데이터 조회
         List<ReqViewDto> forms = attendanceMapper.getAllRequestFormsByUserNo(userNo, condition);
 
