@@ -48,7 +48,6 @@
             </if>
     </select>
 
-
     <!-- 개인 일정 조회 -->
     <select id="selectPersonalEvents" resultType="Calendar">
         SELECT
@@ -103,6 +102,27 @@
             </if>
         ORDER BY
             CALENDAR_START_DATE ASC;
+    </select>
+
+    <select id="selectMyCalendarEvents">
+        SELECT
+            calendar_no AS no,
+            calendar_name AS name,
+            calendar_content AS content,
+            calendar_start_date AS startDate,
+            calendar_end_date AS endDate,
+            calendar_location AS location,
+            calendar_division AS division,
+            user_no AS userNo
+        FROM
+            calendar_events
+        WHERE
+            created_by = #{userNo} -- 현재 사용자가 작성한 일정만 가져오기
+            AND (start_date BETWEEN #{start} AND #{end} OR end_date BETWEEN #{start} AND #{end})
+            AND division IN
+            <foreach item="div" collection="division" open="(" separator="," close=")">
+                #{div}
+            </foreach>
     </select>
 
     <!-- 일정 번호와 사용자 번호를 기준으로 일정 조회 -->

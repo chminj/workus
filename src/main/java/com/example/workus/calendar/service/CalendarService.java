@@ -63,6 +63,17 @@ public class CalendarService {
         return calendarMapper.selectTeamAndPersonalEvents(userNo, deptNo, startDateTime, endDateTime, division);
     }
 
+    // 내 일정만 가져오기
+    public List<Calendar> getMyCalendarEvents(Date start, Date end, Long userNo, List<Integer> division) {
+        LocalDateTime startDateTime = DateTimeUtil.toLocalDateTime(start);
+        LocalDateTime endDateTime = DateTimeUtil.toLocalDateTime(end);
+
+        if (userNo != null) {
+            return calendarMapper.selectMyCalendarEvents(userNo, startDateTime, endDateTime, division);
+        }
+        return Collections.emptyList();
+    }
+
     // 특정 일정 조회
     public Calendar getCalendarByNo(Long calendarNo, Long userNo) {
         return calendarMapper.selectCalendarByNoAndUser(calendarNo, userNo);

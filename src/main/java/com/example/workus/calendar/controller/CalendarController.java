@@ -110,7 +110,7 @@ public class CalendarController {
             case "divisionAll":
                 return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 개인 + 팀 일정`
             case "myCalendar":
-                return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 내 일정 목록
+                return calendarService.getMyCalendarEvents(start, end, user.getNo(), division); // 내 일정 목록
             default:
                 return calendarService.getAllEventsByDateRange(start, end, user.getNo(), user.getDeptNo(), division); // 기본 개인 + 팀 일정
         }
