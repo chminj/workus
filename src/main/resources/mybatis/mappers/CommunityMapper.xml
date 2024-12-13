@@ -331,4 +331,38 @@
         ORDER BY LIKE_NO DESC
     </select>
 
+    <!--
+        Reply getReplyByReplyNo(@Param("replyNo") long replyNo);
+    -->
+    <select id="getReplyByReplyNo">
+        select
+            R.REPLY_NO AS no,
+            R.REPLY_CONTENT AS content,
+            R.REPLY_CREATED_DATE AS createdDate,
+            B.COMMUNITY_NO AS "feed.no",
+            U.USER_NO AS "user.no",
+            U.USER_NAME AS "user.name"
+        from
+            WORKUS_REPLY R
+            INNER JOIN
+            WORKUS_COMMUNITY B
+        ON
+            B.COMMUNITY_NO = R.COMMUNITY_NO
+            INNER JOIN
+            WORKUS_USERS U
+            ON
+            R.USER_NO = U.USER_NO
+        WHERE B.COMMUNITY_NO = R.COMMUNITY_NO
+        and R.REPLY_NO = #{replyNo}
+        ORDER BY R.REPLY_NO DESC
+    </select>
+
+    <!--
+        void deleteReplyByReplyNo(@Param("feedNo") long feedNo);
+    -->
+    <delete id="deleteReplyByReplyNo">
+       delete from WORKUS_REPLY
+       where REPLY_NO = #{replyNo}
+    </delete>
+
 </mapper>

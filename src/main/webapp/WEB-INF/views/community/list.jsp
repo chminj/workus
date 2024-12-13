@@ -207,7 +207,7 @@
               <circle cx="18" cy="12" r="1.5"></circle>
             </svg>
             <ul class="dropdown-menu dropdown-menu-end p-3" id="ul-dropdown">
-               <div class="dropdown-item1" id="box-modify">
+               <div class="dropdown-item1" id="box- fy">
 
                  <form class="dropdown-delete" method="get" action="modify">
                       <input type="hidden" name="feedNo" value="\${feed.no}" />
@@ -332,19 +332,39 @@
 
         let replys = feed.replys;
         let content = "";
-        for (let reply of replys) {3
+        for (let reply of replys) {
           content += `
-         <div class="popup-reply">
+
+      <div class="popup-reply">
+        <div id="reply-\${reply.no}">
            <p>
               <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
               <span>\${reply != null ? reply.content : ''}</span>
            </p>
-         <div>
+         <button onclick="deleteRely(\${reply.no},\${reply.user.no})">🗑️</button>
+      </div>
         `;
         }
         $("#postReplys").html(content);
 
         document.getElementById("popupOverlay").style.display = "flex";
+      }
+    })
+  }
+
+  function  deleteRely(replyNo){
+    $.ajax({
+      type:"post",
+      url:"deleteReply",
+      data:{
+            replyNo : replyNo
+            },
+      success:function (){
+        alert("댓글이 삭제 되었습니다.")
+        $(`#reply-`+replyNo).remove();
+      },
+      error:function (){
+        alert("댓글 삭제 권한이 없습니다.");
       }
     })
   }
@@ -388,6 +408,7 @@
               <strong><span style="margin-right: 10px;">\${reply != null ? reply.user.name : ''} :</span></strong>
               <span>\${reply != null ? reply.content : ''}</span>
            </p>
+           <button onclick="deleteRely(\${reply.no})">🗑️</button>
          <div>
         `;
 

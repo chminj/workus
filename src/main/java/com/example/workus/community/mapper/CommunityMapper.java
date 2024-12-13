@@ -68,4 +68,8 @@ public interface CommunityMapper {
     List<Like> getLikesByFeedNo(@Param("feedNo") long feedNo);
 
 
+    Reply getReplyByReplyNo(@Param("replyNo") long replyNo);
+    // 게시글 댓글 삭제
+    void deleteReplyByReplyNo(@Param("replyNo") long replyNo);
+
 }
