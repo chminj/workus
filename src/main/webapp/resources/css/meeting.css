@@ -15,10 +15,25 @@ html, body {
 }
 
 .lnb li a {position:relative; z-index:1; padding:4px 2px; cursor: pointer;}
-.lnb li a:after {content:""; left:0; bottom:0; width:0; height:2px; z-index:-1; background-color:#e91e63; opacity:0.6; position:absolute; display:inline-block; transition: all 0.3s ease;}
+.lnb li a:after {
+    content: "";
+    left: 0;
+    bottom: 3px;
+    width: 0;
+    height: 9px;
+    z-index: -1;
+    background-color: #e91e63;
+    position: absolute;
+    display: inline-block;
+    transition: all 0.3s ease;
+    opacity: 0.1;
+}
 .lnb li a:hover:after {width:100%;}
 
-.lnb li.on a:after {width:100%; opacity:1;}
+.lnb li.on a:after {
+    opacity: 0.3;
+    width: 100%;
+}
 
 .listTitle:after {
     content: "";
