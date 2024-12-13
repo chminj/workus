@@ -12,5 +12,4 @@ import lombok.Setter;
 public class EmojiPayload implements Payload {
     private int emojiNo;
     private String fileSrc;
-    private String type;
 }

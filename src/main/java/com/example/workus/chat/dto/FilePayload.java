@@ -11,5 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class FilePayload implements Payload {
     private String fileSrc;
-    private String type;
 }

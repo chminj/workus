@@ -61,6 +61,8 @@ public class ChatService {
                             break;
                         }
                     }
+                } else if (chat.getEmoji() != null) {
+                    chat.setType("emoji");
                 }
             }
             Collections.sort(dto.getData(), (data1, data2) ->

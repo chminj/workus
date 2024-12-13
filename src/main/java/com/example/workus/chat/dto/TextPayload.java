@@ -11,5 +11,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TextPayload implements Payload{
     private String content;
-    private String type;
 }
