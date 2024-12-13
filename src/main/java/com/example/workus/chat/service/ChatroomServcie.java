@@ -42,6 +42,8 @@ public class ChatroomServcie {
             ChatroomDto chatroomDto = chatroomMapper.getChatRoomInMenuByChatroomNo(chatroomNo);
             if (chatroomDto != null) {
                 chatroomDto.setNotReadCount(chatroomMapper.getNotReadCount(userNo, chatroomNo));
+                // lastchat에 파일명도 텍스트도 없으면 이모지로 나타낸다.
+                if (chatroomDto.getLastChat() == null) chatroomDto.setLastChat("이모지");
             } else {
                 chatroomDto = new ChatroomDto();
                 Chatroom chatroom = chatroomMapper.getChatroomByChatroomNo(chatroomNo);
@@ -135,6 +137,8 @@ public class ChatroomServcie {
         ChatroomDto chatroomDto = chatroomMapper.getChatroomDtoByUserNo(userNo);
         if (chatroomDto != null) {
             chatroomDto.setNotReadCount(chatroomMapper.getNotReadCount(userNo, chatroomDto.getChatroomNo()));
+            // lastchat에 파일명도 텍스트도 없으면 이모지로 나타낸다.
+            if (chatroomDto.getLastChat() == null) chatroomDto.setLastChat("이모지");
         }
         return chatroomDto;
     }
