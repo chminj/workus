@@ -142,8 +142,6 @@ public class AttendanceService {
 
         condition.compute("roleNo", (k, roleNo) -> roleNo);
 
-        System.out.println("condition: " + condition);
-
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByUserNo(userNo, condition);
 
         ListDto<RefViewDto> dtoList = new ListDto<>(forms, pagination);

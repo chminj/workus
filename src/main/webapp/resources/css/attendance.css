@@ -96,6 +96,9 @@
     font-size: 16px;
     font-weight: normal;
     min-height: 40px;
+    background: #f1f1f1;
+    border: none;
+    border-right: 1px solid #ddd;
 }
 
 #fullCalendarInAtd .fc-col-header-cell-cushion {

@@ -56,7 +56,6 @@ label {
         a {
             text-decoration: none;
             color: #0f132a;
-            font-weight: bolder;
             text-align: center;
             cursor: pointer;
         }
@@ -78,8 +77,8 @@ form {
             &::before {
                 content: "";
                 position: absolute;
-                top: -15px;
-                left: 50px;
+                top: -14px;
+                left: 20px;
                 display: block;
                 width: 0;
                 height: 0;
@@ -110,7 +109,7 @@ form {
 
         input {
             display: block;
-            width: 90%;
+            width: 100%;
             max-width: 680px;
             height: 50px;
             margin: 0 auto;
@@ -142,12 +141,12 @@ form {
         display: block;
         width: 100%;
         max-width: 680px;
-        height: 50px;
+        height: 56px;
         border-radius: 8px;
         margin: 0 auto;
         border: none;
         cursor: pointer;
-        font-size: 14px;
+        font-size: 20px;
         box-shadow: 0 0 0 rgba(233, 30, 99, 0.36);
         transition: .2s linear;
 
