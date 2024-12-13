@@ -184,16 +184,6 @@
                     </a>
                 </li>
                 <li class="gnb">
-                    <a href="/notice/list">
-                        <span class="gnbIcon">
-                            <svg class="gnbIcon text-skin">
-                                <use href="#topTask"></use>
-                            </svg>
-                        </span>
-                        <span class="gnbText">사내 게시판</span>
-                    </a>
-                </li>
-                <li class="gnb">
                     <a href="/community/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">

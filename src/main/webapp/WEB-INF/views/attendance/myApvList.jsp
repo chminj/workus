@@ -216,7 +216,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 alert('승인할 항목을 선택해 주세요.');
                 return
             } else {
-                // confirm('재확인 컨펌창');
+                confirm('승인하겠습니까?');
             }
 
             // 데이터 전송

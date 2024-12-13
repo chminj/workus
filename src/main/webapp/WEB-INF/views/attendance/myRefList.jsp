@@ -46,13 +46,6 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                         <div class="searchW mgb30">
                             <form id="searchOption" method="get" action="myRefList" class="d-flex">
                                 <input type="hidden" name="page"/>
-                                <%--                    <div class="input-group">--%>
-                                <%--                        <label for="startDate" class="d-none">시작 날짜</label>--%>
-                                <%--                        <input type="date" id="startDate" name="startDate" class="form-control">--%>
-                                <%--                        <span class="simpleText">~</span>--%>
-                                <%--                        <label for="endDate" class="d-none">종료 날짜</label>--%>
-                                <%--                        <input type="date" id="endDate" name="endDate" class="form-control">--%>
-                                <%--                    </div>--%>
                                 <div class="input-group">
                                     <label for="searchOpt1">
                                         <select name="opt" id="searchOpt1" class="form-select">

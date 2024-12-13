@@ -141,7 +141,6 @@ public class ApprovalController {
         return "approval/my/refList";
     }
 
-//        @GetMapping("/my/detail/{apvNo}")
     @GetMapping("/my/detail/reqDetail")
     public String myRequestDetail(@RequestParam("no") Long no
                                 , Model model)
@@ -153,6 +152,7 @@ public class ApprovalController {
     }
 
     @GetMapping("/my/detail/waitDetail")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     public String myWaitDetail(@RequestParam("no") Long no
                                 , Model model)
     {
@@ -163,6 +163,7 @@ public class ApprovalController {
     }
 
     @GetMapping("/my/detail/endDetail")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     public String myEndDetail(@RequestParam("no") Long no
                                 , Model model)
     {
@@ -173,6 +174,7 @@ public class ApprovalController {
     }
 
     @GetMapping("/my/detail/denyDetail")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')")
     public String myDenyDetail(@RequestParam("no") Long no
                                 , Model model)
     {
@@ -183,6 +185,7 @@ public class ApprovalController {
     }
 
     @GetMapping("/my/detail/refDetail")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_LEADER')")
     public String myRefDetail(@RequestParam("no") Long no
                                 , Model model)
     {
@@ -220,5 +223,4 @@ public class ApprovalController {
 
         return "redirect:/approval/my/denyList";
     }
-
 }

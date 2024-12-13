@@ -62,30 +62,41 @@
             , #{form.no})
         </foreach>
     </insert>
-    <select id="getAllRequestFormsByUserNo" resultType="reqViewDto">
-        SELECT DISTINCT
-        A.ATD_NO AS no,
-        U.ATD_STATUS AS status,
-        A.ATD_TEXT AS reason,
-        A.ATD_TO_DATE AS toDate,
-        A.ATD_FROM_DATE AS fromDate,
-        A.ATD_CREATED_DATE AS createdDate,
-        A.ATD_CATEGORY_TIME AS time,
-        C.ATD_CATEGORY_NAME AS categoryName
+    <resultMap id="reqViewResultMap" type="reqViewDto">
+        <result property="no" column="no"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+        <result property="toDate" column="toDate"/>
+        <result property="fromDate" column="fromDate"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="time" column="time"/>
+        <result property="categoryName" column="categoryName"/>
+    </resultMap>
+    <select id="getAllRequestFormsByUserNo" resultMap="reqViewResultMap">
+        SELECT
+            A.ATD_NO AS no,
+            MAX(U.ATD_STATUS) AS status,
+            MAX(A.ATD_TEXT) AS reason,
+            MAX(A.ATD_TO_DATE) AS toDate,
+            MAX(A.ATD_FROM_DATE) AS fromDate,
+            MAX(A.ATD_CREATED_DATE) AS createdDate,
+            MAX(A.ATD_CATEGORY_TIME) AS time,
+            MAX(C.ATD_CATEGORY_NAME) AS categoryName
         FROM WORKUS_ATTENDANCE A
         JOIN WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
-        LEFT JOIN WORKUS_ATTENDANCE_USER U2 ON U.ATD_NO = U2.ATD_NO AND U2.ATD_STATUS = #{condition.status}
+        LEFT JOIN WORKUS_ATTENDANCE_USER U2 ON U.ATD_NO = U2.ATD_NO
         WHERE A.USER_NO = #{userNo}
         <if test="condition.status != null">
             AND U2.ATD_NO IS NOT NULL
         </if>
+        GROUP BY A.ATD_NO
         ORDER BY
-        CASE
-        WHEN U.ATD_STATUS = 'I' THEN 1
-        WHEN U.ATD_STATUS = 'C' THEN 2
-        END,
-        A.ATD_NO ASC
+            CASE
+                WHEN MAX(U.ATD_STATUS) = 'I' THEN 1
+                WHEN MAX(U.ATD_STATUS) = 'C' THEN 2
+            END,
+            A.ATD_NO ASC
         LIMIT #{condition.offset}, #{condition.end}
     </select>
     <select id="getTotalRows" resultType="int">
@@ -98,17 +109,30 @@
                         JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO)
         </if>
     </select>
-    <select id="getAllReferenceFormsByUserNo" resultType="refViewDto">
+
+    <resultMap id="refViewResultMap" type="refViewDto">
+        <result property="atdNo" column="atdNo"/>
+        <result property="refNo" column="refNo"/>
+        <result property="status" column="status"/>
+        <result property="reason" column="reason"/>
+        <result property="toDate" column="toDate"/>
+        <result property="fromDate" column="fromDate"/>
+        <result property="createdDate" column="createdDate"/>
+        <result property="time" column="time"/>
+        <result property="categoryName" column="categoryName"/>
+        <result property="reqUserName" column="reqUserName"/>
+    </resultMap>
+    <select id="getAllReferenceFormsByUserNo" resultMap="refViewResultMap">
         SELECT A.ATD_NO AS atdNo
-        , U.ATD_APPROVAL_NO as refNo
-        , U.ATD_STATUS AS status
-        , A.ATD_TEXT AS reason
-        , A.ATD_TO_DATE AS toDate
-        , A.ATD_FROM_DATE AS fromDate
-        , A.ATD_CREATED_DATE AS createdDate
-        , A.ATD_CATEGORY_TIME AS time
-        , C.ATD_CATEGORY_NAME AS categoryName
-        , AU.USER_NAME AS reqUserName
+        , MAX(U.ATD_APPROVAL_NO) as refNo
+        , MAX(U.ATD_STATUS) AS status
+        , MAX(A.ATD_TEXT) AS reason
+        , MAX(A.ATD_TO_DATE) AS toDate
+        , MAX(A.ATD_FROM_DATE) AS fromDate
+        , MAX(A.ATD_CREATED_DATE) AS createdDate
+        , MAX(A.ATD_CATEGORY_TIME) AS time
+        , MAX(C.ATD_CATEGORY_NAME) AS categoryName
+        , MAX(AU.USER_NAME) AS reqUserName
         FROM WORKUS_ATTENDANCE A
         JOIN WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
@@ -129,41 +153,7 @@
                 </when>
             </choose>
         </if>
-        ORDER BY
-        CASE
-        WHEN U.ATD_STATUS = 'I' THEN 1
-        WHEN U.ATD_STATUS = 'C' THEN 2
-        END,
-        A.ATD_NO ASC
-        LIMIT #{condition.offset}, #{condition.end}
-    </select>
-    <select id="getAllReferenceFormsByRoleNo" resultType="refViewDto">
-        SELECT A.ATD_NO AS atdNo
-        , U.ATD_APPROVAL_NO as refNo
-        , U.ATD_STATUS AS status
-        , A.ATD_TEXT AS reason
-        , A.ATD_TO_DATE AS toDate
-        , A.ATD_FROM_DATE AS fromDate
-        , A.ATD_CREATED_DATE AS createdDate
-        , A.ATD_CATEGORY_TIME AS time
-        , C.ATD_CATEGORY_NAME AS categoryName
-        , AU.USER_NAME AS reqUserName
-        FROM WORKUS_ATTENDANCE A
-        JOIN WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
-        JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
-        JOIN WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
-        WHERE U.ROLE_NO = #{roleNo}
-        AND U.ATD_APPROVAL_STATUS = 'R'
-        <if test="condition.opt != null">
-            <choose>
-                <when test="condition.opt == 'name'">
-                    and AU.USER_NAME like CONCAT('%', #{condition.keyword}, '%')
-                </when>
-                <when test="condition.opt == 'reason'">
-                    and A.ATD_TEXT like CONCAT('%', #{condition.keyword}, '%')
-                </when>
-            </choose>
-        </if>
+        GROUP BY A.ATD_NO
         ORDER BY
         CASE
         WHEN U.ATD_STATUS = 'I' THEN 1
