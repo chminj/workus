@@ -6,6 +6,7 @@ import com.example.workus.chat.dto.ChatroomInfoDto;
 import com.example.workus.chat.dto.ChatroomForm;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.vo.Chatroom;
+import com.example.workus.common.exception.RestWorkusException;
 import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import com.example.workus.user.mapper.UserMapper;
@@ -127,6 +128,11 @@ public class ChatroomServcie {
     public List<User> addNewUserByChatroomNo(AddNewUserInChatroomForm addNewUserInChatroomForm) {
         List<User> users = new ArrayList<>();
         for (User user : addNewUserInChatroomForm.getUsers()) {
+            // joinChatroomCount가 0이 아니면 이미 참여중이다.
+            int joinChatroomCount = chatroomMapper.getJoinChatroomCountByChatroomNoAndUserNo(addNewUserInChatroomForm.getChatroomNo(), user.getNo());
+            if (joinChatroomCount != 0) {
+                throw new RestWorkusException("이미 참여중인 유저를 초대했습니다.");
+            }
             chatroomMapper.addChatroomHistory(addNewUserInChatroomForm.getChatroomNo(), user.getNo());
             users.add(userMapper.getUserByUserNo(user.getNo()));
         }

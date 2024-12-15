@@ -2,6 +2,7 @@ package com.example.workus.chat.controller;
 
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.common.dto.DownloadFileData;
+import com.example.workus.common.exception.RestWorkusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -42,7 +43,7 @@ public class ChatController {
                     .contentLength(downloadFileData.getResource().contentLength())
                     .body(downloadFileData.getResource());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("파일 이름 인코딩 실패", e);
+            throw new RestWorkusException("파일 이름 인코딩 실패", e);
         }
     }
 }
