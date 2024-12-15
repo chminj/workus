@@ -13,6 +13,11 @@ import java.util.Map;
 @Mapper
 public interface CommunityMapper {
 
+    // 최신글 번호 조회
+    long getLatestFeedNo();
+    //최신 게시글 조회
+    Feed getLastFeed();
+
     // 게시글 해쉬태그 조회
     List<HashTag> getHashTagsByFeedNo(@Param("feedNo") long feedNo);
     int getTotalRows();
@@ -71,5 +76,4 @@ public interface CommunityMapper {
     Reply getReplyByReplyNo(@Param("replyNo") long replyNo);
     // 게시글 댓글 삭제
     void deleteReplyByReplyNo(@Param("replyNo") long replyNo);
-
 }

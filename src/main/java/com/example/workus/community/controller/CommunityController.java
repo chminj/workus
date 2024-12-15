@@ -30,6 +30,7 @@ public class CommunityController {
 
     @GetMapping("/list")
     public String list() {
+
         return "community/list";
     }
 

@@ -2,6 +2,8 @@ package com.example.workus.common.controller;
 
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.service.ChatroomServcie;
+import com.example.workus.community.service.CommunityService;
+import com.example.workus.community.vo.Feed;
 import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,9 +16,12 @@ public class HomeController {
 
     private final ChatroomServcie chatroomServcie;
 
+    private final CommunityService communityService;
+
     @Autowired
-    public HomeController(ChatroomServcie chatroomServcie) {
+    public HomeController(ChatroomServcie chatroomServcie, CommunityService communityService) {
         this.chatroomServcie = chatroomServcie;
+        this.communityService = communityService;
     }
 
     @GetMapping("/home")
@@ -24,6 +29,9 @@ public class HomeController {
                        @AuthenticationPrincipal LoginUser loginUser) {
         ChatroomDto chatroomDto = chatroomServcie.getChatroomDtoByUserNo(loginUser.getNo());
         model.addAttribute("chatroomDto", chatroomDto);
+        Feed feed = communityService.getLastFeed();
+        System.out.println("sssssssssssssssssssssssssssssssss"+feed);// 최신 게시글 번호로 데이터 조회
+        model.addAttribute("feed", feed); // JSP로 전달할 데이터 추가
         return "home";
     }
 }

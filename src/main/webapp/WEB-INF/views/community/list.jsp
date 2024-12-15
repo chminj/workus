@@ -302,7 +302,7 @@
         let insertUrl =
                 `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
-      } else if(feed.mediaUrl.includes('mp4') || feed.mediaUrl.includes('mp4')|| feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
+      } else if(feed.mediaUrl.includes('mp4') ||feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
         let insertUrl =
                 `<video controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)

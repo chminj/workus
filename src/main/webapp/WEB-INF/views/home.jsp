@@ -15,6 +15,19 @@
     <title>workus ㅣ 중앙HTA 2404기 2조 FINAL PROJECT</title>
     <style>
 
+            img {
+                border: none;
+                height: 100%;
+                width: 100%;
+                object-fit: contain;
+            }
+            video{
+                border: 2px solid #000000;    /* 테두리 설정 */
+                width: 100%;
+                height: 600px;
+                object-fit: contain;
+            }
+
         /* lnb 메뉴 설정 (예시) */
         #lnb {
             position: fixed;
@@ -114,10 +127,27 @@
                     </div>
 
                     <!-- 커뮤니티 -->
-                    <div class="grid-item" id="community-section">
-                        <h2>커뮤니티</h2>
-                        <div id="community-content"></div>
+                   <div class="grid-item" id="community-section">
+                        <div>
+                            <h1><a href="community/list">Wokrus Community 📰</a></h1>
+                            <h3>${feed.title}</h3>
+                            <h4>${feed.content}</h4>
+                                <c:choose>
+                                    <c:when test="${not empty feed.mediaUrl}">
+                                        <c:if test="${fn:contains(feed.mediaUrl, '.jpg') || fn:contains(feed.mediaUrl, '.png') || fn:contains(feed.mediaUrl, '.gif')}">
+                                            <img src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}"/>
+                                        </c:if>
+                                        <c:if test="${fn:contains(feed.mediaUrl, '.mp4') || fn:contains(feed.mediaUrl, '.webm') || fn:contains(feed.mediaUrl, '.ogg')}">
+                                            <video controls>
+                                                <source src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}" type="video/mp4">
+                                            </video>
+                                        </c:if>
+                                    </c:when>
+                                </c:choose>
+                        </div>
                     </div>
+
+
 
                     <!-- 일정 -->
                     <div class="grid-item" id="calendar-section">

@@ -45,6 +45,10 @@ public class CommunityService {
     @Autowired
     private UserMapper userMapper;
 
+    public Feed getLastFeed(){
+        return communityMapper.getLastFeed();
+    }
+
     // 게시글 조회 무한스크롤
     public List<Feed> getFeeds(Map<String,Object> condtion){
         int totalRows = communityMapper.getTotalRows2(condtion);
