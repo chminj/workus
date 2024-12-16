@@ -20,8 +20,8 @@
         });
 
         const divisionColors = {
-            1: '#007bff', // 내 캘린더
-            0: '#28a745'  // 팀 캘린더
+            1: '#6266e3', // 내 캘린더
+            0: '#dc7474'  // 팀 캘린더
         };
 
         let filter = "divisionAll";
