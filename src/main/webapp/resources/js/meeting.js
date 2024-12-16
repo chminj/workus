@@ -16,8 +16,8 @@
         });
 
         const roomColors = {
-            a: '#007bff', // 회의실 A
-            b: '#28a745'  // 회의실 B
+            a: '#6266e3', // 회의실 A
+            b: '#dc7474'  // 회의실 B
         };
 
         let filter = "all";
