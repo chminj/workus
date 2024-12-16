@@ -16,7 +16,6 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -72,6 +71,7 @@ public class SecurityConfig {
                     }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
+                    request.setAttribute("errorMessage", "접근 권한이 없는 페이지입니다.");
                     request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 })
             );
