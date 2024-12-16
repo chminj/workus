@@ -2,7 +2,6 @@ package com.example.workus.approval.dto;
 
 
 import lombok.*;
-import org.apache.ibatis.type.Alias;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;

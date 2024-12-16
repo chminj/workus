@@ -3,8 +3,6 @@ package com.example.workus.approval.dto;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
-import java.math.BigDecimal;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

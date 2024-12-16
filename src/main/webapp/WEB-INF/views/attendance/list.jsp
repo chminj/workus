@@ -44,7 +44,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                 class="applyBtn btn btn-lg border border-secondary d-flex justify-content-between align-items-center"
                                 id="atdApplyBtnForModal">
               <span>
-                휴가 신청
+                연차 신청
                 <span class="holiday">
                     <span class="usable">${attendanceDto.unusedAnnualLeave}</span>
                     <span class="slash">/</span>
