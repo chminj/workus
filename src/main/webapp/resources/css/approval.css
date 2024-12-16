@@ -252,6 +252,8 @@ table tr th {
     border:1px solid #ddd;
 }
 
+.tableW table.noB {border:none; border-bottom:1px solid #ddd;}
+
 .tableStyle>:not(caption)>*>* {padding: 0.7rem 0.6rem;}
 
 .form-switch {

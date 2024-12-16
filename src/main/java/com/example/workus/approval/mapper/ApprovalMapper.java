@@ -2,7 +2,6 @@ package com.example.workus.approval.mapper;
 
 import com.example.workus.approval.dto.*;
 import com.example.workus.approval.vo.ApprovalCategory;
-import com.example.workus.user.vo.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

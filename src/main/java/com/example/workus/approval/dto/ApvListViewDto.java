@@ -4,8 +4,6 @@ import lombok.*;
 import org.apache.ibatis.type.Alias;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor
 @AllArgsConstructor

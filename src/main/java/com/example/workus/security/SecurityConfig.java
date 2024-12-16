@@ -1,5 +1,7 @@
 package com.example.workus.security;
 
+import com.example.workus.common.dto.RestResponseDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletRequest;
@@ -50,10 +52,26 @@ public class SecurityConfig {
             )
             .exceptionHandling(exceptionHandling -> exceptionHandling
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect(request.getContextPath() + "/login");
+
+                    String requestURI = request.getRequestURI();
+                    if (requestURI.startsWith("/api")) {
+                        response.setContentType("application/json");
+                        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                        RestResponseDto res = new RestResponseDto();
+                        res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                        res.setMessage("인증이 필요한 요청입니다.");
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        String jsonText = mapper.writeValueAsString(res);
+
+                        response.getWriter().write(jsonText);
+                    } else {
+                        // 일반 요청일 때 로그인 페이지를 재요청하는 URL을 응답으로 보낸다.
+                        response.sendRedirect(request.getContextPath() + "/login");
+                    }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-//                    response.sendRedirect(request.getContextPath() + "/login?error=access-denied");
                     request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 })
             );
