@@ -1,5 +1,8 @@
 package com.example.workus.community.service;
 
+import com.example.workus.common.exception.CommunityException;
+import com.example.workus.common.exception.RestWorkusException;
+import com.example.workus.common.exception.WorkusException;
 import com.example.workus.common.s3.S3Service;
 import com.example.workus.common.util.WebContentFileUtils;
 import com.example.workus.community.dto.*;
@@ -56,7 +59,7 @@ public class CommunityService {
         Pagination pagination = new Pagination(page, totalRows,1);
 
         if(pagination.getTotalPages() < page) {
-                return null;
+            throw new CommunityException("요청한 페이지가 존재하지 않습니다.");
         }
 
         condtion.put("begin",pagination.getBegin());
@@ -70,6 +73,9 @@ public class CommunityService {
             feed.setReply(reply);
             List<Like> likes = communityMapper.getLikesByFeedNo(feed.getNo());
             feed.setLikes(likes);
+        }
+        if (feeds.isEmpty()) {
+            throw new CommunityException("검색된 게시글이 없습니다.");
         }
         return feeds;
     }
@@ -104,7 +110,7 @@ public class CommunityService {
             // list ---> [map, map]
             // map -> {key:"value" value:"#222"}
             // map -> {key:"value" value:"#333"} 이렇게 담겨 있다.
-            List<Map<String, String>> list = mapper.readValue(jsonText, new TypeReference<List<Map<String, String>>>() {});
+            List<Map<String, String>>   list = mapper.readValue(jsonText, new TypeReference<List<Map<String, String>>>() {});
 
             // 반복문 사용해서 객체 데이터 뽑아서 담음
             for (Map<String, String> map : list) {
@@ -141,7 +147,9 @@ public class CommunityService {
 
         // 최신 리플 조회
         reply = communityMapper.getReplyByFeedNo(form.getFeedNo());
-
+        if (reply == null){
+            throw new   CommunityException("댓글이 없습니다.");
+        }
         // 저장된 댓글 반환
         return reply;
     }
@@ -157,6 +165,9 @@ public class CommunityService {
 
     public void deleteFeed(Long feedNo, Long userNo) {
         Feed feed = communityMapper.getFeedByNo(feedNo); // 번호에 맞는 피드찾기
+        if (!feed.getUser().getNo().equals(userNo)){
+            throw new CommunityException("삭제 권한이 없습니다");
+        }
         communityMapper.deleteLikeByFeedNo(feedNo);// 게시글 삭제 맨 마지막에 삭제 되어야함
         communityMapper.deleteReplysByFeedNo(feedNo);         // 게시글에 맞는 댓글 삭제
         communityMapper.deleteHashTagsByFeedNo(feedNo);      // 게시글에 맞는 해쉬태그 삭제
@@ -175,7 +186,7 @@ public class CommunityService {
         if (reply.getUser().getNo() == userNo) {
             communityMapper.deleteReplyByReplyNo(replyNo);
         } else {
-            throw new RuntimeException();
+            throw new CommunityException("삭제 권한이 없습니다");
         }
 
     }
