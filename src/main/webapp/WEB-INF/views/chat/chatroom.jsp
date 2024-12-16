@@ -413,6 +413,8 @@
 				}
 
 				$('#chat').on('click', '#submitChat', function () {
+					$('#emojiSuggestionsDiv').addClass('d-none');
+					$('input[name=content]').val('');
 					chat();
 				});
 
