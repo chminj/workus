@@ -53,8 +53,8 @@
             eventSources: [
                 {
                     googleCalendarId: 'ko.south_korea#holiday@group.v.calendar.google.com'
-                    , color: 'yellow'
-                    , textColor: 'black'
+                    , color: '#ffde94'
+                    , textColor: '#393434'
                     , className : 'ko_event'
                 }
             ],
