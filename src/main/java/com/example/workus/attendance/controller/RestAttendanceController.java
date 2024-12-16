@@ -3,6 +3,8 @@ package com.example.workus.attendance.controller;
 import com.example.workus.attendance.dto.AnnualLeaveHistoryDto;
 import com.example.workus.attendance.dto.AtdApprovalRequestDto;
 import com.example.workus.attendance.service.AttendanceService;
+import com.example.workus.common.exception.AttendanceException;
+import com.example.workus.common.exception.RestAttendanceException;
 import com.example.workus.common.vo.Constants;
 import com.example.workus.common.dto.RestResponseDto;
 import com.example.workus.security.LoginUser;
@@ -24,23 +26,39 @@ public class RestAttendanceController {
     @Autowired
     private UserService userService;
 
+    private static final String ANNUAL_LEAVE_HISTORY_ERROR_MESSAGE = "연차 이력을 조회하는 중 오류가 발생했습니다.";
+
+    @ExceptionHandler(AttendanceException.class)
+    public ResponseEntity<RestResponseDto<String>> handleAttendanceException(AttendanceException ex) {
+        // AttendanceException을 RestAttendanceException으로 변환
+        throw new RestAttendanceException(ex.getMessage());
+    }
+
     @PostMapping("/approve")
     public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList
                                                                 , @AuthenticationPrincipal LoginUser loginUser)
     {
-        // 결재자 정보 각 DTO에 추가
-        Long approvalNo = loginUser.getNo();
-        for (AtdApprovalRequestDto dto : requestDtoList) {
-            dto.setApprovalNo(approvalNo);
+        try {
+            // 결재자 정보 각 DTO에 추가
+            Long approvalNo = loginUser.getNo();
+            for (AtdApprovalRequestDto dto : requestDtoList) {
+                dto.setApprovalNo(approvalNo);
+            }
+
+            // 수정된 메소드 호출
+            attendanceService.approveRequests(requestDtoList);
+
+            RestResponseDto<String> response = RestResponseDto.success(null);
+            response.setMessage("승인이 완료되었습니다.");
+
+            return ResponseEntity.ok(response);
+        } catch (AttendanceException e) {
+            // 서비스에서 발생한 예외를 그대로 사용
+            // RestAttendanceException으로 변환
+            throw new RestAttendanceException(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(RestResponseDto.fail("Unexpected error occurred."));
         }
-
-        // 수정된 메소드 호출
-        attendanceService.approveRequests(requestDtoList);
-
-        RestResponseDto<String> response = RestResponseDto.success(null);
-        response.setMessage("승인이 완료되었습니다.");
-
-        return ResponseEntity.ok(response);
     }
 
     /**
@@ -53,15 +71,17 @@ public class RestAttendanceController {
     public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser)
     {
         List<AnnualLeaveHistoryDto> events;
-        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
-        // 권한 구분
-        if (roleNo == Constants.ROLE_NO_ADMIN) {
-            events = attendanceService.getAllAnnualLeaveHistory();
-        } else {
-            events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
-        }
-
-        return ResponseEntity.ok(events);
+//        try {
+            int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+            if (roleNo == Constants.ROLE_NO_ADMIN) {
+                events = attendanceService.getAllAnnualLeaveHistory();
+            } else {
+                events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
+            }
+            return ResponseEntity.ok(events);
+//        } catch (Exception e) {
+//            return ResponseEntity.status(500).body(RestResponseDto.fail(ANNUAL_LEAVE_HISTORY_ERROR_MESSAGE));
+//        }
     }
 
     /**

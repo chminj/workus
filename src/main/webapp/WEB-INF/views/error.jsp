@@ -4,13 +4,16 @@
 <html>
 <head>
     <link rel="stylesheet" type="text/css" href="/resources/css/error.css">
-    <title>접근 거부</title>
+    <title>오류 발생</title>
 </head>
 <body>
     <main>
         <img src="/resources/images/errorIcon.png" />
-        <h1>접근 권한이 없습니다.</h1>
-        <p>이 페이지에 접근할 수 있는 권한이 없습니다.</p>
+        <h1>오류 발생</h1>
+        <p>에러 메시지 : ${requestScope.errorMessage}</p>
+<%--      <p>상태 코드: ${status}</p>
+    <p>메시지: ${message}</p>  --%>
+
         <a href="${pageContext.request.contextPath}/" class="button">홈으로 돌아가기</a>
     </main>
 </body>

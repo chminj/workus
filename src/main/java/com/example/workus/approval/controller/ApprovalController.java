@@ -85,7 +85,7 @@ public class ApprovalController {
             notificationService.sendMessageToAll("신규 결재 요청이 있습니다.");
         }
 
-        return "redirect:/approval/form-list";
+        return "redirect:/approval/my/reqList";
     }
 
     @GetMapping("/my/reqList")
