@@ -325,6 +325,7 @@
 				async function chat() {
 					let inputMessage = $('input[name=content]').val();
 					let fileInput = $('#fileInput')[0].files[0];
+					let isUploaded = false; // 업로드가 한 번에 되는 것 때문에 동시성 제어 추가
 
 					if (inputMessage) {
 						let message = {
@@ -342,7 +343,11 @@
 						send(message);
 					}
 
-					if (fileInput) {
+					if (fileInput && !isUploaded) {
+						isUploaded = true;
+						$('input[name=content]').prop('disabled', false);
+						$('input[name=content]').val('');
+						$('#fileInput').val('');
 						const formData = new FormData();
 						formData.append('upfile', fileInput);
 						const response = await fetch('/ajax/chat/upload', {
@@ -368,10 +373,8 @@
 						} else {
 							console.log('파일 업로드에 실패했습니다.');
 						}
+						isUploaded = false;
 					}
-					$('input[name=content]').prop('disabled', false);
-					$('input[name=content]').val('');
-					$('#fileInput').val('');
 				}
 
 				// 이모지 전송
@@ -414,8 +417,8 @@
 
 				$('#chat').on('click', '#submitChat', function () {
 					$('#emojiSuggestionsDiv').addClass('d-none');
-					$('input[name=content]').val('');
 					chat();
+					$('input[name=content]').val('');
 				});
 
 				// 엔터키 입력 이벤트
