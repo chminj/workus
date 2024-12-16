@@ -90,4 +90,19 @@ public interface ChatroomMapper {
      * @param chatroomNo 채팅방 번호
      */
     void outChatroomByChatroomNo(@Param("userNo") Long userNo, @Param("chatroomNo") Long chatroomNo);
+
+    /**
+     * 메인에 뿌려줄 로그인한 유저가 포함된 가장 최근 채팅의 채팅방 정보를 가져온다.
+     * @param userNo 로그인 유저 번호
+     * @return 채팅방 정보 객체
+     */
+    ChatroomDto getChatroomDtoByUserNo(@Param("userNo") Long userNo);
+
+    /**
+     * 채팅방에 나가지 않고 참여중인지 체크하기 위한 메서드 (같은 방에 두 번 초대되는 것을 방지)
+     * @param chatroomNo 채팅방 번호
+     * @param userNo 유저 번호
+     * @return 참여중이면 1 아니면 0을 반환한다.
+     */
+    int getJoinChatroomCountByChatroomNoAndUserNo(@Param("chatroomNo") Long chatroomNo, @Param("userNo") Long userNo);
 }

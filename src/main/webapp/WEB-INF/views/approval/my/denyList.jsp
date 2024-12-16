@@ -48,7 +48,7 @@
                                                     href="${pageContext.request.contextPath}/approval/my/waitList">대기건</a>
                                             </li>
                                             <li class="${lnb eq 'mydenyList' ? 'on' : '' }"><a
-                                                    href="${pageContext.request.contextPath}/approval/my/denyList">종결건</a>
+                                                    href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
                                             <li class="${lnb eq 'myDenyList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/denyList">반려건</a>

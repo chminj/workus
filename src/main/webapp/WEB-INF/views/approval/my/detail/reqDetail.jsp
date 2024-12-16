@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <%@ include file="/WEB-INF/views/common/common.jsp" %>
     <link rel="stylesheet" href="${s3}/resources/css/approval.css">
-    <script src="/${s3}//js/approval.js"></script>
+    <script src="${s3}/resources/js/approval.js"></script>
     <!-- Include the Quill library -->
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet"/>
     <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>

@@ -1,7 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.community.mapper.CommunityMapper">
+    <!--
+          long getLatestFeedNo();
+    -->
+    <select id="getLatestFeedNo">
+        select max(COMMUNITY_NO)
+        from WORKUS_COMMUNITY
+    </select>
 
+
+    <!--
+         Feed getLastFeed(@Param("feedNo") long feedNo);
+    -->
+    <select id="getLastFeed">
+        select
+            B.COMMUNITY_NO as no
+        , B.COMMUNITY_TITLE as title
+        , B.COMMUNITY_CONTENT as content
+        , B.COMMUNITY_MEDIA_URL as mediaUrl
+        , B.COMMUNITY_MEDIA_TYPE as mediaType
+        , B.COMMUNITY_CREATED_DATE as createDate
+        , B.COMMUNITY_UPDATED_DATE as updateDate
+        , B.USER_NO as "user.no"
+        , U.USER_NAME as "user.name"
+        , U.USER_PROFILE_SRC as "user.profileSrc"
+        from
+            WORKUS_COMMUNITY B
+        inner join
+            WORKUS_USERS U
+        on
+            B.USER_NO = U.USER_NO
+        order by COMMUNITY_NO desc
+        limit 1
+    </select>
     <!--
          List<HashTag> getHashTags(@Param("feedNo") int feedNo);
     -->
@@ -330,5 +362,39 @@
         WHERE L.COMMUNITY_NO = #{feedNo}
         ORDER BY LIKE_NO DESC
     </select>
+
+    <!--
+        Reply getReplyByReplyNo(@Param("replyNo") long replyNo);
+    -->
+    <select id="getReplyByReplyNo">
+        select
+            R.REPLY_NO AS no,
+            R.REPLY_CONTENT AS content,
+            R.REPLY_CREATED_DATE AS createdDate,
+            B.COMMUNITY_NO AS "feed.no",
+            U.USER_NO AS "user.no",
+            U.USER_NAME AS "user.name"
+        from
+            WORKUS_REPLY R
+            INNER JOIN
+            WORKUS_COMMUNITY B
+        ON
+            B.COMMUNITY_NO = R.COMMUNITY_NO
+            INNER JOIN
+            WORKUS_USERS U
+            ON
+            R.USER_NO = U.USER_NO
+        WHERE B.COMMUNITY_NO = R.COMMUNITY_NO
+        and R.REPLY_NO = #{replyNo}
+        ORDER BY R.REPLY_NO DESC
+    </select>
+
+    <!--
+        void deleteReplyByReplyNo(@Param("feedNo") long feedNo);
+    -->
+    <delete id="deleteReplyByReplyNo">
+       delete from WORKUS_REPLY
+       where REPLY_NO = #{replyNo}
+    </delete>
 
 </mapper>

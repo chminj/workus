@@ -37,7 +37,6 @@ public interface CalendarMapper {
             @Param("endDateTime") LocalDateTime endDateTime,
             @Param("division") List<Integer> division
     );
-
     List<Calendar> selectMyCalendarEvents(
             @Param("userNo") Long userNo,
             @Param("start") LocalDateTime startDateTime,

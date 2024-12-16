@@ -82,7 +82,7 @@ button:hover svg {
 }
 
 .wrap {
-    width: 1500px;
+    width: 1200px;
     margin: 0 auto;
 }
 
@@ -124,11 +124,11 @@ header .logo h1 {
     display: flex;
     flex: 2;                   /* 비율을 줄임 */
     padding: 3px;             /* 내부 여백을 줄임 */
-    margin: 0 10%;         /* 외부 여백을 줄임 */
+    margin: 0 auto;         /* 외부 여백을 줄임 */
     background: #fafafa;
     border: 1px solid #e8e8e8;
     text-align: center;
-    width: 80%;                /* 너비를 80%로 설정 */
+    width: 90%;
     height: 40px;              /* 높이를 40px로 설정 */
 }
 
@@ -345,7 +345,7 @@ FEED BOARD
 div.feed_board {
     width: 100%; /* 부모 요소 너비에 맞게 이미지 크기 조정 */
     height: 100%; /* 부모 요소 높이에 맞게 이미지 크기 조정 */
-    margin: 70px;
+    margin: 0 40px;
 }
 
 /* FEED - common */
@@ -354,6 +354,7 @@ div.feed_board {
     border: 1px solid #e8e8e8;
     margin: auto;
     width: 100%;
+    margin-bottom:30px;
 }
 
 /* FEED - top */
@@ -461,8 +462,8 @@ div.feed_board {
 
 .popup {
     background: #fff;
-    width: 1500px;
-    height: 800px;
+    width: 70vw;
+    height: 70vh;
     border-radius: 12px;
     overflow: hidden;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);

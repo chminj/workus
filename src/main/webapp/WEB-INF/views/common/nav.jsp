@@ -163,7 +163,7 @@
                         <span class="gnbText">회의실</span>
                     </a>
                 </li>
-                <li class="gnb ${menu eq 'attendance' ? 'on' : '' }">
+                <li class="gnb ${menu eq 'attendance' ? 'on' : ''}">
                     <a href="/attendance/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">
@@ -183,17 +183,7 @@
                         <span class="gnbText">결재</span>
                     </a>
                 </li>
-                <li class="gnb">
-                    <a href="/notice/list">
-                        <span class="gnbIcon">
-                            <svg class="gnbIcon text-skin">
-                                <use href="#topTask"></use>
-                            </svg>
-                        </span>
-                        <span class="gnbText">사내 게시판</span>
-                    </a>
-                </li>
-                <li class="gnb">
+                <li class="gnb ${menu eq 'community' ? 'on' : '' }" >
                     <a href="/community/list">
                         <span class="gnbIcon">
                             <svg class="gnbIcon text-skin">

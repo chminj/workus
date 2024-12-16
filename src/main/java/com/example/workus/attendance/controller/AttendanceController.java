@@ -178,7 +178,6 @@ public class AttendanceController {
 
         ListDto<RefViewDto> forms = attendanceService.getReferenceForms(loginUser.getNo(), condition);
         model.addAttribute("condition", condition);
-        System.out.println("condition: " + condition);
         model.addAttribute("forms", forms.getData());
         model.addAttribute("paging", forms.getPaging());
 

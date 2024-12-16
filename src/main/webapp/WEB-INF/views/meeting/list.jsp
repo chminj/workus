@@ -39,7 +39,7 @@
             </div>
             <main>
                 <div class="content">
-                    <div id='calendar'></div>
+                    <div id='meeting'></div>
                 </div>
             </main>
         </section>

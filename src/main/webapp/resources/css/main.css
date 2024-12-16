@@ -143,6 +143,8 @@ ul.flex li {margin:0 10px}
 .wd400{width: 400px!important;}
 .wd500{width: 500px!important;}
 
+.chatModal{width:90px !important;}
+
 .inlineBlock {display:inline-block !important;}
 
 #divWrapper {
@@ -201,7 +203,9 @@ header.header {
     --tw-bg-opacity: 1;
     background-color: rgb(255 255 255/var(--tw-bg-opacity));
     width: 76px;
-    min-width: 76px
+    min-width: 76px;
+    border:none;
+    box-shadow: 3px 9px 17px 0px rgba(0,0,0,0.1)
 }
 
 .gnb {
@@ -308,3 +312,24 @@ main.noLnb {margin-left:76px;}
 .logout {background-color:#0f132a !important; font-size:13px;}
 
 #notificationToast {position:fixed; left:auto; right:20px; top:60px;}
+
+/* main content */
+main.main {width:100%; padding:20px 0 0 30px;}
+.mainSection {display:flex; padding-top:60px;}
+.mainSection.main1>div:first-child {width:64%}
+.mainSectionHalf {width:36%;}
+.mainSection>div {padding:12px 20px 12px 10px;}
+
+#meeting-section {border-top:1px dashed #ddd}
+.sectionTit {font-size:22px; position:relative; padding:6px 0 28px 8px; letter-spacing:0.02em; font-style:italic}
+.sectionTit:before {content:""; position:absolute; left:0; top:0; width:8px; height:8px; background-color:#dc7474; display:block; border-radius:50%;}
+
+.chatMain {font-size:15px;}
+
+#community-section {margin-top:30px;}
+.communityText {font-size:17px;}
+.titleBox {padding:15px; border-radius:10px 10px 0 0; border:1px solid #ddd;}
+.titleBox.titleBoxBot {border-radius:0 0 10px 10px;}
+.titleBox .tit {font-weight:bolder;}
+.contentBox {border:1px solid #ddd; padding:20px; border-top:none; border-bottom:none;}
+.contentBox img, .contentBox video {width:100%; height:462px;}

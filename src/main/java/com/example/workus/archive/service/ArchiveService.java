@@ -2,7 +2,6 @@ package com.example.workus.archive.service;
 
 import com.example.workus.archive.mapper.ArchiveMapper;
 import com.example.workus.archive.vo.Archive;
-import com.example.workus.common.dto.DeleteFileData;
 import com.example.workus.common.dto.DownloadFileData;
 import com.example.workus.common.dto.saveFileForm;
 import com.example.workus.common.s3.S3Service;

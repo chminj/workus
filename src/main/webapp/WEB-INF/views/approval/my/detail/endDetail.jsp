@@ -50,8 +50,8 @@
                                             <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
                                                     href="${pageContext.request.contextPath}/approval/my/endList">종결건</a>
                                             </li>
-                                            <li class="${lnb eq 'myEndList' ? 'on' : '' }"><a
-                                                    href="${pageContext.request.contextPath}/approval/my/endList">반려건</a>
+                                            <li class="${lnb eq 'myDenyList' ? 'on' : '' }"><a
+                                                    href="${pageContext.request.contextPath}/approval/my/DenyList">반려건</a>
                                             </li>
                                         </sec:authorize>
                                         <sec:authorize access="hasRole('ROLE_LEADER')">

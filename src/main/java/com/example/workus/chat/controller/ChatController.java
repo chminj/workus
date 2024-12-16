@@ -2,11 +2,13 @@ package com.example.workus.chat.controller;
 
 import com.example.workus.chat.service.ChatService;
 import com.example.workus.common.dto.DownloadFileData;
+import com.example.workus.common.exception.RestWorkusException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ public class ChatController {
         this.chatService = chatService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/download/{chatNo}")
     public ResponseEntity<ByteArrayResource> downloadFile(@PathVariable("chatNo") Long chatNo) {
         DownloadFileData downloadFileData = chatService.downloadFile(chatNo);
@@ -40,7 +43,7 @@ public class ChatController {
                     .contentLength(downloadFileData.getResource().contentLength())
                     .body(downloadFileData.getResource());
         } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("파일 이름 인코딩 실패", e);
+            throw new RestWorkusException("파일 이름 인코딩 실패", e);
         }
     }
 }

@@ -7,6 +7,7 @@ import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.util.Pagination;
 import com.example.workus.user.mapper.UserMapper;
 import com.example.workus.user.vo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @Transactional
 public class AttendanceService {
@@ -94,8 +96,6 @@ public class AttendanceService {
         condition.put("end", end);
         condition.compute("status", (k, status) -> status);
 
-        System.out.println("condition: " + condition);
-
         // 조회범위에 맞는 데이터 조회
         List<ReqViewDto> forms = attendanceMapper.getAllRequestFormsByUserNo(userNo, condition);
 
@@ -141,8 +141,6 @@ public class AttendanceService {
         condition.put("end", end);
 
         condition.compute("roleNo", (k, roleNo) -> roleNo);
-
-        System.out.println("condition: " + condition);
 
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByUserNo(userNo, condition);
 
