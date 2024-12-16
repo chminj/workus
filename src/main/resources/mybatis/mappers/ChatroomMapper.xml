@@ -168,4 +168,17 @@
         order by
             C.CHAT_TIME desc limit 1
     </select>
+
+    <select id="getJoinChatroomCountByChatroomNoAndUserNo">
+        select
+            count(1)
+        from
+            WORKUS_CHATROOM_HISTORY
+        where
+            CHATROOM_OUT_TIME is not null
+        and
+            CHATROOM_NO = #{chatroomNo}
+        and
+            USER_NO = #{userNo}
+    </select>
 </mapper>

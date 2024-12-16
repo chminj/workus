@@ -6,6 +6,7 @@ import com.example.workus.community.service.CommunityService;
 import com.example.workus.community.vo.Feed;
 import com.example.workus.security.LoginUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,13 +25,13 @@ public class HomeController {
         this.communityService = communityService;
     }
 
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/home")
     public String home(Model model,
                        @AuthenticationPrincipal LoginUser loginUser) {
         ChatroomDto chatroomDto = chatroomServcie.getChatroomDtoByUserNo(loginUser.getNo());
         model.addAttribute("chatroomDto", chatroomDto);
         Feed feed = communityService.getLastFeed();
-        System.out.println("sssssssssssssssssssssssssssssssss"+feed);// 최신 게시글 번호로 데이터 조회
         model.addAttribute("feed", feed); // JSP로 전달할 데이터 추가
         return "home";
     }
