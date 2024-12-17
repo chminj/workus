@@ -16,6 +16,6 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 <%-- 공통 CSS : css 추가해야 한다면 main.css 위로 추가할 것 --%>
-<link rel="stylesheet" href="/resources/css/main.css">
+<link rel="stylesheet" href="${s3}/resources/css/main.css">
 <%-- 웹 소켓 --%>
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>

@@ -219,6 +219,7 @@
 				const files = $(this)[0].files;
 
 				if(files.length > 0) {
+					$('#emojiSuggestionsDiv').addClass('d-none');
 					$('input[name=content]').val('');
 					$('input[name=content]').prop('disabled', true);
 				}
@@ -343,6 +344,10 @@
 					}
 
 					if (fileInput) {
+						$('input[name=content]').val('');
+						$('input[name=content]').prop('disabled', false);
+						$('#fileInput').val('');
+						$('#emojiSuggestionsDiv').removeClass('d-none');
 						const formData = new FormData();
 						formData.append('upfile', fileInput);
 						const response = await fetch('/ajax/chat/upload', {
@@ -369,9 +374,6 @@
 							console.log('파일 업로드에 실패했습니다.');
 						}
 					}
-					$('input[name=content]').prop('disabled', false);
-					$('input[name=content]').val('');
-					$('#fileInput').val('');
 				}
 
 				// 이모지 전송
@@ -413,9 +415,9 @@
 				}
 
 				$('#chat').on('click', '#submitChat', function () {
+					chat();
 					$('#emojiSuggestionsDiv').addClass('d-none');
 					$('input[name=content]').val('');
-					chat();
 				});
 
 				// 엔터키 입력 이벤트
@@ -423,6 +425,8 @@
 					if (e.keyCode === 13) {
 						e.preventDefault();
 						chat();
+						$('#emojiSuggestionsDiv').addClass('d-none');
+						$('input[name=content]').val('');
 					}
 				});
 			})

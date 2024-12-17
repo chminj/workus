@@ -212,6 +212,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
                 userSession.sendMessage(new TextMessage(chatMessageBytes));
             }
         }
+
+        removeWebSocketSession(session);
     }
 
     private void chatting(ChatMessage chatMessage) throws IOException {
