@@ -1,11 +1,15 @@
 package com.example.workus.common.sse;
 
+import com.example.workus.common.exception.WorkusException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Slf4j
 @Service
 public class NotificationService {
     private final List<SseEmitter> emitters = new CopyOnWriteArrayList<>();
@@ -27,20 +31,17 @@ public class NotificationService {
         } catch (Exception e) {
             // 오류가 발생한 emitter는 제거
             emitters.remove(emitter);
-            // 로그 추가: 어떤 오류가 발생했는지 확인
-            System.err.println("Emitter 오류: " + e.getMessage());
+            // WorkusException으로 예외를 던짐
+            throw new WorkusException("EMITTER_ERROR", "Emitter 오류: " + e.getMessage(), e);
         }
     }
-
-
-
-
 
     /**
      * 모든 emitter에 메시지를 전송합니다.
      *
      * @param message 전송할 메시지
      */
+    @Transactional
     public void sendMessageToAll(String message) {
         for (SseEmitter emitter : emitters) {
             try {
@@ -49,8 +50,9 @@ public class NotificationService {
             } catch (Exception e) {
                 // 오류가 발생한 emitter는 제거
                 emitters.remove(emitter);
-                // 로그 추가: 어떤 오류가 발생했는지 확인
-                System.err.println("Emitter 오류: " + e.getMessage());
+                // 오류 로그 기록
+                log.error("Emitter 오류: {}", e.getMessage(), e);
+                throw new WorkusException("EMITTER_ERROR", "Emitter 오류: " + e.getMessage(), e);
             }
         }
     }

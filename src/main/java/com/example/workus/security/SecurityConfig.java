@@ -3,16 +3,12 @@ package com.example.workus.security;
 import com.example.workus.common.dto.RestResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.DispatcherType;
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -53,7 +49,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint((request, response, authException) -> {
 
                     String requestURI = request.getRequestURI();
-                    if (requestURI.startsWith("/api")) {
+                    if (requestURI.startsWith("/api") || requestURI.startsWith("/ajax")) {
                         response.setContentType("application/json");
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
@@ -71,8 +67,25 @@ public class SecurityConfig {
                     }
                 })
                 .accessDeniedHandler((request, response, accessDeniedException) -> {
-                    request.setAttribute("errorMessage", "접근 권한이 없는 페이지입니다.");
-                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                    String requestURI = request.getRequestURI();
+                    if (requestURI.startsWith("/api") || requestURI.startsWith("/ajax")) {
+                        response.setContentType("application/json");
+                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+
+                        RestResponseDto res = new RestResponseDto();
+                        res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                        res.setMessage("접근 권한이 없는 요청입니다.");
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        String jsonText = mapper.writeValueAsString(res);
+
+                        response.getWriter().write(jsonText);
+                    } else {
+
+                        request.setAttribute("status", HttpServletResponse.SC_FORBIDDEN);
+                        request.setAttribute("message", "접근 권한이 없는 페이지입니다.");
+                        request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                    }
                 })
             );
 

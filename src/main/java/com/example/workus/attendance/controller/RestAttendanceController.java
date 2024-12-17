@@ -26,14 +26,6 @@ public class RestAttendanceController {
     @Autowired
     private UserService userService;
 
-    private static final String ANNUAL_LEAVE_HISTORY_ERROR_MESSAGE = "연차 이력을 조회하는 중 오류가 발생했습니다.";
-
-    @ExceptionHandler(AttendanceException.class)
-    public ResponseEntity<RestResponseDto<String>> handleAttendanceException(AttendanceException ex) {
-        // AttendanceException을 RestAttendanceException으로 변환
-        throw new RestAttendanceException(ex.getMessage());
-    }
-
     @PostMapping("/approve")
     public ResponseEntity<RestResponseDto<String>> approveRequests(@RequestBody List<AtdApprovalRequestDto> requestDtoList
                                                                 , @AuthenticationPrincipal LoginUser loginUser)
@@ -56,8 +48,6 @@ public class RestAttendanceController {
             // 서비스에서 발생한 예외를 그대로 사용
             // RestAttendanceException으로 변환
             throw new RestAttendanceException(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(RestResponseDto.fail("Unexpected error occurred."));
         }
     }
 
@@ -68,21 +58,22 @@ public class RestAttendanceController {
      * @return 연차 이력 목록
      */
     @PostMapping("/annualLeaveHistory")
-    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser)
-    {
-        List<AnnualLeaveHistoryDto> events;
-//        try {
+    public ResponseEntity<List<AnnualLeaveHistoryDto>> getAnnualLeaveHistory(@AuthenticationPrincipal LoginUser loginUser) {
+        try {
             int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+            List<AnnualLeaveHistoryDto> events;
+
             if (roleNo == Constants.ROLE_NO_ADMIN) {
                 events = attendanceService.getAllAnnualLeaveHistory();
             } else {
                 events = attendanceService.getAnnualLeaveHistoryForLoggedInUser(loginUser.getNo());
             }
             return ResponseEntity.ok(events);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(500).body(RestResponseDto.fail(ANNUAL_LEAVE_HISTORY_ERROR_MESSAGE));
-//        }
+        } catch (AttendanceException e) {
+            throw new RestAttendanceException(e.getMessage(), e);
+        }
     }
+
 
     /**
      * 필터링할 부서 정보를 조회한다.
@@ -116,8 +107,12 @@ public class RestAttendanceController {
     @GetMapping("/role")
     public ResponseEntity<Integer> getUserRole(@AuthenticationPrincipal LoginUser loginUser)
     {
-        int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
-        return ResponseEntity.ok(roleNo);
+        try {
+            int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
+            return ResponseEntity.ok(roleNo);
+        } catch (AttendanceException e) {
+            throw new RestAttendanceException(e.getMessage(), e);
+        }
     }
 
 }

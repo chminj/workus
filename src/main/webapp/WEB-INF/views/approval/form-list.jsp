@@ -100,10 +100,10 @@
                                         <td colspan="5">
                                             <div class="d-flex align-items-center">
                                                 <input type="date" name="fromDate" class="form-control wd150"
-                                                       id="apvFromDate" required/>
+                                                       id="apvFromDate" required onkeydown="return false"/>
                                                 <span class="mgl5 mgr5">~</span>
                                                 <input type="date" name="todate" class="form-control wd150"
-                                                       id="apvToDate" required/>
+                                                       id="apvToDate" required onkeydown="return false"/>
                                                 <span class="dayCheck">총 <span class="dayTotal">0</span>일</span>
                                             </div>
                                         </td>
@@ -163,9 +163,9 @@
                                         <th class="table-active require">휴직 기간</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="fromDate" class="form-control wd150" required/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required onkeydown="return false"/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="toDate" class="form-control wd150" required/>
+                                                <input type="date" name="toDate" class="form-control wd150" required onkeydown="return false"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -279,13 +279,13 @@
                                         <th class="table-active require">협조요청일</th>
                                         <td colspan="2">
                                             <div class="d-flex">
-                                                <input type="date" name="fromDate" class="form-control wd150" required/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required onkeydown="return false"/>
                                             </div>
                                         </td>
                                         <th class="table-active">완료예정일</th>
                                         <td colspan="2">
                                             <div class="d-flex">
-                                                <input type="date" name="toDate" class="form-control wd150"/>
+                                                <input type="date" name="toDate" class="form-control wd150" onkeydown="return false"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -344,9 +344,9 @@
                                         <th class="table-active require">교육참석일</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="fromDate" class="form-control wd150" required/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required onkeydown="return false"/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="toDate" class="form-control wd150" required/>
+                                                <input type="date" name="toDate" class="form-control wd150" required onkeydown="return false"/>
                                             </div>
                                         </td>
                                     </tr>
@@ -400,9 +400,9 @@
                                         <th class="table-active require">외근 일정</th>
                                         <td colspan="5">
                                             <div class="d-flex">
-                                                <input type="date" name="fromDate" class="form-control wd150" required/>
+                                                <input type="date" name="fromDate" class="form-control wd150" required onkeydown="return false"/>
                                                 <span class="mgl5 mgr5">~</span>
-                                                <input type="date" name="toDate" class="form-control wd150" required/>
+                                                <input type="date" name="toDate" class="form-control wd150" required onkeydown="return false"/>
                                             </div>
                                         </td>
                                     </tr>

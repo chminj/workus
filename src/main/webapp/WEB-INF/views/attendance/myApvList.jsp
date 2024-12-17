@@ -180,6 +180,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 </div>
 <script>
     $(function () {
+        let refSearch = document.querySelector("#searchOption");
         let pageInput = document.querySelector("input[name=page]");
 
         // 페이징 번호 클릭 시
@@ -214,9 +215,11 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
             // 선택된 항목이 없을 경우 check
             if (requestDtoList.length === 0) {
                 alert('승인할 항목을 선택해 주세요.');
-                return
+                return;
             } else {
-                confirm('승인하겠습니까?');
+               if (!confirm('승인하겠습니까?')) {
+                    return; // 사용자가 취소를 선택한 경우
+                }
             }
 
             // 데이터 전송
@@ -227,20 +230,20 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                 },
                 body: JSON.stringify(requestDtoList),
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('네트워크 응답이 좋지 않습니다.');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert(data.message);
-                    // 페이지 새로고침
-                    location.reload();
-                })
-                .catch(error => {
-                    alert('오류가 발생했습니다.');
-                });
+            .then(response => {
+                if (!response.ok) {
+                    // 서버에서 에러가 발생한 경우
+                    return Promise.reject(new Error(response.message));
+                }
+                return response.json();
+            })
+            .then(data => {
+                // 페이지 새로고침
+                location.reload();
+            })
+            .catch(error => {
+                alert(error.message);
+            });
         })
     });
 </script>

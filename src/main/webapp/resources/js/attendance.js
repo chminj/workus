@@ -1,4 +1,4 @@
-$(function () {
+$(document).ready(function () {
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 달력 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
     let atdCalendarEl = document.getElementById('fullCalendarInAtd');
     let roleNo = 0; // 사용자 역할 저장
@@ -8,16 +8,21 @@ $(function () {
     const selectBox = $('<select id="deptSelect" class="form-select"><option value="">Select a department</option></select>');
 
 // 페이지 로드 시 사용자 역할 조회
-    $.ajax({
-        url: '/api/attendances/role',
-        type: 'GET',
-        success: function (data) {
-            roleNo = data; // roleNo 값 저장
-        },
-        error: function () {
-            console.error('사용자 역할을 가져오는 데 실패했습니다.');
+    fetch('/api/attendances/role')
+    .then(response => {
+        if (!response.ok) {
+            // 서버에서 에러가 발생한 경우
+            return Promise.reject(new Error('사용자 역할을 가져오는 데 실패했습니다.'));
         }
-    });
+        return response.json(); // 응답을 JSON으로 변환
+    })
+    .then(data => {
+        roleNo = data; // roleNo 값 저장
+    })
+    .catch(error => {
+        console.error(error.message); // 에러 메시지 출력
+        }
+    );
 
 // 부서 select option 추가
     function populateDepartmentSelect(deptSelect) {
@@ -122,28 +127,31 @@ $(function () {
 
 // 부서 목록을 가져오는 AJAX 호출
     function loadDepartmentList() {
-        $.ajax({
-            url: '/api/attendances/departments',
-            type: 'GET',
-            success: function (data) {
-                const deptSelect = [];
-                data.forEach(dept => {
-                    deptSelect.push({id: dept.deptNo, name: dept.deptName});
-                });
-
-                // 역할에 따라 부서 선택 옵션 추가
-                if (roleNo === 100) { // 관리자일 경우
-                    selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child'))
-                    populateDepartmentSelect(deptSelect); // 부서 선택 옵션 추가
-                } else { // 일반 사용자일 경우
-                    selectedDeptNo = deptSelect[0].id; // 자신의 부서 ID 저장
-                    selectBox.append(`<option value="${selectedDeptNo}">${deptSelect[0].name}</option>`); // 일반 사용자의 부서 추가
-                    filterEventsByDepartment(selectedDeptNo); // 초기 필터링
-                }
-            },
-            error: function () {
-                console.error('부서 목록을 가져오는 데 실패했습니다.');
+        fetch('/api/attendances/departments')
+        .then(response => {
+            if (!response.ok) {
+                return Promise.reject(new Error('부서 목록을 가져오는 데 실패했습니다.'));
             }
+            return response.json();
+        })
+        .then(data => {
+            const deptSelect = data.map(dept => ({
+                id: dept.deptNo,
+                name: dept.deptName
+            }));
+
+            // 역할에 따라 부서 선택 옵션 추가
+            if (roleNo === 100) { // 관리자일 경우
+                selectBox.appendTo($('.fc-toolbar .fc-toolbar-chunk:first-child'));
+                populateDepartmentSelect(deptSelect); // 부서 선택 옵션 추가
+            } else { // 일반 사용자일 경우
+                selectedDeptNo = deptSelect[0].id; // 자신의 부서 ID 저장
+                selectBox.append(`<option value="${selectedDeptNo}">${deptSelect[0].name}</option>`); // 일반 사용자의 부서 추가
+                filterEventsByDepartment(selectedDeptNo); // 초기 필터링
+            }
+        })
+        .catch(error => {
+            console.error(error.message); // 에러 메시지 출력
         });
     }
 
@@ -204,53 +212,60 @@ $(function () {
 // ajax 호출
     async function atdForm() {
         if (!isDataLoaded) {
-            let responseUser = await fetch("/attendance/atdFormInUser");
-            let resultUser = await responseUser.json();
+            try {
+                let responseUser = await fetch("/attendance/atdFormInUser");
+                let resultUser = await responseUser.json();
 
-            for (let i = 0; i < resultUser.length; i++) {
-                let content = `
-                <li class="d-flex">
-                    <input type="checkbox" id="${resultUser[i].no}" class="mgr5">
-                    <label for="${resultUser[i].no}" data-sort="${i}" class="ellipsis wdp40">
-                      <span class="name mgr5">${resultUser[i].name}</span>
-                    </label>
-                    <span class="gray">
-                          <span class="dept">${resultUser[i].deptName}</span>
-                          <span>l</span>
-                          <span class="position">${resultUser[i].positionName}</span>
-                    </span>
-                </li>
-            `;
-                $("#atdFormUser").append(content);
-            }
-
-            let responseCtgr = await fetch("/attendance/atdFormInCtgr");
-            let resultCtgr = await responseCtgr.json();
-
-            // 연차 및 반차 관련 데이터 초기화
-            $(".annualLeaveOnly").empty();
-
-            for (let i = 0; i < resultCtgr.length; i++) {
-                // 연차, 반차, 반반차 (radio)
-                if (resultCtgr[i].no < 25) {
+                for (let i = 0; i < resultUser.length; i++) {
                     let content = `
-                    <label for="day${resultCtgr[i].no}">
-                      <input type="radio" name="categoryOpt2" value=${resultCtgr[i].no} id="day${resultCtgr[i].no}">
-                      <span class="mgr10 mgl5">${resultCtgr[i].name}</span>
-                    </label>
-                `;
-                    $(".annualLeaveOnly").append(content);
+                        <li class="d-flex">
+                            <input type="checkbox" id="${resultUser[i].no}" class="mgr5">
+                            <label for="${resultUser[i].no}" data-sort="${i}" class="ellipsis wdp40">
+                              <span class="name mgr5">${resultUser[i].name}</span>
+                            </label>
+                            <span class="gray">
+                                  <span class="dept">${resultUser[i].deptName}</span>
+                                  <span>l</span>
+                                  <span class="position">${resultUser[i].positionName}</span>
+                            </span>
+                        </li>
+                    `;
+                    $("#atdFormUser").append(content);
                 }
 
-                // 연차, 병가 (select)
-                if (resultCtgr[i].count === 1) {
-                    let content = `
-                    <option value="${resultCtgr[i].no}">${resultCtgr[i].name}</option>
-                `;
-                    $("#atdCtgr").append(content);
+                let responseCtgr = await fetch("/attendance/atdFormInCtgr");
+                if (!responseCtgr.ok) {
+                    throw new Error("카테고리 목록 조회 실패");
                 }
+                let resultCtgr = await responseCtgr.json();
+
+                // 연차 및 반차 관련 데이터 초기화
+                $(".annualLeaveOnly").empty();
+
+                for (let i = 0; i < resultCtgr.length; i++) {
+                    // 연차, 반차, 반반차 (radio)
+                    if (resultCtgr[i].no < 25) {
+                        let content = `
+                            <label for="day${resultCtgr[i].no}">
+                              <input type="radio" name="categoryOpt2" value=${resultCtgr[i].no} id="day${resultCtgr[i].no}">
+                              <span class="mgr10 mgl5">${resultCtgr[i].name}</span>
+                            </label>
+                        `;
+                        $(".annualLeaveOnly").append(content);
+                    }
+
+                    // 연차, 병가 (select)
+                    if (resultCtgr[i].count === 1) {
+                        let content = `
+                            <option value="${resultCtgr[i].no}">${resultCtgr[i].name}</option>
+                        `;
+                        $("#atdCtgr").append(content);
+                    }
+                }
+                isDataLoaded = true; // 데이터가 로드되었음을 표시
+            } catch (error) {
+                console.error(error.message);
             }
-            isDataLoaded = true; // 데이터가 로드되었음을 표시
         }
     }
 
@@ -453,8 +468,8 @@ $(function () {
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 연차 선택 옵션 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
     let categoryNo = $("#categoryNo");
 
-    $("#atdCtgr").on("click", function () {
-        let opt = $(this).children("option:selected").val();
+    $("#atdCtgr").on("change", function () {
+        let opt = $(this).val();
 
         if (opt === '25') {
             $(".annualLeaveOnly").hide();
@@ -486,23 +501,32 @@ $(function () {
 // confirm
     $("#atdApproval").on("submit", function (e) {
         e.preventDefault();
+
         if ($("#apvUserList").val().trim() === "" || $("#refUserList").val().trim() === "") {
             alert("결재선/참조선 목록이 비어 있습니다. 사용자를 선택해 주세요.");
-        } else {
-            $("#collapseExample").stop().fadeIn(500);
+            return; // 폼 제출 중지
         }
 
-        // 폼 제출
+        let categoryNoValue = $("#categoryNo").val();
+        if (categoryNoValue === "0") {
+            alert('신청할 연차 유형을 선택해주세요.');
+            return;
+        }
+
+        // dayTotal 처리
         let dayTotal = $("#dayTotal").val();
         if (dayTotal === "") {
-            $("#dayTotal").val(0); // 또는 원하는 기본값으로 설정
+            $("#dayTotal").val(0); // 기본값으로 설정
         }
+
+
+        $("#collapseExample").stop().fadeIn(500);
     });
 
     $("#confirmModalBtn").on("click", function () {
         if ($("#collapseExample").is(':visible')) {
-            $("#atdApproval").off("submit").submit();
             // submit 이벤트를 제거하고 폼 제출
+            $("#atdApproval").off("submit").submit();
         }
     });
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 승인 모달 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */

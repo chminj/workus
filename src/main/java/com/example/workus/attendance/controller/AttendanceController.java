@@ -4,15 +4,18 @@ import com.example.workus.attendance.dto.*;
 import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
+import com.example.workus.common.exception.RestAttendanceException;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,14 +51,24 @@ public class AttendanceController {
 
     @GetMapping("/atdFormInUser")
     @ResponseBody
-    public List<User> usersInAtdForm(@AuthenticationPrincipal LoginUser loginUser) {
-        return (List<User>) userService.getUsersExceptMe(loginUser.getNo());
+    public ResponseEntity<List<User>> usersInAtdForm(@AuthenticationPrincipal LoginUser loginUser) {
+        try {
+            List<User> users = (List<User>) userService.getUsersExceptMe(loginUser.getNo());
+            return ResponseEntity.ok(users);
+        } catch (Exception e) {
+            throw new RestAttendanceException("사용자 목록 조회 중 오류 발생", e);
+        }
     }
 
     @GetMapping("/atdFormInCtgr")
     @ResponseBody
-    public List<AttendanceCategory> categoriesInAtdForm() {
-        return (List<AttendanceCategory>) attendanceService.getCategories();
+    public ResponseEntity<List<AttendanceCategory>> categoriesInAtdForm() {
+    try {
+        List<AttendanceCategory> categories = (List<AttendanceCategory>) attendanceService.getCategories();
+        return ResponseEntity.ok(categories);
+        } catch (Exception e) {
+            throw new RestAttendanceException("카테고리 목록 조회 중 오류 발생", e);
+        }
     }
 
     @PostMapping("/getApproval")
@@ -71,6 +84,7 @@ public class AttendanceController {
         apvForm.setCategoryNo(form.getCategoryNo());
         apvForm.setUserNo(loginUser.getNo());
         apvForm.setTime(form.getTime());
+        apvForm.setDayTotal(form.getDayTotal());
         List<AtdApprovalUserDto> users = new ArrayList<>();
         String[] apvs = form.getApv().split(",");
         String[] refs = form.getRef().split(",");
@@ -176,7 +190,13 @@ public class AttendanceController {
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
         condition.put("roleNo", roleNo);
 
-        ListDto<RefViewDto> forms = attendanceService.getReferenceForms(loginUser.getNo(), condition);
+        ListDto<RefViewDto> forms;
+        if (roleNo == 100 ){
+            forms = attendanceService.getReferenceForms(loginUser.getNo(), condition, roleNo);
+        } else {
+            forms = attendanceService.getMyReferenceForms(loginUser.getNo(), condition);
+        }
+
         model.addAttribute("condition", condition);
         model.addAttribute("forms", forms.getData());
         model.addAttribute("paging", forms.getPaging());

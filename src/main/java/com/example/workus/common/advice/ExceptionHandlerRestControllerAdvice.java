@@ -9,7 +9,13 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-public class ExceptionHandlerRestControllerAdvice {
+public class ExceptionHandlerRestControllerAdvice {//    구체적인 예외 처리기 먼저 작성
+
+    @ExceptionHandler(RestAttendanceException.class)
+    public ResponseEntity<RestResponseDto<String>> handleRestAttendanceException(RestAttendanceException ex) {
+        RestResponseDto<String> response = RestResponseDto.fail(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response); // 500 error
+    }
 
     @ExceptionHandler(RestWorkusException.class)
     public ResponseEntity<RestResponseDto<Void>> handlerWorkusException(RestWorkusException e) {
@@ -17,9 +23,4 @@ public class ExceptionHandlerRestControllerAdvice {
         return ResponseEntity.internalServerError().body(RestResponseDto.fail(msg));
     }
 
-    @ExceptionHandler(RestAttendanceException.class)
-    public ResponseEntity<RestResponseDto<String>> handleRestAttendanceException(RestAttendanceException ex) {
-        RestResponseDto<String> response = RestResponseDto.fail(ex.getMessage());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-    }
 }
