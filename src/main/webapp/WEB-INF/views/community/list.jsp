@@ -62,7 +62,7 @@
         <div class="popup-header">
           <img src="" id="postProfile" alt="Profile Picture" class="profile">
           <div class="username" id="postUsername"></div>
-          <div class="popup-close" onclick="closePopup()">×</div>
+          <div class="popup-close">×</div>
         </div>
         <div class="popup-detail">
           <p class="popup-title" id="postTitle"><span class="bold"></span></p>
@@ -238,7 +238,7 @@
                   <i class="bi bi-heart large-heart" id="he"></i> <!-- 기본 빈 하트 아이콘 -->
                  </span>
 
-                 <button class="open-popup-btn" onclick="openPopup(\${feed.no})">
+                 <button class="open-popup-btn" id="openPopupBtn\${feed.no}" data-feed-no="\${feed.no}">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
                     <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.5-1.05 1.548-.524 2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
                   </svg>
@@ -304,7 +304,7 @@
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       } else if(feed.mediaUrl.includes('mp4') ||feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
         let insertUrl =
-                `<video controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                `<video id="nonPopupVideo\${feed.no}" controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       }
     }
@@ -323,9 +323,10 @@
           $("#popupUrl${feed.no}").html(insertUrl)
         } else if(feed.mediaUrl.includes('mp4') || feed.mediaUrl.includes('mp4')|| feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
           let insertUrl =
-                  `<video width=100%; height=100%; controls autoplay loop src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<video id="popupVideo" width=100%; height=100%; controls  src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         }
+
         $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
         $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/userprofile/"+feed.user.profileSrc);
         $("#postUsername").text(feed.user.name);
@@ -375,9 +376,22 @@
     })
   }
 
-  function closePopup() {
+
+  $(document).on('click', '.open-popup-btn',function () {
+    let feedNo = $(this).data('feedNo');
+    openPopup(feedNo);
+    let video = $(`#nonPopupVideo\${feedNo}`);
+    video.get(0).pause();
+  })
+
+  $(document).on('click', '.popup-close',function () {
     document.getElementById("popupOverlay").style.display = "none";
-  }
+    let video = $('#popupVideo');
+    if(video.length){
+      video.get(0).pause();
+    }
+  })
+
 
   // 댓글 js
   function inserReply(feedNo){
@@ -481,21 +495,21 @@
     });
   }
 
-  //  드롭다운 js
-  const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
-  const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
-
-  // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
-  function toggleDropdown() {
-    menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
-  }
-
-  // 클릭 외부 시 드롭다운 닫기
-  window.addEventListener('click', (event) => {
-    if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
-      menu.classList.remove('show'); // 드롭다운 숨기기
-    }
-  });
+  // //  드롭다운 js
+  // const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+  // const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
+  //
+  // // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
+  // function toggleDropdown() {
+  //   menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
+  // }
+  //
+  // // 클릭 외부 시 드롭다운 닫기
+  // window.addEventListener('click', (event) => {
+  //   if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
+  //     menu.classList.remove('show'); // 드롭다운 숨기기
+  //   }
+  // });
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // 맨 위로 부드럽게 이동
