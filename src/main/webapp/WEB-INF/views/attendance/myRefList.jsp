@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                     <tbody>
                                     <c:forEach var="form" items="${forms }" varStatus="loop">
                                         <tr>
-                                            <td>${loop.count }</td>
+                                            <td>${loop.count } ${form.atdNo }</td>
                                             <td>${form.reqUserName}</td>
                                             <td>
                                                 ${form.categoryName }

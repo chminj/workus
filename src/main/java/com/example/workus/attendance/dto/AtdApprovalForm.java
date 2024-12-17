@@ -26,5 +26,5 @@ public class AtdApprovalForm {
     private String time;
     private String apv;
     private String ref;
-    private int totalDay;
+    private int dayTotal;
 }

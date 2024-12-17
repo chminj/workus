@@ -34,7 +34,7 @@
         , ATD_CATEGORY_NO
         , USER_NO
         , ATD_CATEGORY_TIME
-        <if test="form.totalDay != null">, ATD_TOTAL_DAY</if>)
+        <if test="form.dayTotal != null">, ATD_TOTAL_DAY</if>)
         VALUES
         (#{form.reason}
         , #{form.fromDate}
@@ -42,7 +42,7 @@
         , #{form.categoryNo}
         , #{form.userNo}
         , #{form.time}
-        <if test="form.totalDay != null">, #{form.totalDay}</if>)
+        <if test="form.dayTotal != null">, #{form.dayTotal}</if>)
         <selectKey keyProperty="form.no" resultType="Long" order="AFTER">
             SELECT LAST_INSERT_ID()
         </selectKey>
@@ -109,7 +109,6 @@
                         JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO)
         </if>
     </select>
-
     <resultMap id="refViewResultMap" type="refViewDto">
         <result property="atdNo" column="atdNo"/>
         <result property="refNo" column="refNo"/>
@@ -122,6 +121,35 @@
         <result property="categoryName" column="categoryName"/>
         <result property="reqUserName" column="reqUserName"/>
     </resultMap>
+    <select id="getAllReferenceFormsByRoleNo" resultMap="refViewResultMap">
+        SELECT A.ATD_NO AS atdNo
+        , U.ATD_APPROVAL_NO as refNo
+        , U.ATD_STATUS AS status
+        , A.ATD_TEXT AS reason
+        , A.ATD_TO_DATE AS toDate
+        , A.ATD_FROM_DATE AS fromDate
+        , A.ATD_CREATED_DATE AS createdDate
+        , A.ATD_CATEGORY_TIME AS time
+        , C.ATD_CATEGORY_NAME AS categoryName
+        , AU.USER_NAME AS reqUserName
+        FROM WORKUS_ATTENDANCE A
+        JOIN WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
+        JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
+        JOIN WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
+        <if test="condition.opt != null">
+            <choose>
+                <when test="condition.opt == 'name'">
+                    AND AU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.opt == 'reason'">
+                    AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+        GROUP BY A.ATD_NO
+        ORDER BY A.ATD_NO ASC
+        LIMIT #{condition.offset}, #{condition.end}
+    </select>
     <select id="getAllReferenceFormsByUserNo" resultMap="refViewResultMap">
         SELECT A.ATD_NO AS atdNo
         , MAX(U.ATD_APPROVAL_NO) as refNo
@@ -296,6 +324,7 @@
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
         JOIN WORKUS_DEPT D ON D.DEPT_NO = U.DEPT_NO
         WHERE U.DEPT_NO = #{user.deptNo}
+        AND H.ATD_NO IS NOT NULL
     </select>
     <select id="getAllUsedAnnualLeave" resultType="CalDto">
         SELECT A.USER_NO       as userNo
