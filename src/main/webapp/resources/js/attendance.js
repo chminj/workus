@@ -1,4 +1,4 @@
-$(function () {
+$(document).ready(function () {
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 달력 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
     let atdCalendarEl = document.getElementById('fullCalendarInAtd');
     let roleNo = 0; // 사용자 역할 저장
@@ -468,8 +468,8 @@ $(function () {
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ 연차 선택 옵션 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */
     let categoryNo = $("#categoryNo");
 
-    $("#atdCtgr").on("click", function () {
-        let opt = $(this).children("option:selected").val();
+    $("#atdCtgr").on("change", function () {
+        let opt = $(this).val();
 
         if (opt === '25') {
             $(".annualLeaveOnly").hide();
@@ -501,23 +501,32 @@ $(function () {
 // confirm
     $("#atdApproval").on("submit", function (e) {
         e.preventDefault();
+
         if ($("#apvUserList").val().trim() === "" || $("#refUserList").val().trim() === "") {
             alert("결재선/참조선 목록이 비어 있습니다. 사용자를 선택해 주세요.");
-        } else {
-            $("#collapseExample").stop().fadeIn(500);
+            return; // 폼 제출 중지
         }
 
-        // 폼 제출
+        let categoryNoValue = $("#categoryNo").val();
+        if (categoryNoValue === "0") {
+            alert('신청할 연차 유형을 선택해주세요.');
+            return;
+        }
+
+        // dayTotal 처리
         let dayTotal = $("#dayTotal").val();
         if (dayTotal === "") {
-            $("#dayTotal").val(0); // 또는 원하는 기본값으로 설정
+            $("#dayTotal").val(0); // 기본값으로 설정
         }
+
+
+        $("#collapseExample").stop().fadeIn(500);
     });
 
     $("#confirmModalBtn").on("click", function () {
         if ($("#collapseExample").is(':visible')) {
-            $("#atdApproval").off("submit").submit();
             // submit 이벤트를 제거하고 폼 제출
+            $("#atdApproval").off("submit").submit();
         }
     });
     /* ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ // 승인 모달 ㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ */

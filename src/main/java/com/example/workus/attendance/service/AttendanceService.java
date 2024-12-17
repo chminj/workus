@@ -148,7 +148,7 @@ public class AttendanceService {
      * @param condition 페이징, 검색 조건(date, opt, keyword)
      * @return 내 참조 내역 리스트
      */
-    public ListDto<RefViewDto> getReferenceForms(Long userNo, Map<String, Object> condition) {
+    public ListDto<RefViewDto> getMyReferenceForms(Long userNo, Map<String, Object> condition) {
         int totalRows = attendanceMapper.getTotalRows(userNo, condition);
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
@@ -170,6 +170,33 @@ public class AttendanceService {
         condition.compute("roleNo", (k, roleNo) -> roleNo);
 
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByUserNo(userNo, condition);
+        ListDto<RefViewDto> dtoList = new ListDto<>(forms, pagination);
+
+        return dtoList;
+    }
+
+    public ListDto<RefViewDto> getReferenceForms(Long userNo, Map<String, Object> condition, int roleNo) {
+        int totalRows = attendanceMapper.getTotalRows(userNo, condition);
+        int page = (Integer) condition.get("page");
+        int rows = (Integer) condition.get("rows");
+        Pagination pagination = new Pagination(totalRows, page, rows);
+
+        int begin = pagination.getBegin();
+        int end = pagination.getEnd();
+        int offset = pagination.getOffset();
+        if (begin < 0) {
+            begin = 0; // 기본값 설정
+        }
+        if (end <= 0) {
+            end = 10; // 기본값 설정
+        }
+        condition.put("begin", begin);
+        condition.put("offset", offset);
+        condition.put("end", end);
+
+        condition.compute("roleNo", (k, role) -> roleNo);
+
+        List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByRoleNo(condition);
 
         ListDto<RefViewDto> dtoList = new ListDto<>(forms, pagination);
 

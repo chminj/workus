@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import software.amazon.awssdk.services.s3.model.ListBucketAnalyticsConfigurationsRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -83,6 +84,7 @@ public class AttendanceController {
         apvForm.setCategoryNo(form.getCategoryNo());
         apvForm.setUserNo(loginUser.getNo());
         apvForm.setTime(form.getTime());
+        apvForm.setDayTotal(form.getDayTotal());
         List<AtdApprovalUserDto> users = new ArrayList<>();
         String[] apvs = form.getApv().split(",");
         String[] refs = form.getRef().split(",");
@@ -188,7 +190,13 @@ public class AttendanceController {
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
         condition.put("roleNo", roleNo);
 
-        ListDto<RefViewDto> forms = attendanceService.getReferenceForms(loginUser.getNo(), condition);
+        ListDto<RefViewDto> forms;
+        if (roleNo == 100 ){
+            forms = attendanceService.getReferenceForms(loginUser.getNo(), condition, roleNo);
+        } else {
+            forms = attendanceService.getMyReferenceForms(loginUser.getNo(), condition);
+        }
+
         model.addAttribute("condition", condition);
         model.addAttribute("forms", forms.getData());
         model.addAttribute("paging", forms.getPaging());
