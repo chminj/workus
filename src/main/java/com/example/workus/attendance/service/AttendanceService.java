@@ -216,7 +216,11 @@ public class AttendanceService {
      * @return
      */
     private Map<String, Object> getAnnualLeaveData(Long atdNo) {
-        return attendanceMapper.getAnnualLeaveData(atdNo);
+        Map<String, Object> data = attendanceMapper.getAnnualLeaveData(atdNo);
+        if (data == null || data.isEmpty()) {
+            throw new AttendanceException("ANNUAL_LEAVE_DATA_ERROR", "연차 데이터가 없습니다. atdNo: " + atdNo);
+        }
+        return data;
     }
 
     /**

@@ -160,6 +160,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
 </div>
 <script>
     $(function () {
+        let refSearch = document.querySelector("#searchOption");
         let pageInput = document.querySelector("input[name=page]");
 
         // 페이징 번호 클릭 시
