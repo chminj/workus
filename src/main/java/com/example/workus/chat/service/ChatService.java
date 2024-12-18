@@ -6,6 +6,7 @@ import com.example.workus.chat.vo.Chat;
 import com.example.workus.chat.vo.Emoji;
 import com.example.workus.common.dto.DownloadFileData;
 import com.example.workus.common.dto.ListDto;
+import com.example.workus.common.exception.RestChatException;
 import com.example.workus.common.s3.S3Service;
 import com.example.workus.common.util.Pagination;
 import lombok.extern.slf4j.Slf4j;
@@ -43,28 +44,16 @@ public class ChatService {
     private static final String[] imageExtensions = {"jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"};
 
     public ListDto<Chat> getAllChatsByChatroomNo(Long userNo, Long chatroomNo, int page) {
+        if (userNo == null) {
+            throw new RestChatException("요청한 사용자 정보가 존재하지 않습니다.");
+        }
         int totalRows = chatMapper.getTotalRows(userNo, chatroomNo);
         Pagination pagination = new Pagination(page, totalRows);
         ListDto<Chat> dto;
         // 채팅방이 생성되고 친 채팅이 존재할 때
         if(pagination.getBegin() != 0) {
-            // 가장 첫 페이지일 때 -> 더보기 때 10개씩 하기 위해 첫 페이지인 경우는 11개를 보여준다.
             dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
-            // 확장자에 따라 file이나 image로 type을 설정한다.
-            for (Chat chat : dto.getData()) {
-                if (chat.getFileSrc() != null) {
-                    chat.setType("file");
-                    String extension = chat.getFileSrc().toLowerCase();
-                    for (String imageExtension : imageExtensions) {
-                        if (extension.endsWith("." + imageExtension)) {
-                            chat.setType("image");
-                            break;
-                        }
-                    }
-                } else if (chat.getEmoji() != null) {
-                    chat.setType("emoji");
-                }
-            }
+            setType(dto); // 확장자에 따라 file이나 image로 type을 설정한다.
             Collections.sort(dto.getData(), (data1, data2) ->
                     data1.getTime().compareTo(data2.getTime()));
             LocalDateTime firstChatTime = dto.getData().getFirst().getTime();
@@ -157,6 +146,9 @@ public class ChatService {
     }
 
     public DownloadFileData downloadFile(Long chatNo) {
+        if (chatNo == null) {
+            throw new RestChatException("요청한 파일의 정보가 존재하지 않습니다.");
+        }
         Chat chat = chatMapper.getChatByChatNo(chatNo);
         ByteArrayResource resource = s3Service.downloadFile(bucketName, folder + CHAT_DIR, chat.getFileSrc());
         return new DownloadFileData(chat.getFileSrc(), resource);
@@ -176,5 +168,23 @@ public class ChatService {
             iterator.remove();
         }
         return emojiList;
+    }
+
+    // 확장자에 따라 file이나 image로 type을 설정한다.
+    public void setType(ListDto<Chat> dto) {
+        for (Chat chat : dto.getData()) {
+            if (chat.getFileSrc() != null) {
+                chat.setType("file");
+                String extension = chat.getFileSrc().toLowerCase();
+                for (String imageExtension : imageExtensions) {
+                    if (extension.endsWith("." + imageExtension)) {
+                        chat.setType("image");
+                        break;
+                    }
+                }
+            } else if (chat.getEmoji() != null) {
+                chat.setType("emoji");
+            }
+        }
     }
 }

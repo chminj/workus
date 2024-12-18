@@ -49,6 +49,9 @@ $(document).ready(function () {
             week: '주별',
             day: '일별',
         },
+        // hiddenDays: [0, 6], // 주말 1
+        // weekends: false, // 주말 2
+        eventOrder : 'displayOrder',
         aspectRatio: 2,
         height: "auto",
         displayEventTime: false,
@@ -62,10 +65,15 @@ $(document).ready(function () {
                     $.ajax({
                         url: '/api/attendances/annualLeaveHistory',
                         type: 'POST',
+                        data: {
+                            start: fetchInfo.start.toISOString(),
+                            end: fetchInfo.end.toISOString()
+                        },
                         success: function (data) {
                             finalEvents = data.map(leave => {
                                 const startDate = new Date(leave.fromDate);
                                 const endDate = new Date(leave.toDate);
+                                endDate.setDate(endDate.getDate() + 1); // 하루 더하기
                                 return {
                                     title: leave.userName,
                                     start: startDate,
@@ -112,6 +120,8 @@ $(document).ready(function () {
             }
         },
         eventClick: function (info) {
+
+
             info.jsEvent.stopPropagation();
             info.jsEvent.preventDefault();
         },

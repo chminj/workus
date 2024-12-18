@@ -99,14 +99,67 @@
             A.ATD_NO ASC
         LIMIT #{condition.offset}, #{condition.end}
     </select>
-    <select id="getTotalRows" resultType="int">
+    <select id="getMyTotalRows" resultType="int">
         SELECT COUNT(*) as CNT
         FROM WORKUS_ATTENDANCE
         WHERE USER_NO = #{userNo}
         <if test="condition.status != null">
         AND ATD_NO IN (SELECT U2.ATD_NO
                         FROM WORKUS_ATTENDANCE_USER U2
-                        JOIN WORKUS_ATTENDANCE A2 ON U2.ATD_NO = A2.ATD_NO)
+                        WHERE U2.ATD_STATUS = #{condition.status})
+        </if>
+    </select>
+    <select id="getMyRefTotalRows" resultType="int">
+        SELECT COUNT(*) as CNT
+        FROM WORKUS_ATTENDANCE A
+        JOIN WORKUS_ATTENDANCE_USER U2 ON A.ATD_NO = U2.ATD_NO
+        JOIN WORKUS_USERS AU ON U2.USER_NO = AU.USER_NO
+        JOIN WORKUS_USERS RU ON RU.USER_NO = A.USER_NO
+        WHERE U2.USER_NO = #{userNo}
+        AND U2.ATD_APPROVAL_STATUS = 'R'
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.status == 'name'">
+                    AND RU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.status == 'reason'">
+                    AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+    <select id="getMyApvTotalRows" resultType="int">
+        SELECT COUNT(*) as CNT
+        FROM WORKUS_ATTENDANCE A
+        JOIN WORKUS_ATTENDANCE_USER U2 ON A.ATD_NO = U2.ATD_NO
+        JOIN WORKUS_USERS AU ON U2.USER_NO = AU.USER_NO
+        JOIN WORKUS_USERS RU ON RU.USER_NO = A.USER_NO
+        WHERE U2.USER_NO = #{userNo}
+        AND U2.ATD_APPROVAL_STATUS = 'A'
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.status == 'name'">
+                    AND RU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.status == 'reason'">
+                    AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
+        </if>
+    </select>
+    <select id="getTotalRows" resultType="int">
+        SELECT COUNT(*) as CNT
+        FROM WORKUS_ATTENDANCE A
+        JOIN WORKUS_USERS U ON A.USER_NO = U.USER_NO
+        <if test="condition.keyword != null">
+            <choose>
+                <when test="condition.status == 'name'">
+                    AND U.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+                <when test="condition.status == 'reason'">
+                    AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
+                </when>
+            </choose>
         </if>
     </select>
     <resultMap id="refViewResultMap" type="refViewDto">
@@ -136,19 +189,19 @@
         JOIN WORKUS_ATTENDANCE_USER U ON A.ATD_NO = U.ATD_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
         JOIN WORKUS_USERS AU ON A.USER_NO = AU.USER_NO
-        <if test="condition.opt != null">
+        <if test="condition.status != null">
             <choose>
-                <when test="condition.opt == 'name'">
+                <when test="condition.status == 'name'">
                     AND AU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
-                <when test="condition.opt == 'reason'">
+                <when test="condition.status == 'reason'">
                     AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
             </choose>
         </if>
         GROUP BY A.ATD_NO
         ORDER BY A.ATD_NO ASC
-        LIMIT #{condition.offset}, #{condition.end}
+        LIMIT #{condition.offset}, #{condition.rows}
     </select>
     <select id="getAllReferenceFormsByUserNo" resultMap="refViewResultMap">
         SELECT A.ATD_NO AS atdNo
@@ -171,12 +224,12 @@
                 AND U.ATD_APPROVAL_STATUS = 'R'
             </if>
         </where>
-        <if test="condition.opt != null">
+        <if test="condition.status != null">
             <choose>
-                <when test="condition.opt == 'name'">
+                <when test="condition.status == 'name'">
                     AND AU.USER_NAME LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
-                <when test="condition.opt == 'reason'">
+                <when test="condition.status == 'reason'">
                     AND A.ATD_TEXT LIKE CONCAT('%', #{condition.keyword}, '%')
                 </when>
             </choose>
@@ -188,7 +241,7 @@
         WHEN U.ATD_STATUS = 'C' THEN 2
         END,
         A.ATD_NO ASC
-        LIMIT #{condition.offset}, #{condition.end}
+        LIMIT #{condition.offset}, #{condition.rows}
     </select>
     <select id="getAllApprovalFormsByUserNo" resultType="apvViewDto">
         SELECT A.ATD_NO AS atdNo
@@ -212,12 +265,12 @@
         WHERE
         U.USER_NO = #{userNo}
         AND U.ATD_APPROVAL_STATUS = 'A'
-        <if test="condition.opt != null">
+        <if test="condition.status != null">
             <choose>
-                <when test="condition.opt == 'name'">
+                <when test="condition.status == 'name'">
                     and AU.USER_NAME like CONCAT('%', #{condition.keyword}, '%')
                 </when>
-                <when test="condition.opt == 'reason'">
+                <when test="condition.status == 'reason'">
                     and A.ATD_TEXT like CONCAT('%', #{condition.keyword}, '%')
                 </when>
             </choose>
@@ -228,12 +281,13 @@
         WHEN U.ATD_STATUS = 'C' THEN 2
         END,
         A.ATD_NO ASC
-        LIMIT #{condition.offset}, #{condition.end}
+        LIMIT #{condition.offset}, #{condition.rows}
     </select>
     <!-- CTE 쿼리 -->
     <select id="getAnnualLeaveData" resultType="map">
         SELECT U.USER_UNUSED_ANNUAL_LEAVE AS unused_leave,
-               C.ATD_CATEGORY_COUNT       AS category_count
+               C.ATD_CATEGORY_COUNT       AS category_count,
+               A.ATD_TOTAL_DAY            AS total_day
         FROM WORKUS_USERS U
         JOIN WORKUS_ATTENDANCE A ON U.USER_NO = A.USER_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON C.ATD_CATEGORY_NO = A.ATD_CATEGORY_NO
@@ -289,7 +343,7 @@
         UPDATE WORKUS_ATTENDANCE_USER
         SET ATD_STATUS = 'C'
         WHERE ATD_NO = #{atdNo}
-        AND ATD_APPROVAL_STATUS = 'I'
+        AND ATD_APPROVAL_STATUS = 'R'
     </update>
     <update id="updateAnnualLeaveByUnusedDate">
         UPDATE WORKUS_USERS U
@@ -310,34 +364,39 @@
             WHERE H.ATD_NO = subquery.ATD_NO);
     </update>
     <select id="getUsedAnnualLeaveByUser" resultType="CalDto">
-        SELECT A.USER_NO       as userNo
-             , U.USER_NAME     as userName
-             , A.ATD_FROM_DATE as fromDate
-             , A.ATD_TO_DATE   as toDate
-             , A.ATD_CATEGORY_TIME as time
-             , U.DEPT_NO as deptNo
-             , D.DEPT_NAME as deptName
-             , C.ATD_CATEGORY_NAME as categoryName
+        SELECT A.USER_NO            as userNo
+             , U.USER_NAME          as userName
+             , A.ATD_FROM_DATE      as fromDate
+             , A.ATD_TO_DATE        as toDate
+             , A.ATD_CATEGORY_TIME  as time
+             , U.DEPT_NO            as deptNo
+             , D.DEPT_NAME          as deptName
+             , C.ATD_CATEGORY_NAME  as categoryName
         FROM WORKUS_ATTENDANCE A
         JOIN WORKUS_USERS U ON A.USER_NO = U.USER_NO
-        JOIN WORKUS_ANNUAL_LEAVE_HISTORY H ON H.ATD_NO = A.ATD_NO
+        JOIN (SELECT ATD_NO, ATD_USER_NO as historyNo
+                FROM WORKUS_ANNUAL_LEAVE_HISTORY
+                GROUP BY ATD_NO) H
+        ON H.ATD_NO = A.ATD_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
         JOIN WORKUS_DEPT D ON D.DEPT_NO = U.DEPT_NO
         WHERE U.DEPT_NO = #{user.deptNo}
-        AND H.ATD_NO IS NOT NULL
     </select>
     <select id="getAllUsedAnnualLeave" resultType="CalDto">
-        SELECT A.USER_NO       as userNo
-             , U.USER_NAME     as userName
-             , A.ATD_FROM_DATE as fromDate
-             , A.ATD_TO_DATE   as toDate
-             , A.ATD_CATEGORY_TIME as time
-             , U.DEPT_NO as deptNo
-             , D.DEPT_NAME as deptName
-             , C.ATD_CATEGORY_NAME as categoryName
+        SELECT A.USER_NO            as userNo
+             , U.USER_NAME          as userName
+             , A.ATD_FROM_DATE      as fromDate
+             , A.ATD_TO_DATE        as toDate
+             , A.ATD_CATEGORY_TIME  as time
+             , U.DEPT_NO            as deptNo
+             , D.DEPT_NAME          as deptName
+             , C.ATD_CATEGORY_NAME  as categoryName
         FROM WORKUS_ATTENDANCE A
         JOIN WORKUS_USERS U ON A.USER_NO = U.USER_NO
-        JOIN WORKUS_ANNUAL_LEAVE_HISTORY H ON H.ATD_NO = A.ATD_NO
+        JOIN (SELECT ATD_NO, ATD_USER_NO as historyNo
+                FROM WORKUS_ANNUAL_LEAVE_HISTORY
+                GROUP BY ATD_NO) H
+        ON H.ATD_NO = A.ATD_NO
         JOIN WORKUS_ATTENDANCE_CATEGORY C ON A.ATD_CATEGORY_NO = C.ATD_CATEGORY_NO
         JOIN WORKUS_DEPT D ON D.DEPT_NO = U.DEPT_NO
     </select>

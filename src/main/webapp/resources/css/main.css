@@ -301,7 +301,7 @@ header.header {
 .lnb .list1 li, .lnb .list2 li {font-size:16px; line-height:1.9;}
 .lnb .listTitle {font-size:17px; font-weight:700; margin:35px 0 10px; padding-bottom:6px; border-bottom:1px solid #ddd;}
 
-main {padding:20px 25px; width:calc(100% - 230px)}
+main {padding:20px 25px 14px; width:calc(100% - 230px)}
 main.noLnb {margin-left:76px;}
 
 .title1 {font-size:21px;}

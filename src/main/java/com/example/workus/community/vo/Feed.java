@@ -4,6 +4,8 @@ import com.example.workus.user.vo.User;
 import lombok.*;
 import org.apache.ibatis.type.Alias;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +56,15 @@ public class Feed {
                 return "video";
             }
         }
+        return null;
+    }
+
+    public String getEncodedMediaUrl() {
+        try {
+            if (mediaUrl != null) {
+                return URLEncoder.encode(mediaUrl, "utf-8");
+            }
+        } catch (UnsupportedEncodingException e) {}
         return null;
     }
 

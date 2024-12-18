@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-   <link href="../../resources/css/communitymain.css" rel="stylesheet"/>\
+   <link href="${s3}/resources/css/communitymain.css" rel="stylesheet"/>\
   <title>workus template</title>
 </head>
 <body>
@@ -282,11 +282,16 @@
         tags += `
          <span type="button"id="\${tag.no}searchTag" onclick="searchHashTag(event)" style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span>`
       }
-
-      if (feed.likeCount > 0) {
+      if(feed.likeCount == 1){
+        let content = `
+            <span class="like-userName" name="userName" id="likeFeedUserName\${feed.no}">\${feed.userName}</span>님이 좋아합니다
+        `;
+        $(`#like-user-\${feed.no}`).html(content);
+      }else if (feed.likeCount > 0) {
+        let otherCount = feed.likeCount -1 ;
         let content = `
             <span class="like-userName" name="userName" id="likeFeedUserName\${feed.no}">\${feed.userName}</span>님
-            외<span class="like-count" name="likeCount" id="likeFeedCount\${feed.no}">\${feed.likeCount}</span>명이 좋아합니다.
+            외<span class="like-count" name="likeCount" id="likeFeedCount\${feed.no}">\${otherCount}</span>명이 좋아합니다.
         `;
 
         $(`#like-user-\${feed.no}`).html(content);
@@ -304,7 +309,7 @@
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       } else if(feed.mediaUrl.includes('mp4') ||feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
         let insertUrl =
-                `<video id="nonPopupVideo\${feed.no}" controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                `<video id="nonPopupVideo\${feed.no}" controls src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       }
     }
@@ -319,14 +324,13 @@
       success: function (feed) {
         if(feed.mediaUrl.includes('jpg') || feed.mediaUrl.includes('png')|| feed.mediaUrl.includes('jpeg') || feed.mediaUrl.includes('gif')) {
           let insertUrl =
-                  `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<img src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         } else if(feed.mediaUrl.includes('mp4') || feed.mediaUrl.includes('mp4')|| feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
           let insertUrl =
-                  `<video id="popupVideo" width=100%; height=100%; controls  src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<video id="popupVideo" width=100%; height=100%; controls  src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         }
-
         $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
         $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/userprofile/"+feed.user.profileSrc);
         $("#postUsername").text(feed.user.name);
@@ -359,6 +363,24 @@
     })
   }
 
+  // 동영상 정지 js
+  // 기본 게시글
+  $(document).on('click', '.open-popup-btn',function () {
+    let feedNo = $(this).data('feedNo');
+    openPopup(feedNo);
+    let video = $(`#nonPopupVideo\${feedNo}`);
+    video.get(0).pause();
+  })
+
+  // 팝업 게시글
+  $(document).on('click', '.popup-close',function () {
+    document.getElementById("popupOverlay").style.display = "none";
+    let video = $('#popupVideo');
+    if(video.length){
+      video.get(0).pause();
+    }
+  })
+
   function  deleteRely(replyNo){
     $.ajax({
       type:"post",
@@ -375,23 +397,6 @@
       }
     })
   }
-
-
-  $(document).on('click', '.open-popup-btn',function () {
-    let feedNo = $(this).data('feedNo');
-    openPopup(feedNo);
-    let video = $(`#nonPopupVideo\${feedNo}`);
-    video.get(0).pause();
-  })
-
-  $(document).on('click', '.popup-close',function () {
-    document.getElementById("popupOverlay").style.display = "none";
-    let video = $('#popupVideo');
-    if(video.length){
-      video.get(0).pause();
-    }
-  })
-
 
   // 댓글 js
   function inserReply(feedNo){
@@ -481,35 +486,38 @@
                 } else if (likeFeed.likeCount == 1){
                   $(`#like-user-\${feedNo}`).html("");
                   let content = `
-                <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
-                외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${likeFeed.likeCount}</span>명이 좋아합니다.
-            `;
+                    <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님이 좋아합니다
+                  `;
                   $(`#like-user-\${feedNo}`).html(content);
 
                 } else {
-                  $("#likeFeedUserName"+feedNo).text(likeFeed.userName);
-                  $("#likeFeedCount"+feedNo).text(likeFeed.likeCount);
+                  let otherCount =likeFeed.likeCount -1 ;
+                  let content = `
+                    <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
+                    외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${otherCount}</span>명이 좋아합니다.
+                  `;
+                  $(`#like-user-\${feedNo}`).html(content);
                 }
 
               }
     });
   }
 
-  // //  드롭다운 js
-  // const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
-  // const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
-  //
-  // // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
-  // function toggleDropdown() {
-  //   menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
-  // }
-  //
-  // // 클릭 외부 시 드롭다운 닫기
-  // window.addEventListener('click', (event) => {
-  //   if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
-  //     menu.classList.remove('show'); // 드롭다운 숨기기
-  //   }
-  // });
+  //  드롭다운 js
+  const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+  const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
+
+  // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
+  function toggleDropdown() {
+    menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
+  }
+
+  // 클릭 외부 시 드롭다운 닫기
+  window.addEventListener('click', (event) => {
+    if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
+      menu.classList.remove('show'); // 드롭다운 숨기기
+    }
+  });
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // 맨 위로 부드럽게 이동
