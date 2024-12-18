@@ -526,3 +526,12 @@ table label {
 .fc-col-header, .fc-scrollgrid-sync-table, .fc-daygrid-body.fc-daygrid-body-unbalanced {
     width: 100% !important;
 }
+
+.fc-sat, .fc-sun {
+    display: none; /* 주말 셀 숨기기 */
+}
+th.ui-datepicker-week-end,
+td.ui-datepicker-week-end {
+display: none;
+
+}

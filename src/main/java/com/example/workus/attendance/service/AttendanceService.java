@@ -94,11 +94,10 @@ public class AttendanceService {
      */
     public ListDto<ReqViewDto> getRequestForms(Long userNo, Map<String, Object> condition) {
         try {
-            int totalRows = attendanceMapper.getTotalRows(userNo, condition);
+            int totalRows = attendanceMapper.getMyTotalRows(userNo, condition);
             int page = (Integer) condition.get("page");
             int rows = (Integer) condition.get("rows");
-            Pagination pagination = new Pagination(totalRows, page, rows);
-
+            Pagination pagination = new Pagination(page, totalRows, rows);
             int begin = pagination.getBegin();
             int offset = pagination.getOffset();
             int end = pagination.getEnd();
@@ -123,7 +122,6 @@ public class AttendanceService {
             log.error("Error fetching request forms for userNo: {}", userNo, e);
             throw new AttendanceException("REQUEST_FORMS_FETCH_ERROR", "신청 내역을 조회하는 중 오류가 발생했습니다.");
         }
-
     }
 
     /**
@@ -149,16 +147,16 @@ public class AttendanceService {
      * @return 내 참조 내역 리스트
      */
     public ListDto<RefViewDto> getMyReferenceForms(Long userNo, Map<String, Object> condition) {
-        int totalRows = attendanceMapper.getTotalRows(userNo, condition);
+        int totalRows = attendanceMapper.getMyRefTotalRows(userNo, condition);
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
-        Pagination pagination = new Pagination(totalRows, page, rows);
+        Pagination pagination = new Pagination(page, totalRows, rows);
 
         int begin = pagination.getBegin();
         int end = pagination.getEnd();
         int offset = pagination.getOffset();
         if (begin < 0) {
-            begin = 0; // 기본값 설정
+            begin = 1; // 기본값 설정
         }
         if (end <= 0) {
             end = 10; // 기본값 설정
@@ -166,8 +164,6 @@ public class AttendanceService {
         condition.put("begin", begin);
         condition.put("offset", offset);
         condition.put("end", end);
-
-        condition.compute("roleNo", (k, roleNo) -> roleNo);
 
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByUserNo(userNo, condition);
         ListDto<RefViewDto> dtoList = new ListDto<>(forms, pagination);
@@ -175,26 +171,16 @@ public class AttendanceService {
         return dtoList;
     }
 
-    public ListDto<RefViewDto> getReferenceForms(Long userNo, Map<String, Object> condition, int roleNo) {
-        int totalRows = attendanceMapper.getTotalRows(userNo, condition);
+    public ListDto<RefViewDto> getReferenceForms(Map<String, Object> condition) {
+        int totalRows = attendanceMapper.getTotalRows(condition);
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
-        Pagination pagination = new Pagination(totalRows, page, rows);
+        Pagination pagination = new Pagination(page, totalRows, rows);
 
-        int begin = pagination.getBegin();
-        int end = pagination.getEnd();
         int offset = pagination.getOffset();
-        if (begin < 0) {
-            begin = 0; // 기본값 설정
-        }
-        if (end <= 0) {
-            end = 10; // 기본값 설정
-        }
-        condition.put("begin", begin);
-        condition.put("offset", offset);
-        condition.put("end", end);
 
-        condition.compute("roleNo", (k, role) -> roleNo);
+        condition.put("offset", offset);
+        condition.put("rows", rows);
 
         List<RefViewDto> forms = attendanceMapper.getAllReferenceFormsByRoleNo(condition);
 
@@ -211,10 +197,11 @@ public class AttendanceService {
      * @return 내 결재 내역 리스트
      */
     public ListDto<ApvViewDto> getApprovalForms(Long userNo, Map<String, Object> condition) {
-        int totalRows = attendanceMapper.getTotalRows(userNo, condition);
+        int totalRows = attendanceMapper.getMyApvTotalRows(userNo, condition);
         int page = (Integer) condition.get("page");
         int rows = (Integer) condition.get("rows");
-        Pagination pagination = new Pagination(totalRows, page, rows);
+
+        Pagination pagination = new Pagination(page, totalRows, rows);
 
         int begin = pagination.getBegin();
         int end = pagination.getEnd();
@@ -258,11 +245,11 @@ public class AttendanceService {
      * @param categoryCount 연차 종류별 차감될 숫자
      * @param updatedCount 2일 이상의 총 일수
      */
-    private void setAnnualLeaveData(AtdApprovalRequestDto dto, BigDecimal unusedLeave, BigDecimal categoryCount, Long updatedCount) {
+    private void setAnnualLeaveData(AtdApprovalRequestDto dto, BigDecimal unusedLeave, BigDecimal categoryCount, Integer updatedCount) {
         if (updatedCount != null && updatedCount != 0) { // 연차 종류에서 차감될 count를 조회하지 않고 updatedCount를 사용
             dto.setUsedDate(BigDecimal.valueOf(updatedCount));
             dto.setUnusedDate(unusedLeave.subtract(BigDecimal.valueOf(updatedCount)));
-            dto.setTotalDay(updatedCount.intValue());
+            dto.setTotalDay(updatedCount);
         } else { // 연차 종류에서 count를 조회해서 사용
             dto.setUsedDate(categoryCount);
             dto.setUnusedDate(unusedLeave.subtract(categoryCount));
@@ -300,10 +287,10 @@ public class AttendanceService {
                 // 잔여연차, 연차 종류별 차감일, (하계휴가일 경우 즉, 2일 이상일 때 사용할) 총 일수 조회
                 BigDecimal unusedLeave = (BigDecimal) annualLeaveData.get("unused_leave");
                 BigDecimal categoryCount = (BigDecimal) annualLeaveData.get("category_count");
-                Long updatedCount = (Long) annualLeaveData.get("total_day");
+                Integer updatedCount = (int) annualLeaveData.get("total_day");
                 if (updatedCount == null) {
                     // null check + default 값 설정
-                    updatedCount = 0L;
+                    updatedCount = 0;
                 }
 
                 // 1) 연차 이력 추가

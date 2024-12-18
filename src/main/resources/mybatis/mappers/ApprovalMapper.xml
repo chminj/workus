@@ -134,6 +134,7 @@
             WORKUS_APPROVAL
         SET
             APV_STATUS = 'rejected'
+          , APV_APPROVER_NO = #{rejectDto.reqUserNo}
           , APV_REJECTION_REASON = #{rejectDto.reason}
         WHERE
             APV_NO = #{rejectDto.no}
