@@ -304,7 +304,7 @@
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       } else if(feed.mediaUrl.includes('mp4') ||feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
         let insertUrl =
-                `<video id="nonPopupVideo\${feed.no}" controls src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                `<video id="nonPopupVideo\${feed.no}" controls src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
         $(`#feed-\${feed.no}-insertUrl`).html(insertUrl)
       }
     }
@@ -319,14 +319,13 @@
       success: function (feed) {
         if(feed.mediaUrl.includes('jpg') || feed.mediaUrl.includes('png')|| feed.mediaUrl.includes('jpeg') || feed.mediaUrl.includes('gif')) {
           let insertUrl =
-                  `<img src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<img src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         } else if(feed.mediaUrl.includes('mp4') || feed.mediaUrl.includes('mp4')|| feed.mediaUrl.includes('avi')|| feed.mediaUrl.includes('mpg') ||feed.mediaUrl.includes('mpeg') ) {
           let insertUrl =
-                  `<video id="popupVideo" width=100%; height=100%; controls  src="${s3}/resources/repository/communityfeedfile/\${feed.mediaUrl}"/>`;
+                  `<video id="popupVideo" width=100%; height=100%; controls  src="${s3}/resources/repository/communityfeedfile/\${feed.encodedMediaUrl}"/>`;
           $("#popupUrl${feed.no}").html(insertUrl)
         }
-
         $("#postImage").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/communityfeedfile/"+feed.mediaUrl);
         $("#postProfile").attr("src", "https://2404-bucket-team-2.s3.ap-northeast-2.amazonaws.com/resources/repository/userprofile/"+feed.user.profileSrc);
         $("#postUsername").text(feed.user.name);
@@ -359,6 +358,24 @@
     })
   }
 
+  // 동영상 정지 js
+  // 기본 게시글
+  $(document).on('click', '.open-popup-btn',function () {
+    let feedNo = $(this).data('feedNo');
+    openPopup(feedNo);
+    let video = $(`#nonPopupVideo\${feedNo}`);
+    video.get(0).pause();
+  })
+
+  // 팝업 게시글
+  $(document).on('click', '.popup-close',function () {
+    document.getElementById("popupOverlay").style.display = "none";
+    let video = $('#popupVideo');
+    if(video.length){
+      video.get(0).pause();
+    }
+  })
+
   function  deleteRely(replyNo){
     $.ajax({
       type:"post",
@@ -375,23 +392,6 @@
       }
     })
   }
-
-
-  $(document).on('click', '.open-popup-btn',function () {
-    let feedNo = $(this).data('feedNo');
-    openPopup(feedNo);
-    let video = $(`#nonPopupVideo\${feedNo}`);
-    video.get(0).pause();
-  })
-
-  $(document).on('click', '.popup-close',function () {
-    document.getElementById("popupOverlay").style.display = "none";
-    let video = $('#popupVideo');
-    if(video.length){
-      video.get(0).pause();
-    }
-  })
-
 
   // 댓글 js
   function inserReply(feedNo){
@@ -495,21 +495,21 @@
     });
   }
 
-  // //  드롭다운 js
-  // const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
-  // const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
-  //
-  // // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
-  // function toggleDropdown() {
-  //   menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
-  // }
-  //
-  // // 클릭 외부 시 드롭다운 닫기
-  // window.addEventListener('click', (event) => {
-  //   if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
-  //     menu.classList.remove('show'); // 드롭다운 숨기기
-  //   }
-  // });
+  //  드롭다운 js
+  const toggle = document.getElementById('dropdownToggle'); // 드롭다운 토글 요소
+  const menu = document.getElementById('dropdownMenu'); // 드롭다운 메뉴
+
+  // 팝업 헤더의 더 많은 옵션 클릭 시 드롭다운 메뉴 표시/숨기기
+  function toggleDropdown() {
+    menu.classList.toggle('show'); // 드롭다운 메뉴 표시/숨기기
+  }
+
+  // 클릭 외부 시 드롭다운 닫기
+  window.addEventListener('click', (event) => {
+    if (!document.querySelector('.more-options').contains(event.target) && !menu.contains(event.target)) {
+      menu.classList.remove('show'); // 드롭다운 숨기기
+    }
+  });
 
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' }); // 맨 위로 부드럽게 이동

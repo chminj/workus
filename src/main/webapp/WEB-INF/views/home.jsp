@@ -69,14 +69,21 @@
                                         <c:choose>
                                             <c:when test="${not empty feed.mediaUrl}">
                                                 <c:if test="${fn:contains(feed.mediaUrl, '.jpg') || fn:contains(feed.mediaUrl, '.png') || fn:contains(feed.mediaUrl, '.gif')}">
-                                                    <img src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}"/>
+                                                    <img src="${s3}/resources/repository/communityfeedfile/${feed.encodedMediaUrl}"/>
                                                 </c:if>
                                                 <c:if test="${fn:contains(feed.mediaUrl, '.mp4') || fn:contains(feed.mediaUrl, '.webm') || fn:contains(feed.mediaUrl, '.ogg')}">
                                                     <video controls>
-                                                        <source src="${s3}/resources/repository/communityfeedfile/${feed.mediaUrl}" type="video/mp4">
+                                                        <source src="${s3}/resources/repository/communityfeedfile/${feed.encodedMediaUrl}" type="video/mp4">
                                                     </video>
                                                 </c:if>
                                             </c:when>
+                                             <c:otherwise>
+                                                <div class="empty-section">
+                                                    <h2>게시글이 없습니다.</h2>
+                                                    <p>첫번째로 게시글을 작성해 보세요!</p>
+                                                    <a href="community/form" class="btn btn-primary">새 글 작성</a>
+                                                </div>
+                                            </c:otherwise>
                                         </c:choose>
                                         </div>
                                          <div class="d-flex align-items-center justify-content-between titleBox titleBoxBot">
