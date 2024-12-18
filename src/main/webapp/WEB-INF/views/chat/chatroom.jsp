@@ -197,6 +197,17 @@
 		let page = null;
 		let ws = null;
 
+		$(document).ready(function() {
+			const urlParams = new URLSearchParams(window.location.search);
+			const prevChtroomNo = urlParams.get('prevChtroomNo');
+			if (prevChtroomNo) {
+				$(`#chatroom\${prevChtroomNo}`).click();
+			}
+
+			// 스크롤 맨 아래로 이동
+			$('.outer-chat-div').scrollTop($('.outer-chat-div')[0].scrollHeight);
+		});
+
 		// 소켓 메시지 전송
 		function send(message) {
 			ws.send(JSON.stringify(message));
@@ -256,93 +267,82 @@
 			}
 		}
 
-		$(document).ready(function() {
-			const urlParams = new URLSearchParams(window.location.search);
-			const prevChtroomNo = urlParams.get('prevChtroomNo');
-			if (prevChtroomNo) {
-				$(`#chatroom\${prevChtroomNo}`).click();
+		// 채팅방 나가기
+		$('#chat').on('click', '#outChatroom', function () {
+			if (!confirm('채팅방을 나가시겠습니까?')) {
+				return;
 			}
-
-			// 파일과 채팅 동시에 전송 막기
-			$('#chat').on('change', '#fileInput', function() {
-				$('input[name=content]').prop('disabled', false);
-				const files = $(this)[0].files;
-
-				if(files.length > 0) {
-					$('#emojiSuggestionsDiv').addClass('d-none');
-					$('input[name=content]').val('');
-					$('input[name=content]').prop('disabled', true);
+			let message = {
+				cmd: 'chat-leave',
+				chatroomNo: chatroomNo,
+				user: {
+					no: LOGIN_USERNO,
+					name: LOGIN_USERNAME
 				}
-			});
+			}
+			send(message);
+			window.location.replace('/chatroom/list');
+		})
 
-			// 스크롤 맨 아래로 이동
-			$('.outer-chat-div').scrollTop($('.outer-chat-div')[0].scrollHeight);
+		// 파일과 채팅 동시에 전송 막기
+		$('#chat').on('change', '#fileInput', function() {
+			$('input[name=content]').prop('disabled', false);
+			const files = $(this)[0].files;
 
-			// 추가 초대하기
-			$('#updateUsersInChatroomBtn').click(async function () {
-				// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
-				let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
-					return { no: $(this).val()};
-				}).get();
-
-				let message = {
-					cmd: 'chat-enter',
-					chatroomNo: chatroomNo,
-					users: checkedUserNumbers
-				}
-				send(message);
-			})
-
-			// 채팅방 나가기
-			$('#chat').on('click', '#outChatroom', async function () {
-				if (!confirm('채팅방을 나가시겠습니까?')) {
-					return;
-				}
-				let message = {
-					cmd: 'chat-leave',
-					chatroomNo: chatroomNo,
-					user: {
-						no: LOGIN_USERNO,
-						name: LOGIN_USERNAME
-					}
-				}
-				send(message);
-				window.location.replace('/chatroom/list');
-			})
-
-			// 이모지 전송
-			$('#chat').on('click', '#emojiDiv', async function() {
-				let emojiNo = $(this).data('emojiNo');
+			if(files.length > 0) {
 				$('#emojiSuggestionsDiv').addClass('d-none');
 				$('input[name=content]').val('');
+				$('input[name=content]').prop('disabled', true);
+			}
+		});
 
-				let message = {
-					cmd: 'chat-message',
-					chatroomNo: chatroomNo,
-					user: {
-						no: LOGIN_USERNO,
-						id: LOGIN_USERID
-					},
-					payload: {
-						type: 'emoji',
-						emojiNo: emojiNo
-					}
-				}
-				send(message);
-			})
+		// 이모지 전송
+		$('#chat').on('click', '#emojiDiv', async function() {
+			let emojiNo = $(this).data('emojiNo');
+			$('#emojiSuggestionsDiv').addClass('d-none');
+			$('input[name=content]').val('');
 
-			// 다른 페이지로 이동하거나 창이 꺼지기 직전
-			window.addEventListener('beforeunload', function () {
-				let message = {
-					cmd: 'chat-close',
-					chatroomNo: chatroomNo,
-					user: {
-						no: LOGIN_USERNO,
-						id: LOGIN_USERID
-					}
+			let message = {
+				cmd: 'chat-message',
+				chatroomNo: chatroomNo,
+				user: {
+					no: LOGIN_USERNO,
+					id: LOGIN_USERID
+				},
+				payload: {
+					type: 'emoji',
+					emojiNo: emojiNo
 				}
-				send(message);
-			});
+			}
+			send(message);
+		})
+
+		// 추가 초대하기
+		$('#updateUsersInChatroomBtn').click(function () {
+			// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
+			let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
+				return { no: $(this).val()};
+			}).get();
+
+			let message = {
+				cmd: 'chat-enter',
+				chatroomNo: chatroomNo,
+				users: checkedUserNumbers
+			}
+			send(message);
+		})
+
+		// 다른 페이지로 이동하거나 창이 꺼지기 직전
+		window.addEventListener('beforeunload', function () {
+			let message = {
+				cmd: 'chat-close',
+				chatroomNo: chatroomNo,
+				user: {
+					no: LOGIN_USERNO,
+					id: LOGIN_USERID
+				}
+			}
+			send(message);
 		});
 
 		// 채팅 전송

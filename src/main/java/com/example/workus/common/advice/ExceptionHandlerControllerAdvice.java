@@ -27,8 +27,8 @@ public class ExceptionHandlerControllerAdvice {//    구체적인 예외 처리�
 
     @ExceptionHandler(WorkusException.class)
     public String handleWorkusException(WorkusException e, Model model) {
-        model.addAttribute("msg", e.getMessage());
-        return "error"; // msg의 이름으로 에러메시지를 담을 수 있는 에러 페이지
+        model.addAttribute("message", e.getMessage());
+        return "error";
     }
 
 }
