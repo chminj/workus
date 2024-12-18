@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <%@ include file="../common/common.jsp" %>
-  <link href="../../../resources/css/communitymain.css" rel="stylesheet"/>
+  <link href="${s3}/resources/css/communitymain.css" rel="stylesheet"/>
   <title>workus template</title>
   <!-- 소스 다운 -->
   <script src="https://unpkg.com/@yaireo/tagify"></script>
