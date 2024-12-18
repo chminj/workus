@@ -282,11 +282,16 @@
         tags += `
          <span type="button"id="\${tag.no}searchTag" onclick="searchHashTag(event)" style=" color: #3a9cfa; padding: 1px 1px; margin-right: 3px;">\${tag.name}</span>`
       }
-
-      if (feed.likeCount > 0) {
+      if(feed.likeCount == 1){
+        let content = `
+            <span class="like-userName" name="userName" id="likeFeedUserName\${feed.no}">\${feed.userName}</span>님이 좋아합니다
+        `;
+        $(`#like-user-\${feed.no}`).html(content);
+      }else if (feed.likeCount > 0) {
+        let otherCount = feed.likeCount -1 ;
         let content = `
             <span class="like-userName" name="userName" id="likeFeedUserName\${feed.no}">\${feed.userName}</span>님
-            외<span class="like-count" name="likeCount" id="likeFeedCount\${feed.no}">\${feed.likeCount}</span>명이 좋아합니다.
+            외<span class="like-count" name="likeCount" id="likeFeedCount\${feed.no}">\${otherCount}</span>명이 좋아합니다.
         `;
 
         $(`#like-user-\${feed.no}`).html(content);
@@ -481,14 +486,17 @@
                 } else if (likeFeed.likeCount == 1){
                   $(`#like-user-\${feedNo}`).html("");
                   let content = `
-                <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
-                외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${likeFeed.likeCount}</span>명이 좋아합니다.
-            `;
+                    <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님이 좋아합니다
+                  `;
                   $(`#like-user-\${feedNo}`).html(content);
 
                 } else {
-                  $("#likeFeedUserName"+feedNo).text(likeFeed.userName);
-                  $("#likeFeedCount"+feedNo).text(likeFeed.likeCount);
+                  let otherCount =likeFeed.likeCount -1 ;
+                  let content = `
+                    <span class="like-userName" name="userName" id="likeFeedUserName\${feedNo}">\${likeFeed.userName}</span>님
+                    외<span class="like-count" name="likeCount" id="likeFeedCount\${feedNo}">\${otherCount}</span>명이 좋아합니다.
+                  `;
+                  $(`#like-user-\${feedNo}`).html(content);
                 }
 
               }
