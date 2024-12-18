@@ -1,16 +1,15 @@
 package com.example.workus.chat.service;
 
-import com.example.workus.chat.dto.AddNewUserInChatroomForm;
 import com.example.workus.chat.dto.ChatroomDto;
 import com.example.workus.chat.dto.ChatroomInfoDto;
 import com.example.workus.chat.dto.ChatroomForm;
 import com.example.workus.chat.mapper.ChatroomMapper;
 import com.example.workus.chat.vo.Chatroom;
-import com.example.workus.common.exception.RestWorkusException;
+import com.example.workus.common.exception.ChatException;
+import com.example.workus.common.exception.RestChatException;
 import com.example.workus.user.dto.DeptDto;
 import com.example.workus.user.dto.ParticipantInChatroomDto;
 import com.example.workus.user.mapper.UserMapper;
-import com.example.workus.user.vo.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,6 +36,9 @@ public class ChatroomServcie {
      * @return 로그인한 유저no가 참여중인 채팅방들
      */
     public List<ChatroomDto> getAllChatrooms(Long userNo) {
+        if (userNo == null) {
+            throw new ChatException("요청한 사용자 정보가 존재하지 않습니다.");
+        }
         List<Long> chatroomNumbers = chatroomMapper.getChatroomNoByUserNo(userNo);
         List<ChatroomDto> chatrooms = new ArrayList<>();
         for (Long chatroomNo : chatroomNumbers) {
@@ -74,6 +76,9 @@ public class ChatroomServcie {
     }
 
     public void updateChatroomConTime(Long userNo, Long chatroomNo) {
+        if (userNo == null) {
+            throw new RestChatException("요청한 사용자 정보가 존재하지 않습니다.");
+        }
         LocalDateTime now = LocalDateTime.now();
         chatroomMapper.updateChatroomConTime(userNo, chatroomNo, now);
     }
@@ -91,6 +96,9 @@ public class ChatroomServcie {
 
     // 채팅방 생성
     public ChatroomDto addChatroom(Long userNo, ChatroomForm chatroomForm) {
+        if (userNo == null) {
+            throw new RestChatException("요청한 사용자 정보가 존재하지 않습니다.");
+        }
         // 채팅방 생성
         Chatroom chatroom = new Chatroom();
         String chatroomTitle = chatroomForm.getChatroomTitle();
@@ -117,26 +125,8 @@ public class ChatroomServcie {
         return chatroomDto;
     }
 
-    public void outChatroomByChatroomNo(Long userNo, Long chatroomNo) {
-        chatroomMapper.outChatroomByChatroomNo(userNo, chatroomNo);
-    }
-
     public ChatroomInfoDto getChatroomInfoByChatroomNo(Long chatroomNo) {
         return chatroomMapper.getChatroomInfoByChatroomNo(chatroomNo);
-    }
-
-    public List<User> addNewUserByChatroomNo(AddNewUserInChatroomForm addNewUserInChatroomForm) {
-        List<User> users = new ArrayList<>();
-        for (User user : addNewUserInChatroomForm.getUsers()) {
-            // joinChatroomCount가 0이 아니면 이미 참여중이다.
-            int joinChatroomCount = chatroomMapper.getJoinChatroomCountByChatroomNoAndUserNo(addNewUserInChatroomForm.getChatroomNo(), user.getNo());
-            if (joinChatroomCount != 0) {
-                throw new RestWorkusException("이미 참여중인 유저를 초대했습니다.");
-            }
-            chatroomMapper.addChatroomHistory(addNewUserInChatroomForm.getChatroomNo(), user.getNo());
-            users.add(userMapper.getUserByUserNo(user.getNo()));
-        }
-        return users;
     }
 
     public ChatroomDto getChatroomDtoByUserNo(Long userNo) {
