@@ -51,6 +51,7 @@ public class ApprovalController {
         // leader 열람/공람자에서 조회
         User leader = approvalService.getLeader(deptNo);
         model.addAttribute("leader", leader);
+        model.addAttribute("userNo", userNo);
 
         return "approval/form-list";
     }

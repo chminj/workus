@@ -2,7 +2,7 @@
 <%@ include file="tags.jsp" %>
 <%-- SSE --%>
 <sec:authorize access="hasAnyRole('ROLE_ADMIN', 'ROLE_MANAGER')">
-<script src="${s3}/resources/js/sse.js"></script>
+<script src="/resources/js/sse.js"></script>
 </sec:authorize>
 <header class="layout header">
     <a href="/home" class="logo">
