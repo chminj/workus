@@ -178,8 +178,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">취소</button>
-        <button type="button" id="createChatroomBtn" class="btn btn-primary hide">생성</button>
-		<button type="button" id="updateUsersInChatroomBtn" class="btn btn-primary hide">초대</button>
+        <button type="button" id="createChatroomBtn" class="btn btn-primary d-none">생성</button>
+		<button type="button" id="updateUsersInChatroomBtn" class="btn btn-primary d-none">초대</button>
       </div>
     </div>
   </div>
@@ -195,6 +195,66 @@
 
 		let chatroomNo = null;
 		let page = null;
+		let ws = null;
+
+		// 소켓 메시지 전송
+		function send(message) {
+			ws.send(JSON.stringify(message));
+		}
+
+		// 채팅 소켓으로 전송
+		async function chat() {
+			let inputMessage = $('input[name=content]').val();
+			let fileInput = $('#fileInput')[0].files[0];
+
+			if (inputMessage) {
+				let message = {
+					cmd: 'chat-message',
+					chatroomNo: chatroomNo,
+					user: {
+						no: LOGIN_USERNO,
+						id: LOGIN_USERID
+					},
+					payload: {
+						type: 'text',
+						content: inputMessage
+					}
+				}
+				send(message);
+			}
+
+			if (fileInput) {
+				$('input[name=content]').val('');
+				$('input[name=content]').prop('disabled', false);
+				$('#fileInput').val('');
+				$('#emojiSuggestionsDiv').removeClass('d-none');
+				const formData = new FormData();
+				formData.append('upfile', fileInput);
+				const response = await fetch('/ajax/chat/upload', {
+					method: 'POST',
+					body: formData
+				});
+				const result = await response.json();
+				const data = result.data;
+				if (response.ok) {
+					let message = {
+						cmd: 'chat-message',
+						chatroomNo: chatroomNo,
+						user: {
+							no: LOGIN_USERNO,
+							id: LOGIN_USERID
+						},
+						payload: {
+							type: 'file',
+							fileSrc: data.fileSrc
+						}
+					}
+					send(message);
+				} else {
+					console.log('파일 업로드에 실패했습니다.');
+				}
+			}
+		}
 
 		$(document).ready(function() {
 			const urlParams = new URLSearchParams(window.location.search);
@@ -202,16 +262,6 @@
 			if (prevChtroomNo) {
 				$(`#chatroom\${prevChtroomNo}`).click();
 			}
-		});
-
-		// 채팅방 입장
-		$('.chatroomDiv').on('click', '.chatroom', async function () {
-			if (chatroomNo !== null) {
-				updateContime();
-			}
-			// data-chatroom-no 속성 가져오기
-			chatroomNo = $(this).data("chatroomNo");
-			updateContime();
 
 			// 파일과 채팅 동시에 전송 막기
 			$('#chat').on('change', '#fileInput', function() {
@@ -225,6 +275,102 @@
 				}
 			});
 
+			// 스크롤 맨 아래로 이동
+			$('.outer-chat-div').scrollTop($('.outer-chat-div')[0].scrollHeight);
+
+			// 추가 초대하기
+			$('#updateUsersInChatroomBtn').click(async function () {
+				// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
+				let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
+					return { no: $(this).val()};
+				}).get();
+
+				let message = {
+					cmd: 'chat-enter',
+					chatroomNo: chatroomNo,
+					users: checkedUserNumbers
+				}
+				send(message);
+			})
+
+			// 채팅방 나가기
+			$('#chat').on('click', '#outChatroom', async function () {
+				if (!confirm('채팅방을 나가시겠습니까?')) {
+					return;
+				}
+				let message = {
+					cmd: 'chat-leave',
+					chatroomNo: chatroomNo,
+					user: {
+						no: LOGIN_USERNO,
+						name: LOGIN_USERNAME
+					}
+				}
+				send(message);
+				window.location.replace('/chatroom/list');
+			})
+
+			// 이모지 전송
+			$('#chat').on('click', '#emojiDiv', async function() {
+				let emojiNo = $(this).data('emojiNo');
+				$('#emojiSuggestionsDiv').addClass('d-none');
+				$('input[name=content]').val('');
+
+				let message = {
+					cmd: 'chat-message',
+					chatroomNo: chatroomNo,
+					user: {
+						no: LOGIN_USERNO,
+						id: LOGIN_USERID
+					},
+					payload: {
+						type: 'emoji',
+						emojiNo: emojiNo
+					}
+				}
+				send(message);
+			})
+
+			// 다른 페이지로 이동하거나 창이 꺼지기 직전
+			window.addEventListener('beforeunload', function () {
+				let message = {
+					cmd: 'chat-close',
+					chatroomNo: chatroomNo,
+					user: {
+						no: LOGIN_USERNO,
+						id: LOGIN_USERID
+					}
+				}
+				send(message);
+			});
+		});
+
+		// 채팅 전송
+		$('#chat').on('click', '#submitChat', function () {
+			chat();
+			$('#emojiSuggestionsDiv').addClass('d-none');
+			$('input[name=content]').val('');
+		});
+
+		// 엔터키 입력 이벤트
+		$('#chat').on('keypress', 'input[name=content]', function (e) {
+			if (e.keyCode === 13) {
+				e.preventDefault();
+				chat();
+				$('#emojiSuggestionsDiv').addClass('d-none');
+				$('input[name=content]').val('');
+			}
+		});
+
+		// 채팅방 입장
+		$('.chatroomDiv').on('click', '.chatroom', async function () {
+			if (chatroomNo !== null) {
+				updateContime();
+			}
+			// data-chatroom-no 속성 가져오기
+			chatroomNo = $(this).data("chatroomNo");
+			updateContime();
+
 			// 읽지 않은 메시지 수 화면에서 삭제
 			$(`.not-read-count\${chatroomNo}`).text("");
 			const titleAndUsersDiv = await ajaxTitleAndUsersData(chatroomNo);
@@ -233,13 +379,8 @@
 			const div = titleAndUsersDiv + chatDiv + chatSubmitForm;
 			await $('#chat').html(div);
 
-            // 스크롤 맨 아래로 이동
-            $('.outer-chat-div').scrollTop($('.outer-chat-div')[0].scrollHeight);
-
 			// 웹소켓 연결
 			$(function () {
-				let ws = null;
-
 				function connect() {
 					ws = new SockJS("/socket/chat");
 
@@ -287,148 +428,7 @@
 						}
 					}
 				}
-
 				connect();
-
-				// 추가 초대하기
-				$('#updateUsersInChatroomBtn').click(async function () {
-					// disabled가 되어있는 것을 제외하고 checked상태인 것의 userNo만 뽑아낸다.
-					let checkedUserNumbers = $('.user-check:checked:not(:disabled)').map(function () {
-						return { no: $(this).val()};
-					}).get();
-
-					let message = {
-						cmd: 'chat-enter',
-						chatroomNo: chatroomNo,
-						users: checkedUserNumbers
-					}
-					send(message);
-				})
-
-				// 채팅방 나가기
-				$('#chat').on('click', '#outChatroom', async function () {
-					if (!confirm('채팅방을 나가시겠습니까?')) {
-						return;
-					}
-					let message = {
-						cmd: 'chat-leave',
-						chatroomNo: chatroomNo,
-						user: {
-							no: LOGIN_USERNO,
-							name: LOGIN_USERNAME
-						}
-					}
-					send(message);
-					window.location.replace('/chatroom/list');
-				})
-
-				// 채팅 소켓으로 전송
-				async function chat() {
-					let inputMessage = $('input[name=content]').val();
-					let fileInput = $('#fileInput')[0].files[0];
-
-					if (inputMessage) {
-						let message = {
-							cmd: 'chat-message',
-							chatroomNo: chatroomNo,
-							user: {
-								no: LOGIN_USERNO,
-								id: LOGIN_USERID
-							},
-							payload: {
-								type: 'text',
-								content: inputMessage
-							}
-						}
-						send(message);
-					}
-
-					if (fileInput) {
-						$('input[name=content]').val('');
-						$('input[name=content]').prop('disabled', false);
-						$('#fileInput').val('');
-						$('#emojiSuggestionsDiv').removeClass('d-none');
-						const formData = new FormData();
-						formData.append('upfile', fileInput);
-						const response = await fetch('/ajax/chat/upload', {
-							method: 'POST',
-							body: formData
-						});
-						const result = await response.json();
-						const data = result.data;
-						if (response.ok) {
-							let message = {
-								cmd: 'chat-message',
-								chatroomNo: chatroomNo,
-								user: {
-									no: LOGIN_USERNO,
-									id: LOGIN_USERID
-								},
-								payload: {
-									type: 'file',
-									fileSrc: data.fileSrc
-								}
-							}
-							send(message);
-						} else {
-							console.log('파일 업로드에 실패했습니다.');
-						}
-					}
-				}
-
-				// 이모지 전송
-				$('#chat').on('click', '#emojiDiv', async function() {
-					let emojiNo = $(this).data('emojiNo');
-					$('#emojiSuggestionsDiv').addClass('d-none');
-					$('input[name=content]').val('');
-
-					let message = {
-						cmd: 'chat-message',
-						chatroomNo: chatroomNo,
-						user: {
-							no: LOGIN_USERNO,
-							id: LOGIN_USERID
-						},
-						payload: {
-							type: 'emoji',
-							emojiNo: emojiNo
-						}
-					}
-					send(message);
-				})
-
-				// 다른 페이지로 이동하거나 창이 꺼지기 직전
-				window.addEventListener('beforeunload', function () {
-					let message = {
-						cmd: 'chat-close',
-						chatroomNo: chatroomNo,
-						user: {
-							no: LOGIN_USERNO,
-							id: LOGIN_USERID
-						}
-					}
-					send(message);
-				});
-
-				function send(message) {
-					ws.send(JSON.stringify(message));
-				}
-
-				$('#chat').on('click', '#submitChat', function () {
-					chat();
-					$('#emojiSuggestionsDiv').addClass('d-none');
-					$('input[name=content]').val('');
-				});
-
-				// 엔터키 입력 이벤트
-				$('#chat').on('keypress', 'input[name=content]', function (e) {
-					if (e.keyCode === 13) {
-						e.preventDefault();
-						chat();
-						$('#emojiSuggestionsDiv').addClass('d-none');
-						$('input[name=content]').val('');
-					}
-				});
 			})
 		})
 
@@ -511,8 +511,8 @@
 		// 추가 초대를 위한 버튼
 		$('#chat').on('click', '#addNewUserBtn', async function () {
 			$('#createChatroomModalLabel').text('추가 초대하기');
-			$('#updateUsersInChatroomBtn').removeClass('hide');
-			$('#createChatroomBtn').addClass('hide');
+			$('#updateUsersInChatroomBtn').removeClass('d-none');
+			$('#createChatroomBtn').addClass('d-none');
 			resetChatroomModal();
 			try {
 				const response = await fetch('/ajax/chatroom/invited/' + chatroomNo);
@@ -669,8 +669,8 @@
 		$('.openCreateChatroomBtn').on('click', function () {
 			$('#createChatroomModalLabel').text('새 채팅방 만들기');
 			$('#chatroomTitle').prop('disabled', false);
-			$('#createChatroomBtn').removeClass('hide');
-			$('#updateUsersInChatroomBtn').addClass('hide');
+			$('#createChatroomBtn').removeClass('d-none');
+			$('#updateUsersInChatroomBtn').addClass('d-none');
 			resetChatroomModal();
 		});
 
@@ -1317,7 +1317,6 @@
 					</div>
 				`;
 		}
-
 		<%-- 채팅 관련 js 끝 --%>
 	</script>
 </body>
