@@ -53,21 +53,7 @@ public class ChatService {
         // 채팅방이 생성되고 친 채팅이 존재할 때
         if(pagination.getBegin() != 0) {
             dto = new ListDto<>(chatMapper.getAllChatsByChatroomNo(userNo, chatroomNo, pagination.getBegin() - 1), pagination);
-            // 확장자에 따라 file이나 image로 type을 설정한다.
-            for (Chat chat : dto.getData()) {
-                if (chat.getFileSrc() != null) {
-                    chat.setType("file");
-                    String extension = chat.getFileSrc().toLowerCase();
-                    for (String imageExtension : imageExtensions) {
-                        if (extension.endsWith("." + imageExtension)) {
-                            chat.setType("image");
-                            break;
-                        }
-                    }
-                } else if (chat.getEmoji() != null) {
-                    chat.setType("emoji");
-                }
-            }
+            setType(dto); // 확장자에 따라 file이나 image로 type을 설정한다.
             Collections.sort(dto.getData(), (data1, data2) ->
                     data1.getTime().compareTo(data2.getTime()));
             LocalDateTime firstChatTime = dto.getData().getFirst().getTime();
@@ -182,5 +168,23 @@ public class ChatService {
             iterator.remove();
         }
         return emojiList;
+    }
+
+    // 확장자에 따라 file이나 image로 type을 설정한다.
+    public void setType(ListDto<Chat> dto) {
+        for (Chat chat : dto.getData()) {
+            if (chat.getFileSrc() != null) {
+                chat.setType("file");
+                String extension = chat.getFileSrc().toLowerCase();
+                for (String imageExtension : imageExtensions) {
+                    if (extension.endsWith("." + imageExtension)) {
+                        chat.setType("image");
+                        break;
+                    }
+                }
+            } else if (chat.getEmoji() != null) {
+                chat.setType("emoji");
+            }
+        }
     }
 }
