@@ -7,7 +7,7 @@ function initializeEventSource() {
             source.close();
         }
 
-        source = new EventSource("http://localhost/api/notifications/register");
+        source = new EventSource("/api/notifications/register");
 
         source.onmessage = function(event) {
             showNotification(event.data); // 알림 메시지를 표시
