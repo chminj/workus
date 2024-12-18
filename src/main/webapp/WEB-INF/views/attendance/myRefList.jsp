@@ -48,9 +48,9 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                 <input type="hidden" name="page"/>
                                 <div class="input-group">
                                     <label for="searchOpt1">
-                                        <select name="opt" id="searchOpt1" class="form-select">
-                                            <option value="name" ${param.opt eq 'name' ? 'selected' : '' }>작성자</option>
-                                            <option value="reason" ${param.opt eq 'reason' ? 'selected' : '' }>사유
+                                        <select name="status" id="searchOpt1" class="form-select">
+                                            <option value="name" ${param.status eq 'name' ? 'selected' : '' }>작성자</option>
+                                            <option value="reason" ${param.status eq 'reason' ? 'selected' : '' }>사유
                                             </option>
                                         </select>
                                     </label>
@@ -96,7 +96,7 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                     <tbody>
                                     <c:forEach var="form" items="${forms }" varStatus="loop">
                                         <tr>
-                                            <td>${loop.count } ${form.atdNo }</td>
+                                            <td>${loop.count }</td>
                                             <td>${form.reqUserName}</td>
                                             <td>
                                                 ${form.categoryName }
@@ -133,19 +133,19 @@ https://cdn.jsdelivr.net/npm/dayjs@1.11.13/dayjs.min.js
                                     <ul class="pagination justify-content-center">
                                         <li class="page-item ${paging.first ? 'disabled' : '' }">
                                             <a class="page-link" onclick="changePage(${paging.prevPage}, e)"
-                                               href="myReqmyReqList?page=${paging.prevPage}">이전</a>
+                                               href="myRefList?page=${paging.prevPage}">이전</a>
                                         </li>
                                         <c:forEach var="num" begin="${paging.beginPage }" end="${paging.endPage }">
                                             <li class="page-item ${paging.page eq num ? 'active' : '' }">
                                                 <a class="page-link" onclick="changePage(${num }, e)"
-                                                   href="myReqList?page=${num }">
+                                                   href="myRefList?page=${num }">
                                                         ${num }
                                                 </a>
                                             </li>
                                         </c:forEach>
                                         <li class="page-item ${paging.last ? 'disabled' : '' }">
                                             <a class="page-link" onclick="changePage(${paging.nextPage}, e)"
-                                               href="myReqList?page=(${paging.nextPage}">다음</a>
+                                               href="myRefList?page=(${paging.nextPage}">다음</a>
                                         </li>
                                     </ul>
                                 </nav>

@@ -5,9 +5,11 @@ import com.example.workus.attendance.service.AttendanceService;
 import com.example.workus.attendance.vo.AttendanceCategory;
 import com.example.workus.common.dto.ListDto;
 import com.example.workus.common.exception.RestAttendanceException;
+import com.example.workus.common.vo.Constants;
 import com.example.workus.security.LoginUser;
 import com.example.workus.user.service.UserService;
 import com.example.workus.user.vo.User;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("/attendance")
 public class AttendanceController {
@@ -152,18 +155,18 @@ public class AttendanceController {
                             , Model model
                             , @RequestParam(required = false, defaultValue = "1") int page
                             , @RequestParam(required = false, defaultValue = "10") int rows
-                            , @RequestParam(required = false) String opt
+                            , @RequestParam(required = false) String status
                             , @RequestParam(required = false) String keyword)
     {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
-        if (StringUtils.hasText(opt)) {
-            condition.put("opt", opt);
+        if (StringUtils.hasText(status)) {
+            condition.put("status", status);
             condition.put("keyword", keyword);
         }
-
         ListDto<ApvViewDto> forms = attendanceService.getApprovalForms(loginUser.getNo(), condition);
+
         model.addAttribute("condition", condition);
         model.addAttribute("forms", forms.getData());
         model.addAttribute("paging", forms.getPaging());
@@ -176,23 +179,21 @@ public class AttendanceController {
                             , Model model
                             , @RequestParam(required = false, defaultValue = "1") int page
                             , @RequestParam(required = false, defaultValue = "10") int rows
-                            , @RequestParam(required = false) String opt
+                            , @RequestParam(required = false) String status
                             , @RequestParam(required = false) String keyword)
     {
         Map<String, Object> condition = new HashMap<>();
         condition.put("page", page);
         condition.put("rows", rows);
-        if (StringUtils.hasText(opt)) {
-            condition.put("opt", opt);
+        if (StringUtils.hasText(status)) {
+            condition.put("status", status);
             condition.put("keyword", keyword);
         }
 
         int roleNo = attendanceService.getUserRoleNo(loginUser.getNo());
-        condition.put("roleNo", roleNo);
-
         ListDto<RefViewDto> forms;
-        if (roleNo == 100 ){
-            forms = attendanceService.getReferenceForms(loginUser.getNo(), condition, roleNo);
+        if (roleNo == Constants.ROLE_NO_ADMIN){
+            forms = attendanceService.getReferenceForms(condition);
         } else {
             forms = attendanceService.getMyReferenceForms(loginUser.getNo(), condition);
         }

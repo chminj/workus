@@ -84,7 +84,7 @@
                                 </div>
                             </c:when>
                             <c:otherwise>
-                                <table class="table">
+                                <table class="table noB">
                                     <colgroup>
                                         <col style="width:5%"/>
                                         <col style="width:10%"/>

@@ -30,7 +30,10 @@ public interface AttendanceMapper {
     // 내 연차 결재 요청 목록 조회
     List<ReqViewDto> getAllRequestFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
     // 조회할 글 총 개수 카운트 (페이지네이션에 필요)
-    int getTotalRows(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
+    int getMyTotalRows(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
+    int getMyApvTotalRows(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
+    int getMyRefTotalRows(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);
+    int getTotalRows(@Param("condition") Map<String, Object> condition);
 
     // 내가 참조자인 목록 조회
     List<RefViewDto> getAllReferenceFormsByUserNo(@Param("userNo") Long userNo, @Param("condition") Map<String, Object> condition);

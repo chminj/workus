@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.example.workus.user.mapper.UserMapper">
     <select id="getUsersNotMe" resultType="User">
-        select U.USER_NO as no
+        SELECT U.USER_NO as no
             , U.USER_ID as id
             , U.USER_NAME as name
             , U.USER_PASSWORD as password
@@ -23,23 +23,13 @@
             , D.DEPT_NAME as deptName
             , R.ROLE_NO as roleNo
             , R.ROLE_NAME as roleName
-        from
-            WORKUS_USERS U
-            inner join
-            WORKUS_POSITION P
-        on
-            U.POSITION_NO = P.POSITION_NO
-            inner join
-            WORKUS_DEPT D
-            on
-            U.DEPT_NO = D.DEPT_NO
-            inner join
-            WORKUS_ATH_ROLE R
-            on
-            U.ROLE_NO = R.ROLE_NO
-        where U.USER_STATUS != 'Q'
-        and U.USER_NO != #{userNo}
-        order by U.DEPT_NO ASC, U.POSITION_NO ASC
+        FROM WORKUS_USERS U
+        INNER JOIN WORKUS_POSITION P ON U.POSITION_NO = P.POSITION_NO
+        INNER JOIN WORKUS_DEPT D ON U.DEPT_NO = D.DEPT_NO
+        INNER JOIN WORKUS_ATH_ROLE R ON U.ROLE_NO = R.ROLE_NO
+        WHERE U.USER_STATUS != 'Q' AND U.USER_NO != #{userNo}
+        ANd U.USER_ID IS NOT NULL
+        ORDER BY U.DEPT_NO ASC, U.POSITION_NO ASC
     </select>
     <!--    User getUserByUserNo(@Param("userNo") long userNo);-->
     <select id="getUserByUserNo" resultType="User">
