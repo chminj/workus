@@ -68,7 +68,7 @@
                                         <div class="contentBox">
                                         <c:choose>
                                             <c:when test="${not empty feed.mediaUrl}">
-                                                <c:if test="${fn:contains(feed.mediaUrl, '.jpg') || fn:contains(feed.mediaUrl, '.png') || fn:contains(feed.mediaUrl, '.gif')}">
+                                                <c:if test="${fn:contains(feed.mediaUrl, '.jpg') || fn:contains(feed.mediaUrl, '.png') || fn:contains(feed.mediaUrl, '.gif')|| fn:contains(feed.mediaUrl,'.jpeg')}">
                                                     <img src="${s3}/resources/repository/communityfeedfile/${feed.encodedMediaUrl}"/>
                                                 </c:if>
                                                 <c:if test="${fn:contains(feed.mediaUrl, '.mp4') || fn:contains(feed.mediaUrl, '.webm') || fn:contains(feed.mediaUrl, '.ogg')}">
