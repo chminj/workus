@@ -554,13 +554,13 @@
     </div>
 </div>
 <script>
-    $(function() {
+    $(document).ready(function() {
+
         const userNo = ${userNo};
         // form category show
         function showForm(formId, categoryName) {
             $('.form').hide();
             $('#' + formId).show();
-            let titleDefault = $('.form-control.titleInput');
 
             // 제목 업데이트
             let titleElement = $('#' + formId).find('h2');
@@ -575,34 +575,21 @@
         function initializeForms() {
             $('.form').each(function () {
                 let categoryNo = $(this).attr('id');
-
-                // label이 없으면 추가
-                if ($(this).find('.titleInput+label').length === 0) {
-                    $(this).find('.titleInput').before(`<label for="title${categoryNo}" class="titleDefault">제목은 ex) '[사번] 양식명 + 추가 내용' 형식으로 작성 부탁드립니다.</label>`);
-                }
-
-                // titleInput의 id 설정
                 let titleInput = $(this).find('.titleInput');
-                titleInput.attr('id', 'title' + categoryNo);
 
+                let confirmed = $(this).find('label');
+                console.log(confirmed);
+                // label이 없으면 추가
+                if ($(this).find('.titleInput').length === 0) {
+                    titleInput.before(`<label for="title${categoryNo}" class="titleDefault">제목은 ex) '[사번] 양식명 + 추가 내용' 형식으로 작성 부탁드립니다.</label>`);
+                }
                 // label의 for 속성 설정
                 $(this).find('label').attr('for', 'title' + categoryNo);
             });
         }
 
         // 페이지 로드 시 초기화
-        $(document).ready(() => {
-            initializeForms(); // 폼 초기화
-
-            // 첫 번째 사이드바 항목에 active 클래스 추가
-            const firstCategoryItem = $('.category-item').first();
-            firstCategoryItem.addClass('active');
-
-            const formId = firstCategoryItem.data('id');
-            const categoryName = firstCategoryItem.data('name');
-
-            showForm(formId, categoryName); // 첫 화면 표시
-        });
+        initializeForms(); // 폼 초기화
 
         // sidebar click event
         $('.category-item').on('click', function () {
@@ -613,7 +600,14 @@
             const categoryName = $(this).data('name');
 
             showForm(formId, categoryName);
+
+            return false;
         });
+
+        setTimeout(function() {
+            $(".category-item:first-child").trigger('click')
+        }, 10);
+
 
         // submit
         $('form').on('submit', function () {
