@@ -554,6 +554,71 @@
     </div>
 </div>
 <script>
+    $(document).ready(function() {
+
+        const userNo = ${userNo};
+        // form category show
+        function showForm(formId, categoryName) {
+            $('.form').hide();
+            $('#' + formId).show();
+
+            // 제목 업데이트
+            let titleElement = $('#' + formId).find('h2');
+            titleElement.text(categoryName);
+
+            // 제목 기본값 설정
+            let titleInput = $('#' + formId).find('.titleInput');
+            titleInput.val('['+ userNo + '] ' + categoryName);
+        }
+
+        // 초기 양식 설정
+        function initializeForms() {
+            $('.form').each(function () {
+                let categoryNo = $(this).attr('id');
+                let titleInput = $(this).find('.titleInput');
+
+                let confirmed = $(this).find('label');
+                console.log(confirmed);
+                // label이 없으면 추가
+                if ($(this).find('.titleInput').length === 0) {
+                    titleInput.before(`<label for="title${categoryNo}" class="titleDefault">제목은 ex) '[사번] 양식명 + 추가 내용' 형식으로 작성 부탁드립니다.</label>`);
+                }
+                // label의 for 속성 설정
+                $(this).find('label').attr('for', 'title' + categoryNo);
+            });
+        }
+
+        // 페이지 로드 시 초기화
+        initializeForms(); // 폼 초기화
+
+        // sidebar click event
+        $('.category-item').on('click', function () {
+            $('.category-item').removeClass('active');
+            $(this).addClass('active');
+
+            const formId = $(this).data('id');
+            const categoryName = $(this).data('name');
+
+            showForm(formId, categoryName);
+
+            return false;
+        });
+
+        setTimeout(function() {
+            $(".category-item:first-child").trigger('click')
+        }, 10);
+
+
+        // submit
+        $('form').on('submit', function () {
+            let activeCategoryNo = $(this).parent('.form').attr('id');
+            $(this).find('.categoryNo').val(activeCategoryNo);
+
+            let editorContent = quill.root.innerHTML;
+            $('.hiddenEditor').val(editorContent);
+        });
+
+    })
     const quill = new Quill('#editor', {
         theme: 'snow'
     });
